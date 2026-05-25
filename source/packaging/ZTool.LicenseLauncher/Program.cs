@@ -925,34 +925,62 @@ namespace ZTool.LicenseLauncher
 
         public ActivationForm()
         {
-            float scale = 1.0f;
-            using (var g = CreateGraphics())
-            {
-                scale = g.DpiX / 96.0f;
-            }
-            var Scale = (Func<int, int>)delegate(int px) { return (int)Math.Round(px * scale); };
-
             Text = "Активация ZTool";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new System.Drawing.Size(Scale(430), Scale(190));
-            Font = new Font("Segoe UI", 9F * scale);
 
-            var keyLabel = new Label { Left = Scale(16), Top = Scale(18), AutoSize = true, Text = "Ключ лицензии:" };
-            keyBox = new TextBox { Left = Scale(16), Top = Scale(40), Width = Scale(395) };
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Font = new Font("Segoe UI", 9F);
+            
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            MinimumSize = new System.Drawing.Size(430, 220);
 
-            var passwordLabel = new Label { Left = Scale(16), Top = Scale(74), AutoSize = true, Text = "Пароль переноса (8-64 символа, буквы и цифры):" };
-            passwordBox = new TextBox { Left = Scale(16), Top = Scale(96), Width = Scale(395), UseSystemPasswordChar = false };
+            var mainLayout = new TableLayoutPanel();
+            mainLayout.Dock = DockStyle.Fill;
+            mainLayout.ColumnCount = 1;
+            mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            mainLayout.Padding = new Padding(15);
+            mainLayout.AutoSize = true;
+            mainLayout.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
-            var showPassword = new CheckBox { Left = Scale(16), Top = Scale(124), AutoSize = true, Text = "Показать пароль", Checked = true };
+            var keyLabel = new Label { Text = "Ключ лицензии:", AutoSize = true, Margin = new Padding(0, 0, 0, 3) };
+            keyBox = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(0, 0, 0, 10) };
+
+            var passwordLabel = new Label { Text = "Пароль переноса (8-64 символа, буквы и цифры):", AutoSize = true, Margin = new Padding(0, 0, 0, 3) };
+            passwordBox = new TextBox { Dock = DockStyle.Fill, UseSystemPasswordChar = false, Margin = new Padding(0, 0, 0, 5) };
+
+            var showPassword = new CheckBox { Text = "Показать пароль", AutoSize = true, Checked = true, Margin = new Padding(0, 0, 0, 10) };
             showPassword.CheckedChanged += delegate { passwordBox.UseSystemPasswordChar = !showPassword.Checked; };
 
-            var activateButton = new Button { Left = Scale(235), Top = Scale(148), Width = Scale(85), Height = Scale(26), Text = "Активировать", DialogResult = DialogResult.OK };
-            var cancelButton = new Button { Left = Scale(326), Top = Scale(148), Width = Scale(85), Height = Scale(26), Text = "Отмена", DialogResult = DialogResult.Cancel };
+            var buttonsPanel = new TableLayoutPanel();
+            buttonsPanel.Dock = DockStyle.Fill;
+            buttonsPanel.ColumnCount = 3;
+            buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F)); // Spacer
+            buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F)); // Activate
+            buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F)); // Cancel
+            buttonsPanel.AutoSize = true;
+            buttonsPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            buttonsPanel.Margin = new Padding(0, 5, 0, 0);
 
-            Controls.AddRange(new Control[] { keyLabel, keyBox, passwordLabel, passwordBox, showPassword, activateButton, cancelButton });
+            var activateButton = new Button { Text = "Активировать", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.OK, Margin = new Padding(3) };
+            var cancelButton = new Button { Text = "Отмена", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.Cancel, Margin = new Padding(3) };
+
+            buttonsPanel.Controls.Add(new Control(), 0, 0); // Spacer
+            buttonsPanel.Controls.Add(activateButton, 1, 0);
+            buttonsPanel.Controls.Add(cancelButton, 2, 0);
+
+            mainLayout.Controls.Add(keyLabel);
+            mainLayout.Controls.Add(keyBox);
+            mainLayout.Controls.Add(passwordLabel);
+            mainLayout.Controls.Add(passwordBox);
+            mainLayout.Controls.Add(showPassword);
+            mainLayout.Controls.Add(buttonsPanel);
+
+            Controls.Add(mainLayout);
             AcceptButton = activateButton;
             CancelButton = cancelButton;
         }
@@ -974,28 +1002,57 @@ namespace ZTool.LicenseLauncher
 
         public PasswordForm()
         {
-            float scale = 1.0f;
-            using (var g = CreateGraphics())
-            {
-                scale = g.DpiX / 96.0f;
-            }
-            var Scale = (Func<int, int>)delegate(int px) { return (int)Math.Round(px * scale); };
-
             Text = "Деактивация ZTool";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new System.Drawing.Size(Scale(390), Scale(165));
-            Font = new Font("Segoe UI", 9F * scale);
 
-            var passwordLabel = new Label { Left = Scale(16), Top = Scale(16), AutoSize = true, Text = "Пароль переноса:" };
-            passwordBox = new TextBox { Left = Scale(16), Top = Scale(38), Width = Scale(355), UseSystemPasswordChar = false };
-            var showPassword = new CheckBox { Left = Scale(16), Top = Scale(66), AutoSize = true, Text = "Показать пароль", Checked = true };
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Font = new Font("Segoe UI", 9F);
+            
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            MinimumSize = new System.Drawing.Size(390, 190);
+
+            var mainLayout = new TableLayoutPanel();
+            mainLayout.Dock = DockStyle.Fill;
+            mainLayout.ColumnCount = 1;
+            mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            mainLayout.Padding = new Padding(15);
+            mainLayout.AutoSize = true;
+            mainLayout.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+            var passwordLabel = new Label { Text = "Пароль переноса:", AutoSize = true, Margin = new Padding(0, 0, 0, 3) };
+            passwordBox = new TextBox { Dock = DockStyle.Fill, UseSystemPasswordChar = false, Margin = new Padding(0, 0, 0, 5) };
+
+            var showPassword = new CheckBox { Text = "Показать пароль", AutoSize = true, Checked = true, Margin = new Padding(0, 0, 0, 10) };
             showPassword.CheckedChanged += delegate { passwordBox.UseSystemPasswordChar = !showPassword.Checked; };
-            var okButton = new Button { Left = Scale(195), Top = Scale(112), Width = Scale(85), Height = Scale(26), Text = "ОК", DialogResult = DialogResult.OK };
-            var cancelButton = new Button { Left = Scale(286), Top = Scale(112), Width = Scale(85), Height = Scale(26), Text = "Отмена", DialogResult = DialogResult.Cancel };
-            Controls.AddRange(new Control[] { passwordLabel, passwordBox, showPassword, okButton, cancelButton });
+
+            var buttonsPanel = new TableLayoutPanel();
+            buttonsPanel.Dock = DockStyle.Fill;
+            buttonsPanel.ColumnCount = 3;
+            buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F)); // Spacer
+            buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F)); // OK
+            buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F)); // Cancel
+            buttonsPanel.AutoSize = true;
+            buttonsPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            buttonsPanel.Margin = new Padding(0, 5, 0, 0);
+
+            var okButton = new Button { Text = "ОК", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.OK, Margin = new Padding(3) };
+            var cancelButton = new Button { Text = "Отмена", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.Cancel, Margin = new Padding(3) };
+
+            buttonsPanel.Controls.Add(new Control(), 0, 0); // Spacer
+            buttonsPanel.Controls.Add(okButton, 1, 0);
+            buttonsPanel.Controls.Add(cancelButton, 2, 0);
+
+            mainLayout.Controls.Add(passwordLabel);
+            mainLayout.Controls.Add(passwordBox);
+            mainLayout.Controls.Add(showPassword);
+            mainLayout.Controls.Add(buttonsPanel);
+
+            Controls.Add(mainLayout);
             AcceptButton = okButton;
             CancelButton = cancelButton;
         }

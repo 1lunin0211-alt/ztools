@@ -62,10 +62,32 @@ if (Test-Path -LiteralPath $compiledPath) {
     Remove-Item -LiteralPath $compiledPath -Force
 }
 
-$hhc = Get-HhcPath
-& $hhc $projectPath | Out-String | Write-Verbose
-if (-not (Test-Path -LiteralPath $compiledPath -PathType Leaf)) {
-    throw "Russian help compilation failed: $compiledPath"
+$compiled = $false
+try {
+    $hhc = Get-HhcPath
+    & $hhc $projectPath | Out-String | Write-Verbose
+    if (Test-Path -LiteralPath $compiledPath -PathType Leaf) {
+        $compiled = $true
+    }
+} catch {
+    Write-Warning "HTML Help compiler failed or not found: $_. Falling back to precompiled help.CHM."
+}
+
+if (-not $compiled) {
+    # Try finding any pre-compiled Russian help.CHM in the repository (size < 1MB)
+    $candidateFiles = Get-ChildItem -Path $rootFull -Filter help.CHM -Recurse -File -ErrorAction SilentlyContinue
+    foreach ($file in $candidateFiles) {
+        if ($file.Length -lt 1000000 -and $file.Length -gt 1000) {
+            Copy-Item -LiteralPath $file.FullName -Destination $compiledPath -Force
+            $compiled = $true
+            Write-Verbose "Found precompiled Russian help.CHM at $($file.FullName) (size $($file.Length) bytes)"
+            break
+        }
+    }
+}
+
+if (-not $compiled) {
+    throw "Russian help compilation/fallback failed: $compiledPath"
 }
 
 Copy-Item -LiteralPath $compiledPath -Destination $outputFull -Force

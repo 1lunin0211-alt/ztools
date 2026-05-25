@@ -346,21 +346,47 @@ function Get-OriginalAssemblyRefPublicKeys([string]$OriginalAssemblyPath) {
 
 function Repair-TokenSizedPublicKeyAssemblyRefs([dnlib.DotNet.ModuleDef]$Module, [hashtable]$OriginalPublicKeys) {
     $patched = New-Object System.Collections.Generic.List[string]
+    
+    $newLicenseTokenBytes = New-Object byte[] 8
+    $newLicenseTokenBytes[0] = 0x60
+    $newLicenseTokenBytes[1] = 0x91
+    $newLicenseTokenBytes[2] = 0x76
+    $newLicenseTokenBytes[3] = 0xc1
+    $newLicenseTokenBytes[4] = 0x09
+    $newLicenseTokenBytes[5] = 0x62
+    $newLicenseTokenBytes[6] = 0xae
+    $newLicenseTokenBytes[7] = 0xcc
+    
     foreach ($assemblyRef in $Module.GetAssemblyRefs()) {
+        # Check if name is the obfuscated ZTool name
+        if ($assemblyRef.Name -eq 'ESYGdDVneyZGaacscwWoIlKTWklM') {
+            $assemblyRef.Name = 'ZTool'
+            $assemblyRef.PublicKeyOrToken = [dnlib.DotNet.PublicKeyToken]::new($newLicenseTokenBytes)
+            $assemblyRef.HasPublicKey = $false
+            $patched.Add("Obfuscated assembly reference renamed to ZTool and token updated to rotated token")
+            continue
+        }
+
+        # Check if name is ZTool.License
         if ($assemblyRef.Name -eq 'ZTool.License') {
-            $newLicenseTokenBytes = New-Object byte[] 8
-            $newLicenseTokenBytes[0] = 0x60
-            $newLicenseTokenBytes[1] = 0x91
-            $newLicenseTokenBytes[2] = 0x76
-            $newLicenseTokenBytes[3] = 0xc1
-            $newLicenseTokenBytes[4] = 0x09
-            $newLicenseTokenBytes[5] = 0x62
-            $newLicenseTokenBytes[6] = 0xae
-            $newLicenseTokenBytes[7] = 0xcc
-            
             $assemblyRef.PublicKeyOrToken = [dnlib.DotNet.PublicKeyToken]::new($newLicenseTokenBytes)
             $assemblyRef.HasPublicKey = $false
             $patched.Add("ZTool.License reference updated to rotated token")
+            continue
+        }
+        
+        # Check if token is the old token
+        $tokenHex = ""
+        if ($assemblyRef.PublicKeyOrToken -ne $null) {
+            if ($assemblyRef.PublicKeyOrToken.Token -ne $null -and $assemblyRef.PublicKeyOrToken.Token.Data -ne $null) {
+                $tokenHex = [BitConverter]::ToString($assemblyRef.PublicKeyOrToken.Token.Data).Replace("-", "").ToLowerInvariant()
+            }
+        }
+        
+        if ($tokenHex -eq '69848a58054312c2') {
+            $assemblyRef.PublicKeyOrToken = [dnlib.DotNet.PublicKeyToken]::new($newLicenseTokenBytes)
+            $assemblyRef.HasPublicKey = $false
+            $patched.Add("$($assemblyRef.Name) token updated to rotated token (old token was 69848a58054312c2)")
             continue
         }
 
@@ -859,6 +885,198 @@ function Write-StrongNamedModule([dnlib.DotNet.ModuleDefMD]$Module, [string]$Out
     $Module.Write($OutputPath, $options)
 }
 
+function Inject-LanguageField([dnlib.DotNet.ModuleDef]$Module) {
+    $configType = $Module.Find('ZTool.CConfigDO', $true)
+    if ($null -eq $configType) {
+        throw 'Type ZTool.CConfigDO not found.'
+    }
+    
+    foreach ($field in $configType.Fields) {
+        if ([string]$field.Name -eq 'Language') {
+            return 'Language field already present in CConfigDO'
+        }
+    }
+    
+    $fieldSig = [dnlib.DotNet.FieldSig]::new($Module.CorLibTypes.String)
+    $field = [dnlib.DotNet.FieldDefUser]::new('Language', $fieldSig, [dnlib.DotNet.FieldAttributes]::Public)
+    $configType.Fields.Add($field)
+    return 'Language field injected into CConfigDO'
+}
+
+function Patch-OptionsFormLanguageSelector([dnlib.DotNet.ModuleDef]$Module, [dnlib.DotNet.ModuleDef]$LicenseModule) {
+    $optionsFormType = $Module.Find('ZTool.FrmOptions', $true)
+    if ($null -eq $optionsFormType) {
+        throw 'Type ZTool.FrmOptions not found.'
+    }
+    
+    $loadMethod = $optionsFormType.FindMethod('FrmOptions_Load')
+    if ($null -eq $loadMethod) {
+        throw 'Method FrmOptions_Load not found.'
+    }
+    
+    $langMngType = $LicenseModule.Find('ZTool.License.LanguageManager', $true)
+    $addSelectorMethod = $langMngType.FindMethod('AddLanguageSelector')
+    $importedMethod = $Module.Import($addSelectorMethod)
+    
+    foreach ($inst in $loadMethod.Body.Instructions) {
+        $op = $inst.Operand -as [dnlib.DotNet.IMethod]
+        if ($null -ne $op -and $op.Name -eq 'AddLanguageSelector') {
+            return 'AddLanguageSelector already injected in FrmOptions_Load'
+        }
+    }
+    
+    $loadMethod.Body.Instructions.Insert(0, [dnlib.DotNet.Emit.OpCodes]::Ldarg_0.ToInstruction())
+    $loadMethod.Body.Instructions.Insert(1, [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($importedMethod))
+    $loadMethod.Body.MaxStack = [Math]::Max($loadMethod.Body.MaxStack, 1)
+    
+    return 'AddLanguageSelector injected in FrmOptions_Load'
+}
+
+function Patch-FormConstructorsTranslation([dnlib.DotNet.ModuleDef]$Module, [dnlib.DotNet.ModuleDef]$LicenseModule) {
+    $langMngType = $LicenseModule.Find('ZTool.License.LanguageManager', $true)
+    $translateMethod = $langMngType.FindMethod('TranslateForm')
+    $importedMethod = $Module.Import($translateMethod)
+    
+    $patched = 0
+    foreach ($type in $Module.GetTypes()) {
+        $isForm = $false
+        $current = $type.BaseType
+        while ($null -ne $current) {
+            if ($current.FullName -eq 'System.Windows.Forms.Form') {
+                $isForm = $true
+                break
+            }
+            try {
+                $resolved = $current.Resolve()
+                if ($null -eq $resolved) { break }
+                $current = $resolved.BaseType
+            } catch {
+                break
+            }
+        }
+        
+        if (-not $isForm) { continue }
+        
+        foreach ($method in $type.Methods) {
+            if ($method.IsConstructor -and $method.HasBody) {
+                $alreadyPatched = $false
+                foreach ($inst in $method.Body.Instructions) {
+                    $op = $inst.Operand -as [dnlib.DotNet.IMethod]
+                    if ($null -ne $op -and $op.Name -eq 'TranslateForm') {
+                        $alreadyPatched = $true
+                        break
+                    }
+                }
+                if ($alreadyPatched) { continue }
+                
+                $instructions = $method.Body.Instructions
+                $i = 0
+                while ($i -lt $instructions.Count) {
+                    if ($instructions[$i].OpCode -eq [dnlib.DotNet.Emit.OpCodes]::Ret) {
+                        $instructions.Insert($i, [dnlib.DotNet.Emit.OpCodes]::Ldarg_0.ToInstruction())
+                        $instructions.Insert($i + 1, [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($importedMethod))
+                        $i += 2
+                        $patched++
+                    }
+                    $i++
+                }
+                $method.Body.MaxStack = [Math]::Max($method.Body.MaxStack, 1)
+            }
+        }
+    }
+    return "$patched form constructors patched with TranslateForm"
+}
+
+function Patch-MessageBoxCalls([dnlib.DotNet.ModuleDef]$Module, [dnlib.DotNet.ModuleDef]$LicenseModule) {
+    $langMngType = $LicenseModule.Find('ZTool.License.LanguageManager', $true)
+    $showMsgMethods = @()
+    foreach ($m in $langMngType.Methods) {
+        if ($m.Name -eq 'ShowMessageBox') {
+            $showMsgMethods += $m
+        }
+    }
+    
+    $patched = 0
+    foreach ($type in $Module.GetTypes()) {
+        foreach ($method in $type.Methods) {
+            if (-not $method.HasBody) { continue }
+            $instructions = $method.Body.Instructions
+            for ($i = 0; $i -lt $instructions.Count; $i++) {
+                $inst = $instructions[$i]
+                if ($inst.OpCode -eq [dnlib.DotNet.Emit.OpCodes]::Call -or $inst.OpCode -eq [dnlib.DotNet.Emit.OpCodes]::Callvirt) {
+                    $op = $inst.Operand -as [dnlib.DotNet.IMethod]
+                    if ($null -ne $op -and $op.DeclaringType.FullName -eq 'System.Windows.Forms.MessageBox' -and $op.Name -eq 'Show') {
+                        $matchedMethod = $null
+                        foreach ($target in $showMsgMethods) {
+                            if ($target.MethodSig.Params.Count -eq $op.MethodSig.Params.Count) {
+                                $match = $true
+                                for ($p = 0; $p -lt $op.MethodSig.Params.Count; $p++) {
+                                    if ($target.MethodSig.Params[$p].FullName -ne $op.MethodSig.Params[$p].FullName) {
+                                        $match = $false
+                                        break
+                                    }
+                                }
+                                if ($match) {
+                                    $matchedMethod = $target
+                                    break
+                                }
+                            }
+                        }
+                        
+                        if ($null -ne $matchedMethod) {
+                            $imported = $Module.Import($matchedMethod)
+                            $inst.OpCode = [dnlib.DotNet.Emit.OpCodes]::Call
+                            $inst.Operand = $imported
+                            $patched++
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return $patched
+}
+
+function Patch-CyrillicLdstr([dnlib.DotNet.ModuleDef]$Module, [dnlib.DotNet.IMethod]$TranslateMethod) {
+    $patched = 0
+    foreach ($type in $Module.GetTypes()) {
+        foreach ($method in $type.Methods) {
+            if (-not $method.HasBody) { continue }
+            
+            $isTarget = $false
+            if ($Module.Name -eq 'ZTool.dll') {
+                if ($type.FullName -eq 'ZTool.SwAddin' -and $method.Name -eq 'AddCommandMgr') {
+                    $isTarget = $true
+                }
+            } else {
+                if ($type.FullName.StartsWith('ZTool.Frm', [System.StringComparison]::Ordinal) -or 
+                    $type.FullName.StartsWith('ZTool.frm_', [System.StringComparison]::Ordinal)) {
+                    $isTarget = $true
+                }
+            }
+            
+            if (-not $isTarget) { continue }
+            
+            $instructions = $method.Body.Instructions
+            $i = 0
+            while ($i -lt $instructions.Count) {
+                $inst = $instructions[$i]
+                if ($inst.OpCode -eq [dnlib.DotNet.Emit.OpCodes]::Ldstr) {
+                    $val = $inst.Operand -as [string]
+                    if ($null -ne $val -and $val -match '[\u0400-\u04FF]') {
+                        $callInst = [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($TranslateMethod)
+                        $instructions.Insert($i + 1, $callInst)
+                        $i++
+                        $patched++
+                    }
+                }
+                $i++
+            }
+        }
+    }
+    return $patched
+}
+
 $packageRootFull = Resolve-FullPath $PackageRoot
 if (-not (Test-Path -LiteralPath $packageRootFull -PathType Container)) {
     throw "PackageRoot not found: $packageRootFull"
@@ -897,106 +1115,138 @@ try {
     $payloadBytes = ConvertFrom-ZToolPayloadResource (Get-EmbeddedPayload $exePath $resourceName)
     [System.IO.File]::WriteAllBytes($payloadTemp, $payloadBytes)
 
-    $payloadModule = [dnlib.DotNet.ModuleDefMD]::Load($payloadTemp)
+    $licenseModule = [dnlib.DotNet.ModuleDefMD]::Load($licenseDllPath)
     try {
-        Set-MethodReturnFalse $payloadModule 'ZTool.Frmmain' 'haveupdate'
-        foreach ($method in @(
-            @{ Type = 'ZTool.Frmmain'; Name = '_checkupdate_ExecuteEvent' },
-            @{ Type = 'ZTool.Frmmain'; Name = '_Lambda$__88' },
-            @{ Type = 'ZTool.Frmmain'; Name = '_Lambda$__119' },
-            @{ Type = 'ZTool.CheckUpdate'; Name = 'getinfo' },
-            @{ Type = 'ZTool.CheckUpdate'; Name = 'updateprocess' },
-            @{ Type = 'ZTool.CheckUpdate'; Name = 'openupdater' }
-        )) {
-            Set-MethodReturnVoid $payloadModule $method.Type $method.Name
+        $payloadModule = [dnlib.DotNet.ModuleDefMD]::Load($payloadTemp)
+        try {
+            Set-MethodReturnFalse $payloadModule 'ZTool.Frmmain' 'haveupdate'
+            foreach ($method in @(
+                @{ Type = 'ZTool.Frmmain'; Name = '_checkupdate_ExecuteEvent' },
+                @{ Type = 'ZTool.Frmmain'; Name = '_Lambda$__88' },
+                @{ Type = 'ZTool.Frmmain'; Name = '_Lambda$__119' },
+                @{ Type = 'ZTool.CheckUpdate'; Name = 'getinfo' },
+                @{ Type = 'ZTool.CheckUpdate'; Name = 'updateprocess' },
+                @{ Type = 'ZTool.CheckUpdate'; Name = 'openupdater' }
+            )) {
+                Set-MethodReturnVoid $payloadModule $method.Type $method.Name
+            }
+            $startupCallsPatched = Disable-StartTypeUpdateWindow $payloadModule
+            $codeStaticConstructorPatched = Reset-CodeStaticConstructorLicenseGate $payloadModule
+            Set-MethodReturnString $payloadModule 'ZTool.code' 'Getpkt' $ztoolProtocolToken
+            $programMainLicenseGatePatched = Patch-ProgramMainLicenseGate $payloadModule $licenseDllPath
+            $legacyChecklicPatched = @(Patch-LegacyChecklicTimer $payloadModule)
+            $frmmainSolidWorksLaunchAutoConnectPatched = @(Patch-FrmmainSolidWorksLaunchAutoConnect $payloadModule)
+            $registrationTransferPatched = Patch-RegistrationTransferButton $payloadModule
+            
+            # Injection of English localization
+            $langFieldInjected = Inject-LanguageField $payloadModule
+            $langSelectorInjected = Patch-OptionsFormLanguageSelector $payloadModule $licenseModule
+            $formCtorsPatched = Patch-FormConstructorsTranslation $payloadModule $licenseModule
+            $messageBoxesPatched = Patch-MessageBoxCalls $payloadModule $licenseModule
+            
+            $langMngType = $licenseModule.Find('ZTool.License.LanguageManager', $true)
+            $translateMethod = $langMngType.FindMethod('Translate')
+            $importedTranslate = $payloadModule.Import($translateMethod)
+            $payloadCyrillicPatched = Patch-CyrillicLdstr $payloadModule $importedTranslate
+
+            $payloadAssemblyRefsRepaired = @(Repair-TokenSizedPublicKeyAssemblyRefs $payloadModule $originalAddInPublicKeys)
+            Write-StrongNamedModule $payloadModule $payloadPatched $strongNameKey
+        } finally {
+            $payloadModule.Dispose()
         }
-        $startupCallsPatched = Disable-StartTypeUpdateWindow $payloadModule
-        $codeStaticConstructorPatched = Reset-CodeStaticConstructorLicenseGate $payloadModule
-        Set-MethodReturnString $payloadModule 'ZTool.code' 'Getpkt' $ztoolProtocolToken
-        $programMainLicenseGatePatched = Patch-ProgramMainLicenseGate $payloadModule $licenseDllPath
-        $legacyChecklicPatched = @(Patch-LegacyChecklicTimer $payloadModule)
-        $frmmainSolidWorksLaunchAutoConnectPatched = @(Patch-FrmmainSolidWorksLaunchAutoConnect $payloadModule)
-        $registrationTransferPatched = Patch-RegistrationTransferButton $payloadModule
-        $payloadAssemblyRefsRepaired = @(Repair-TokenSizedPublicKeyAssemblyRefs $payloadModule $originalAddInPublicKeys)
-        Write-StrongNamedModule $payloadModule $payloadPatched $strongNameKey
-    } finally {
-        $payloadModule.Dispose()
-    }
 
-    $encryptedPatchedPayload = ConvertTo-ZToolPayloadResource ([System.IO.File]::ReadAllBytes($payloadPatched))
+        $encryptedPatchedPayload = ConvertTo-ZToolPayloadResource ([System.IO.File]::ReadAllBytes($payloadPatched))
 
-    $outerModule = [dnlib.DotNet.ModuleDefMD]::Load($exePath)
-    try {
-        $resourcePatched = $false
-        for ($i = 0; $i -lt $outerModule.Resources.Count; $i++) {
-            $embedded = $outerModule.Resources[$i] -as [dnlib.DotNet.EmbeddedResource]
-            if ($null -eq $embedded -or [string]$embedded.Name -ne $resourceName) {
-                continue
+        $outerModule = [dnlib.DotNet.ModuleDefMD]::Load($exePath)
+        try {
+            $resourcePatched = $false
+            for ($i = 0; $i -lt $outerModule.Resources.Count; $i++) {
+                $embedded = $outerModule.Resources[$i] -as [dnlib.DotNet.EmbeddedResource]
+                if ($null -eq $embedded -or [string]$embedded.Name -ne $resourceName) {
+                    continue
+                }
+
+                $outerModule.Resources[$i] = [dnlib.DotNet.EmbeddedResource]::new($embedded.Name, $encryptedPatchedPayload, $embedded.Attributes)
+                $resourcePatched = $true
+                break
             }
 
-            $outerModule.Resources[$i] = [dnlib.DotNet.EmbeddedResource]::new($embedded.Name, $encryptedPatchedPayload, $embedded.Attributes)
-            $resourcePatched = $true
-            break
+            if (-not $resourcePatched) {
+                throw "Embedded resource not found while writing: $resourceName"
+            }
+
+            $outerAssemblyRefsRepaired = @(Repair-TokenSizedPublicKeyAssemblyRefs $outerModule $originalAddInPublicKeys)
+            Write-StrongNamedModule $outerModule $exePatched $strongNameKey
+        } finally {
+            $outerModule.Dispose()
         }
 
-        if (-not $resourcePatched) {
-            throw "Embedded resource not found while writing: $resourceName"
+        Copy-Item -LiteralPath $exePatched -Destination $exePath -Force
+
+        $addinPath = Join-Path $packageRootFull 'ZTool.dll'
+        if (-not (Test-Path -LiteralPath $addinPath -PathType Leaf)) {
+            throw "ZTool.dll not found: $addinPath"
         }
 
-        $outerAssemblyRefsRepaired = @(Repair-TokenSizedPublicKeyAssemblyRefs $outerModule $originalAddInPublicKeys)
-        Write-StrongNamedModule $outerModule $exePatched $strongNameKey
+        $solidWorksAddInAudited = @()
+        $solidWorksImageResourcesPatched = @()
+        $addinModule = [dnlib.DotNet.ModuleDefMD]::Load($addinPath)
+        try {
+            $resourceRoot = Resolve-FullPath (Join-Path $PSScriptRoot '..\assets\ZTool.SolidWorks.AddIn\Resources')
+            $solidWorksImageResourcesPatched = @(Embed-SolidWorksAddInImageResources $addinModule $resourceRoot)
+            $solidWorksAddInAudited = @(Assert-SolidWorksAddInHasNoPerCommandLicenseGate $addinModule)
+            
+            # SolidWorks toolbar and Form translations
+            $addinFormCtorsPatched = Patch-FormConstructorsTranslation $addinModule $licenseModule
+            $addinMessageBoxesPatched = Patch-MessageBoxCalls $addinModule $licenseModule
+            $importedTranslateAddin = $addinModule.Import($translateMethod)
+            $addinCyrillicPatched = Patch-CyrillicLdstr $addinModule $importedTranslateAddin
+
+            $addinAssemblyRefsRepaired = @(Repair-TokenSizedPublicKeyAssemblyRefs $addinModule $originalAddInPublicKeys)
+            Write-StrongNamedModule $addinModule $addinPatched $strongNameKey
+        } finally {
+            $addinModule.Dispose()
+        }
+
+        Copy-Item -LiteralPath $addinPatched -Destination $addinPath -Force
+
+        $patchedItems = @(
+            'ZTool.Frmmain::haveupdate',
+            'ZTool.Frmmain::_checkupdate_ExecuteEvent',
+            'ZTool.Frmmain::_Lambda$__88',
+            'ZTool.Frmmain::_Lambda$__119',
+            'ZTool.CheckUpdate::getinfo',
+            'ZTool.CheckUpdate::updateprocess',
+            'ZTool.CheckUpdate::openupdater',
+            "ZTool.MyapplicationContext::.ctor CheckUpdate calls=$startupCallsPatched",
+            $codeStaticConstructorPatched,
+            "ZTool.code::Getpkt returns original SolidWorks IPC token $ztoolProtocolToken",
+            $programMainLicenseGatePatched,
+            "$registrationTransferPatched uses ZTool.License.LicenseGate::DeactivateWithPassword",
+            $langFieldInjected,
+            $langSelectorInjected,
+            $formCtorsPatched,
+            "$messageBoxesPatched payload MessageBox calls patched",
+            "$payloadCyrillicPatched payload Cyrillic strings patched",
+            "$addinFormCtorsPatched addin form constructors patched",
+            "$addinMessageBoxesPatched addin MessageBox calls patched",
+            "$addinCyrillicPatched addin Cyrillic strings patched"
+        ) + @($legacyChecklicPatched) +
+            @($frmmainSolidWorksLaunchAutoConnectPatched) +
+            @($solidWorksImageResourcesPatched | ForEach-Object { "$_ embedded" }) +
+            @($solidWorksAddInAudited) +
+            @($payloadAssemblyRefsRepaired | ForEach-Object { "payload assembly ref $_" }) +
+            @($outerAssemblyRefsRepaired | ForEach-Object { "outer assembly ref $_" }) +
+            @($addinAssemblyRefsRepaired | ForEach-Object { "addin assembly ref $_" })
+
+        [pscustomobject]@{
+            Status = 'ok'
+            PackageRoot = $packageRootFull
+            Patched = $patchedItems
+        } | ConvertTo-Json -Depth 4
     } finally {
-        $outerModule.Dispose()
+        $licenseModule.Dispose()
     }
-
-    Copy-Item -LiteralPath $exePatched -Destination $exePath -Force
-
-    $addinPath = Join-Path $packageRootFull 'ZTool.dll'
-    if (-not (Test-Path -LiteralPath $addinPath -PathType Leaf)) {
-        throw "ZTool.dll not found: $addinPath"
-    }
-
-    $solidWorksAddInAudited = @()
-    $solidWorksImageResourcesPatched = @()
-    $addinModule = [dnlib.DotNet.ModuleDefMD]::Load($addinPath)
-    try {
-        $resourceRoot = Resolve-FullPath (Join-Path $PSScriptRoot '..\assets\ZTool.SolidWorks.AddIn\Resources')
-        $solidWorksImageResourcesPatched = @(Embed-SolidWorksAddInImageResources $addinModule $resourceRoot)
-        $solidWorksAddInAudited = @(Assert-SolidWorksAddInHasNoPerCommandLicenseGate $addinModule)
-        $addinAssemblyRefsRepaired = @(Repair-TokenSizedPublicKeyAssemblyRefs $addinModule $originalAddInPublicKeys)
-        Write-StrongNamedModule $addinModule $addinPatched $strongNameKey
-    } finally {
-        $addinModule.Dispose()
-    }
-
-    Copy-Item -LiteralPath $addinPatched -Destination $addinPath -Force
-
-    $patchedItems = @(
-        'ZTool.Frmmain::haveupdate',
-        'ZTool.Frmmain::_checkupdate_ExecuteEvent',
-        'ZTool.Frmmain::_Lambda$__88',
-        'ZTool.Frmmain::_Lambda$__119',
-        'ZTool.CheckUpdate::getinfo',
-        'ZTool.CheckUpdate::updateprocess',
-        'ZTool.CheckUpdate::openupdater',
-        "ZTool.MyapplicationContext::.ctor CheckUpdate calls=$startupCallsPatched",
-        $codeStaticConstructorPatched,
-        "ZTool.code::Getpkt returns original SolidWorks IPC token $ztoolProtocolToken",
-        $programMainLicenseGatePatched,
-        "$registrationTransferPatched uses ZTool.License.LicenseGate::DeactivateWithPassword"
-    ) + @($legacyChecklicPatched) +
-        @($frmmainSolidWorksLaunchAutoConnectPatched) +
-        @($solidWorksImageResourcesPatched | ForEach-Object { "$_ embedded" }) +
-        @($solidWorksAddInAudited) +
-        @($payloadAssemblyRefsRepaired | ForEach-Object { "payload assembly ref $_" }) +
-        @($outerAssemblyRefsRepaired | ForEach-Object { "outer assembly ref $_" }) +
-        @($addinAssemblyRefsRepaired | ForEach-Object { "addin assembly ref $_" })
-
-    [pscustomobject]@{
-        Status = 'ok'
-        PackageRoot = $packageRootFull
-        Patched = $patchedItems
-    } | ConvertTo-Json -Depth 4
 } finally {
     Remove-Item -LiteralPath $payloadTemp -Force -ErrorAction SilentlyContinue
     Remove-Item -LiteralPath $payloadPatched -Force -ErrorAction SilentlyContinue

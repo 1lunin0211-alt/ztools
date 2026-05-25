@@ -795,7 +795,6 @@ namespace ZTool.License
                 catch
                 {
                 }
-
                 return string.Empty;
             }
         }
@@ -810,44 +809,98 @@ namespace ZTool.License
 
             public ActivationForm()
             {
-                float scale = 1.0f;
-                using (var g = CreateGraphics())
-                {
-                    scale = g.DpiX / 96.0f;
-                }
-                var Scale = (Func<int, int>)delegate(int px) { return (int)Math.Round(px * scale); };
-
                 Text = "Активация ZTool";
                 FormBorderStyle = FormBorderStyle.FixedDialog;
                 MaximizeBox = false;
                 MinimizeBox = false;
                 StartPosition = FormStartPosition.CenterScreen;
-                ClientSize = new Size(Scale(520), Scale(285));
-                Font = new Font("Segoe UI", 9F * scale);
+                
+                AutoScaleDimensions = new SizeF(6F, 13F);
+                AutoScaleMode = AutoScaleMode.Font;
+                Font = new Font("Segoe UI", 9F);
+                
+                AutoSize = true;
+                AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                MinimumSize = new Size(520, 310);
 
-                var keyLabel = new Label { Left = Scale(20), Top = Scale(18), AutoSize = true, Text = "Ключ лицензии:" };
-                keyBox = new BorderedTextInput { Left = Scale(20), Top = Scale(40), Width = Scale(480), Height = Scale(24) };
-                var passwordLabel = new Label { Left = Scale(20), Top = Scale(76), AutoSize = true, Text = "Пароль переноса (8-64 символа, буквы и цифры):" };
-                passwordBox = new BorderedTextInput { Left = Scale(20), Top = Scale(98), Width = Scale(480), Height = Scale(24) };
+                var mainLayout = new TableLayoutPanel();
+                mainLayout.Dock = DockStyle.Fill;
+                mainLayout.ColumnCount = 1;
+                mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+                mainLayout.Padding = new Padding(15);
+                mainLayout.AutoSize = true;
+                mainLayout.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+                var keyLabel = new Label { Text = "Ключ лицензии:", AutoSize = true, Margin = new Padding(0, 0, 0, 3) };
+                keyBox = new BorderedTextInput { Dock = DockStyle.Fill, Height = 24, Margin = new Padding(0, 0, 0, 10) };
+                
+                var passwordLabel = new Label { Text = "Пароль переноса (8-64 символа, буквы и цифры):", AutoSize = true, Margin = new Padding(0, 0, 0, 3) };
+                passwordBox = new BorderedTextInput { Dock = DockStyle.Fill, Height = 24, Margin = new Padding(0, 0, 0, 5) };
                 passwordBox.UseSystemPasswordChar = false;
-                var showPassword = new CheckBox { Left = Scale(20), Top = Scale(128), AutoSize = true, Text = "Показать пароль", Checked = true };
+                
+                var showPassword = new CheckBox { Text = "Показать пароль", AutoSize = true, Checked = true, Margin = new Padding(0, 0, 0, 10) };
                 showPassword.CheckedChanged += delegate { passwordBox.UseSystemPasswordChar = !showPassword.Checked; };
+
+                var helpPanel = new TableLayoutPanel();
+                helpPanel.Dock = DockStyle.Fill;
+                helpPanel.ColumnCount = 2;
+                helpPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+                helpPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130F));
+                helpPanel.AutoSize = true;
+                helpPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                helpPanel.Margin = new Padding(0, 0, 0, 10);
+
                 var helpText = new Label
                 {
-                    Left = Scale(20),
-                    Top = Scale(156),
-                    Width = Scale(340),
-                    Height = Scale(38),
-                    Text = "Нет кода активации? Откройте инструкцию и получите код для этого компьютера."
+                    Text = "Нет кода активации? Откройте инструкцию и получите код для этого компьютера.",
+                    Dock = DockStyle.Fill,
+                    AutoSize = true,
+                    Margin = new Padding(0, 0, 10, 0)
                 };
-                var helpButton = new Button { Left = Scale(370), Top = Scale(154), Width = Scale(130), Height = Scale(30), Text = "Инструкция" };
+                var helpButton = new Button { Text = "Инструкция", Width = 120, Height = 28, Dock = DockStyle.Right };
                 helpButton.Click += delegate { OpenActivationHelp(); };
-                var demoHint = new Label { Left = Scale(20), Top = Scale(200), Width = Scale(480), Height = Scale(38), Text = "Без активации можно продолжить в демо-режиме. После окончания таймера ZTool закроется." };
-                var demoButton = new Button { Left = Scale(20), Top = Scale(245), Width = Scale(112), Height = Scale(26), Text = "Демо-режим", DialogResult = DialogResult.Ignore };
-                var activateButton = new Button { Left = Scale(280), Top = Scale(245), Width = Scale(105), Height = Scale(26), Text = "Активировать", DialogResult = DialogResult.OK };
-                var cancelButton = new Button { Left = Scale(395), Top = Scale(245), Width = Scale(105), Height = Scale(26), Text = "Выход", DialogResult = DialogResult.Cancel };
+                
+                helpPanel.Controls.Add(helpText, 0, 0);
+                helpPanel.Controls.Add(helpButton, 1, 0);
 
-                Controls.AddRange(new Control[] { keyLabel, keyBox, passwordLabel, passwordBox, showPassword, helpText, helpButton, demoHint, demoButton, activateButton, cancelButton });
+                var demoHint = new Label
+                {
+                    Text = "Без активации можно продолжить в демо-режиме. После окончания таймера ZTool закроется.",
+                    Dock = DockStyle.Fill,
+                    AutoSize = true,
+                    Margin = new Padding(0, 0, 0, 10)
+                };
+
+                var buttonsPanel = new TableLayoutPanel();
+                buttonsPanel.Dock = DockStyle.Fill;
+                buttonsPanel.ColumnCount = 4;
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F)); // Spacer
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F)); // Demo
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F)); // Activate
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F)); // Cancel
+                buttonsPanel.AutoSize = true;
+                buttonsPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                buttonsPanel.Margin = new Padding(0, 5, 0, 0);
+
+                var demoButton = new Button { Text = "Демо-режим", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.Ignore, Margin = new Padding(3) };
+                var activateButton = new Button { Text = "Активировать", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.OK, Margin = new Padding(3) };
+                var cancelButton = new Button { Text = "Выход", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.Cancel, Margin = new Padding(3) };
+
+                buttonsPanel.Controls.Add(new Control(), 0, 0); // Spacer
+                buttonsPanel.Controls.Add(demoButton, 1, 0);
+                buttonsPanel.Controls.Add(activateButton, 2, 0);
+                buttonsPanel.Controls.Add(cancelButton, 3, 0);
+
+                mainLayout.Controls.Add(keyLabel);
+                mainLayout.Controls.Add(keyBox);
+                mainLayout.Controls.Add(passwordLabel);
+                mainLayout.Controls.Add(passwordBox);
+                mainLayout.Controls.Add(showPassword);
+                mainLayout.Controls.Add(helpPanel);
+                mainLayout.Controls.Add(demoHint);
+                mainLayout.Controls.Add(buttonsPanel);
+
+                Controls.Add(mainLayout);
                 AcceptButton = activateButton;
                 CancelButton = cancelButton;
             }
@@ -1031,29 +1084,57 @@ namespace ZTool.License
 
             public PasswordForm()
             {
-                float scale = 1.0f;
-                using (var g = CreateGraphics())
-                {
-                    scale = g.DpiX / 96.0f;
-                }
-                var Scale = (Func<int, int>)delegate(int px) { return (int)Math.Round(px * scale); };
-
                 Text = "Деактивация ZTool";
                 FormBorderStyle = FormBorderStyle.FixedDialog;
                 MaximizeBox = false;
                 MinimizeBox = false;
                 StartPosition = FormStartPosition.CenterScreen;
-                ClientSize = new System.Drawing.Size(Scale(390), Scale(165));
-                Font = new Font("Segoe UI", 9F * scale);
 
-                var passwordLabel = new Label { Left = Scale(16), Top = Scale(16), AutoSize = true, Text = "Пароль переноса:" };
-                passwordBox = new TextBox { Left = Scale(16), Top = Scale(38), Width = Scale(355), UseSystemPasswordChar = false };
-                var showPassword = new CheckBox { Left = Scale(16), Top = Scale(66), AutoSize = true, Text = "Показать пароль", Checked = true };
+                AutoScaleDimensions = new SizeF(6F, 13F);
+                AutoScaleMode = AutoScaleMode.Font;
+                Font = new Font("Segoe UI", 9F);
+                
+                AutoSize = true;
+                AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                MinimumSize = new Size(390, 190);
+
+                var mainLayout = new TableLayoutPanel();
+                mainLayout.Dock = DockStyle.Fill;
+                mainLayout.ColumnCount = 1;
+                mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+                mainLayout.Padding = new Padding(15);
+                mainLayout.AutoSize = true;
+                mainLayout.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+                var passwordLabel = new Label { Text = "Пароль переноса:", AutoSize = true, Margin = new Padding(0, 0, 0, 3) };
+                passwordBox = new TextBox { Dock = DockStyle.Fill, UseSystemPasswordChar = false, Margin = new Padding(0, 0, 0, 5) };
+                
+                var showPassword = new CheckBox { Text = "Показать пароль", AutoSize = true, Checked = true, Margin = new Padding(0, 0, 0, 10) };
                 showPassword.CheckedChanged += delegate { passwordBox.UseSystemPasswordChar = !showPassword.Checked; };
-                var okButton = new Button { Left = Scale(195), Top = Scale(112), Width = Scale(85), Height = Scale(26), Text = "ОК", DialogResult = DialogResult.OK };
-                var cancelButton = new Button { Left = Scale(286), Top = Scale(112), Width = Scale(85), Height = Scale(26), Text = "Отмена", DialogResult = DialogResult.Cancel };
 
-                Controls.AddRange(new Control[] { passwordLabel, passwordBox, showPassword, okButton, cancelButton });
+                var buttonsPanel = new TableLayoutPanel();
+                buttonsPanel.Dock = DockStyle.Fill;
+                buttonsPanel.ColumnCount = 3;
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F)); // Spacer
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F)); // OK
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F)); // Cancel
+                buttonsPanel.AutoSize = true;
+                buttonsPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                buttonsPanel.Margin = new Padding(0, 5, 0, 0);
+
+                var okButton = new Button { Text = "ОК", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.OK, Margin = new Padding(3) };
+                var cancelButton = new Button { Text = "Отмена", Height = 28, Dock = DockStyle.Fill, DialogResult = DialogResult.Cancel, Margin = new Padding(3) };
+
+                buttonsPanel.Controls.Add(new Control(), 0, 0); // Spacer
+                buttonsPanel.Controls.Add(okButton, 1, 0);
+                buttonsPanel.Controls.Add(cancelButton, 2, 0);
+
+                mainLayout.Controls.Add(passwordLabel);
+                mainLayout.Controls.Add(passwordBox);
+                mainLayout.Controls.Add(showPassword);
+                mainLayout.Controls.Add(buttonsPanel);
+
+                Controls.Add(mainLayout);
                 AcceptButton = okButton;
                 CancelButton = cancelButton;
             }
@@ -1491,6 +1572,332 @@ namespace ZTool.License
                 chars[i] = (char)(str[i] ^ 0x5A);
             }
             return new string(chars);
+        }
+    }
+
+    public static class LanguageManager
+    {
+        private static object GetConfig()
+        {
+            try
+            {
+                Type mngType = Type.GetType("ZTool.CConfigMng, ZTool");
+                if (mngType == null)
+                {
+                    mngType = Type.GetType("ZTool.CConfigMng, ZTool.Core");
+                }
+                if (mngType == null)
+                {
+                    foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        foreach (var t in assembly.GetTypes())
+                        {
+                            if (t.FullName == "ZTool.CConfigMng")
+                            {
+                                mngType = t;
+                                break;
+                            }
+                        }
+                        if (mngType != null) break;
+                    }
+                }
+                                  
+                if (mngType != null)
+                {
+                    var configProp = mngType.GetProperty("Config");
+                    if (configProp != null)
+                    {
+                        return configProp.GetValue(null, null);
+                    }
+                }
+            }
+            catch {}
+            return null;
+        }
+
+        public static string GetConfigLanguage()
+        {
+            try
+            {
+                var config = GetConfig();
+                if (config != null)
+                {
+                    var field = config.GetType().GetField("Language");
+                    if (field != null)
+                    {
+                        var val = field.GetValue(config) as string;
+                        if (!string.IsNullOrEmpty(val)) return val;
+                    }
+                }
+            }
+            catch {}
+            return "Russian";
+        }
+
+        public static void SetConfigLanguage(string lang)
+        {
+            try
+            {
+                var config = GetConfig();
+                if (config != null)
+                {
+                    var field = config.GetType().GetField("Language");
+                    if (field != null)
+                    {
+                        field.SetValue(config, lang);
+                    }
+                }
+            }
+            catch {}
+        }
+
+        public static string Translate(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return s;
+            if (GetConfigLanguage() != "English") return s;
+            
+            string key = s.Trim();
+            string translated;
+            if (LanguageDictionary.RuToEn.TryGetValue(key, out translated))
+            {
+                var sb = new StringBuilder();
+                int leadingSpaces = 0;
+                while (leadingSpaces < s.Length && char.IsWhiteSpace(s[leadingSpaces]))
+                {
+                    sb.Append(s[leadingSpaces]);
+                    leadingSpaces++;
+                }
+                sb.Append(translated);
+                int trailingIdx = s.Length - 1;
+                var trailingSb = new StringBuilder();
+                while (trailingIdx >= leadingSpaces && char.IsWhiteSpace(s[trailingIdx]))
+                {
+                    trailingSb.Insert(0, s[trailingIdx]);
+                    trailingIdx--;
+                }
+                sb.Append(trailingSb.ToString());
+                return sb.ToString();
+            }
+            return s;
+        }
+
+        public static void TranslateForm(Form form)
+        {
+            if (GetConfigLanguage() != "English") return;
+            try
+            {
+                form.Text = Translate(form.Text);
+                TranslateControls(form.Controls);
+                if (form.ContextMenuStrip != null)
+                {
+                    TranslateToolStrip(form.ContextMenuStrip);
+                }
+            }
+            catch {}
+        }
+
+        private static void TranslateControls(Control.ControlCollection controls)
+        {
+            if (controls == null) return;
+            foreach (Control ctrl in controls)
+            {
+                try
+                {
+                    ctrl.Text = Translate(ctrl.Text);
+                    
+                    ComboBox cb = ctrl as ComboBox;
+                    if (cb != null)
+                    {
+                        for (int i = 0; i < cb.Items.Count; i++)
+                        {
+                            string s = cb.Items[i] as string;
+                            if (s != null)
+                            {
+                                cb.Items[i] = Translate(s);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ListBox lb = ctrl as ListBox;
+                        if (lb != null)
+                        {
+                            for (int i = 0; i < lb.Items.Count; i++)
+                            {
+                                string s = lb.Items[i] as string;
+                                if (s != null)
+                                {
+                                    lb.Items[i] = Translate(s);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            DataGridView dgv = ctrl as DataGridView;
+                            if (dgv != null)
+                            {
+                                foreach (DataGridViewColumn col in dgv.Columns)
+                                {
+                                    col.HeaderText = Translate(col.HeaderText);
+                                    col.ToolTipText = Translate(col.ToolTipText);
+                                }
+                            }
+                            else
+                            {
+                                ToolStrip ts = ctrl as ToolStrip;
+                                if (ts != null)
+                                {
+                                    TranslateToolStrip(ts);
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (ctrl.ContextMenuStrip != null)
+                    {
+                        TranslateToolStrip(ctrl.ContextMenuStrip);
+                    }
+                    
+                    if (ctrl.HasChildren)
+                    {
+                        TranslateControls(ctrl.Controls);
+                    }
+                }
+                catch {}
+            }
+        }
+
+        private static void TranslateToolStrip(ToolStrip ts)
+        {
+            if (ts == null) return;
+            foreach (ToolStripItem item in ts.Items)
+            {
+                TranslateToolStripItem(item);
+            }
+        }
+
+        private static void TranslateToolStripItem(ToolStripItem item)
+        {
+            if (item == null) return;
+            try
+            {
+                item.Text = Translate(item.Text);
+                item.ToolTipText = Translate(item.ToolTipText);
+                
+                ToolStripDropDownItem dropDown = item as ToolStripDropDownItem;
+                if (dropDown != null)
+                {
+                    foreach (ToolStripItem subItem in dropDown.DropDownItems)
+                    {
+                        TranslateToolStripItem(subItem);
+                    }
+                }
+            }
+            catch {}
+        }
+
+        public static void AddLanguageSelector(Form optionsForm)
+        {
+            try
+            {
+                var tabControlProp = optionsForm.GetType().GetProperty("TabControl1");
+                if (tabControlProp != null)
+                {
+                    var tabControl = (TabControl)tabControlProp.GetValue(optionsForm, null);
+                    
+                    var tabPage = new TabPage("Language / Язык");
+                    tabPage.Padding = new Padding(10);
+                    
+                    var label = new Label();
+                    label.Text = "Выберите язык / Select language:";
+                    label.Location = new Point(20, 20);
+                    label.AutoSize = true;
+                    
+                    var comboBox = new ComboBox();
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                    comboBox.Items.Add("Русский");
+                    comboBox.Items.Add("English");
+                    comboBox.Location = new Point(20, 50);
+                    comboBox.Width = 200;
+                    
+                    string currentLang = GetConfigLanguage();
+                    if (currentLang == "English")
+                    {
+                        comboBox.SelectedIndex = 1;
+                    }
+                    else
+                    {
+                        comboBox.SelectedIndex = 0;
+                    }
+                    
+                    comboBox.SelectedIndexChanged += (sender, args) =>
+                    {
+                        string selected = comboBox.SelectedIndex == 1 ? "English" : "Russian";
+                        SetConfigLanguage(selected);
+                    };
+                    
+                    tabPage.Controls.Add(label);
+                    tabPage.Controls.Add(comboBox);
+                    tabControl.TabPages.Add(tabPage);
+                    
+                    if (GetConfigLanguage() == "English")
+                    {
+                        tabPage.Text = "Language";
+                        label.Text = "Select language:";
+                    }
+                }
+            }
+            catch {}
+        }
+
+        public static DialogResult ShowMessageBox(string text)
+        {
+            return MessageBox.Show(Translate(text));
+        }
+
+        public static DialogResult ShowMessageBox(string text, string caption)
+        {
+            return MessageBox.Show(Translate(text), Translate(caption));
+        }
+
+        public static DialogResult ShowMessageBox(string text, string caption, MessageBoxButtons buttons)
+        {
+            return MessageBox.Show(Translate(text), Translate(caption), buttons);
+        }
+
+        public static DialogResult ShowMessageBox(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
+        {
+            return MessageBox.Show(Translate(text), Translate(caption), buttons, icon);
+        }
+
+        public static DialogResult ShowMessageBox(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton)
+        {
+            return MessageBox.Show(Translate(text), Translate(caption), buttons, icon, defaultButton);
+        }
+
+        public static DialogResult ShowMessageBox(IWin32Window owner, string text)
+        {
+            return MessageBox.Show(owner, Translate(text));
+        }
+
+        public static DialogResult ShowMessageBox(IWin32Window owner, string text, string caption)
+        {
+            return MessageBox.Show(owner, Translate(text), Translate(caption));
+        }
+
+        public static DialogResult ShowMessageBox(IWin32Window owner, string text, string caption, MessageBoxButtons buttons)
+        {
+            return MessageBox.Show(owner, Translate(text), Translate(caption), buttons);
+        }
+
+        public static DialogResult ShowMessageBox(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
+        {
+            return MessageBox.Show(owner, Translate(text), Translate(caption), buttons, icon);
+        }
+
+        public static DialogResult ShowMessageBox(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton)
+        {
+            return MessageBox.Show(owner, Translate(text), Translate(caption), buttons, icon, defaultButton);
         }
     }
 }

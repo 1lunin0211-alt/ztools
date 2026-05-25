@@ -336,6 +336,22 @@ function Test-LicenseAssemblyReferencesUsePublicKeyToken([dnlib.DotNet.ModuleDef
 function Test-NoTokenSizedPublicKeyAssemblyRefs([dnlib.DotNet.ModuleDef]$Module, [string]$ModuleLabel) {
     $errors = New-Object System.Collections.Generic.List[string]
     foreach ($assemblyRef in $Module.GetAssemblyRefs()) {
+        # Fail if the assembly name is the banned obfuscated name
+        if ($assemblyRef.Name -eq 'ESYGdDVneyZGaacscwWoIlKTWklM') {
+            $errors.Add("$ModuleLabel has AssemblyRef to banned obfuscated assembly 'ESYGdDVneyZGaacscwWoIlKTWklM'")
+        }
+        
+        # Fail if the public key token matches the old rotated token
+        $tokenHex = ""
+        if ($assemblyRef.PublicKeyOrToken -ne $null) {
+            if ($assemblyRef.PublicKeyOrToken.Token -ne $null -and $assemblyRef.PublicKeyOrToken.Token.Data -ne $null) {
+                $tokenHex = [BitConverter]::ToString($assemblyRef.PublicKeyOrToken.Token.Data).Replace("-", "").ToLowerInvariant()
+            }
+        }
+        if ($tokenHex -eq '69848a58054312c2') {
+            $errors.Add("$ModuleLabel has AssemblyRef '$($assemblyRef.Name)' with banned old public key token '69848a58054312c2'")
+        }
+
         $publicKeyOrToken = [string]$assemblyRef.PublicKeyOrToken
         if (-not $assemblyRef.HasPublicKey -or
             [string]::IsNullOrWhiteSpace($publicKeyOrToken) -or

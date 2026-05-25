@@ -189,7 +189,9 @@ function Protect-LicenseAssembly([string]$DllPath, [string]$SnkPath) {
         'ZTool.License.LicenseGate',
         'ZTool.License.LicenseCache',
         'ZTool.License.EmbeddedLicenseConfig',
-        'ZTool.License.Decryptor'
+        'ZTool.License.Decryptor',
+        'ZTool.License.LanguageManager',
+        'ZTool.License.LanguageDictionary'
     )
 
     $typeCounter = 1
@@ -338,6 +340,7 @@ $licenseArgs = @(
     '/reference:System.Web.Extensions.dll',
     '/reference:System.Windows.Forms.dll',
     (Join-Path $rootFull 'packaging\ZTool.License\LicenseGate.cs'),
+    (Join-Path $rootFull 'packaging\ZTool.License\LanguageDictionary.cs'),
     (Join-Path $rootFull 'packaging\ZTool.License\Properties\AssemblyInfo.cs'),
     $generatedConfig
 )
