@@ -152,8 +152,11 @@ function Protect-LicenseAssembly([string]$DllPath, [string]$SnkPath) {
         foreach ($method in $type.Methods) {
             if (-not $method.HasBody) { continue }
             
+            $method.Body.SimplifyMacros($method.Parameters)
+            
             $instrs = $method.Body.Instructions
             $i = 0
+            $modified = $false
             while ($i -lt $instrs.Count) {
                 $inst = $instrs[$i]
                 if ($inst.OpCode -eq [dnlib.DotNet.Emit.OpCodes]::Ldstr) {
@@ -169,9 +172,14 @@ function Protect-LicenseAssembly([string]$DllPath, [string]$SnkPath) {
                         $callDec = [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($decMethod)
                         $instrs.Insert($i + 1, $callDec)
                         $i++
+                        $modified = $true
                     }
                 }
                 $i++
+            }
+            
+            if ($modified) {
+                $method.Body.OptimizeMacros()
             }
         }
     }
@@ -193,7 +201,9 @@ function Protect-LicenseAssembly([string]$DllPath, [string]$SnkPath) {
         
         $shouldPreserve = $false
         foreach ($p in $typesToPreserve) {
-            if ($type.FullName -eq $p -or $type.FullName.StartsWith($p + "+", [System.StringComparison]::Ordinal)) {
+            if ($type.FullName -eq $p -or 
+                $type.FullName.StartsWith($p + "+", [System.StringComparison]::Ordinal) -or
+                $type.FullName.StartsWith($p + "/", [System.StringComparison]::Ordinal)) {
                 $shouldPreserve = $true
                 break
             }
@@ -202,6 +212,9 @@ function Protect-LicenseAssembly([string]$DllPath, [string]$SnkPath) {
         if ($shouldPreserve) {
             foreach ($field in $type.Fields) {
                 if (-not $field.IsPublic) {
+                    if ($field.Name -eq 'DemoMinutes' -or $field.Name -eq 'DemoSecondsEnvironmentVariable') {
+                        continue
+                    }
                     $field.Name = "f_" + $fieldCounter++
                 }
             }

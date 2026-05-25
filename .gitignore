@@ -9,3 +9,5 @@
 *.userosscache
 *.sln.docstates
 source/_archive/_reverse/build/
+source/_archive/legacy-localized-builds/
+source/_ztool-fork-production-*/
