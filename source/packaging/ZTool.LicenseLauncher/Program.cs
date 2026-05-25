@@ -49,7 +49,22 @@ namespace ZTool.LicenseLauncher
                     store.Save(cache);
                 }
 
-                using (var runtime = CoreRuntime.Prepare(config, appDir))
+                var payloadKey = string.Empty;
+                try
+                {
+                    var serializer = new JavaScriptSerializer();
+                    var payload = serializer.DeserializeObject(cache.SignedPayload) as Dictionary<string, object>;
+                    if (payload != null && payload.ContainsKey("payloadKey"))
+                    {
+                        payloadKey = Convert.ToString(payload["payloadKey"]);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Failed to parse payload key: " + ex.Message);
+                }
+
+                using (var runtime = CoreRuntime.Prepare(config, appDir, payloadKey))
                 {
                     var process = LaunchCore(appDir, runtime.ExecutablePath, args);
                     runtime.WaitAndCleanup(process);
@@ -244,7 +259,7 @@ namespace ZTool.LicenseLauncher
 
         public string ExecutablePath { get; private set; }
 
-        public static CoreRuntime Prepare(LauncherConfig config, string appDir)
+        public static CoreRuntime Prepare(LauncherConfig config, string appDir, string payloadKey)
         {
             var payloadPath = Path.Combine(appDir, config.CorePayload);
             if (!File.Exists(payloadPath))
@@ -254,7 +269,7 @@ namespace ZTool.LicenseLauncher
 
             var runtimePath = Path.Combine(appDir, "ZTool.Core." + Guid.NewGuid().ToString("N") + ".exe");
             var encrypted = File.ReadAllBytes(payloadPath);
-            var decrypted = PayloadProtector.Decrypt(encrypted);
+            var decrypted = PayloadProtector.Decrypt(encrypted, payloadKey);
             File.WriteAllBytes(runtimePath, decrypted);
             File.SetAttributes(runtimePath, FileAttributes.Hidden);
             return new CoreRuntime(runtimePath, runtimePath);
@@ -313,7 +328,7 @@ namespace ZTool.LicenseLauncher
 
     internal static class PayloadProtector
     {
-        public static byte[] Decrypt(byte[] encrypted)
+        public static byte[] Decrypt(byte[] encrypted, string payloadKey)
         {
             if (encrypted == null || encrypted.Length <= 16)
             {
@@ -331,7 +346,7 @@ namespace ZTool.LicenseLauncher
                 aes.BlockSize = 128;
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
-                aes.Key = DeriveKey();
+                aes.Key = DeriveKey(payloadKey);
                 aes.IV = iv;
 
                 using (var decryptor = aes.CreateDecryptor())
@@ -341,11 +356,11 @@ namespace ZTool.LicenseLauncher
             }
         }
 
-        private static byte[] DeriveKey()
+        private static byte[] DeriveKey(string payloadKey)
         {
             using (var sha = SHA256.Create())
             {
-                return sha.ComputeHash(Encoding.UTF8.GetBytes(EmbeddedLicenseConfig.PayloadKey));
+                return sha.ComputeHash(Encoding.UTF8.GetBytes(string.IsNullOrEmpty(payloadKey) ? EmbeddedLicenseConfig.PayloadKey : payloadKey));
             }
         }
     }
@@ -548,7 +563,11 @@ namespace ZTool.LicenseLauncher
 
             try
             {
-                return serializer.Deserialize<LicenseCache>(File.ReadAllText(path, Encoding.UTF8));
+                var encryptedBytes = File.ReadAllBytes(path);
+                var machineId = HardwareFingerprint.GetMachineId();
+                var key = HexToBytes(machineId);
+                var decryptedJson = DecryptStringAes(encryptedBytes, key);
+                return serializer.Deserialize<LicenseCache>(decryptedJson);
             }
             catch (Exception ex)
             {
@@ -559,7 +578,18 @@ namespace ZTool.LicenseLauncher
 
         public void Save(LicenseCache cache)
         {
-            File.WriteAllText(path, serializer.Serialize(cache), Encoding.UTF8);
+            try
+            {
+                var json = serializer.Serialize(cache);
+                var machineId = HardwareFingerprint.GetMachineId();
+                var key = HexToBytes(machineId);
+                var encryptedBytes = EncryptStringAes(json, key);
+                File.WriteAllBytes(path, encryptedBytes);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("License cache save failed: " + ex);
+            }
         }
 
         public void Delete()
@@ -567,6 +597,60 @@ namespace ZTool.LicenseLauncher
             if (File.Exists(path))
             {
                 File.Delete(path);
+            }
+        }
+
+        private static byte[] HexToBytes(string hex)
+        {
+            if (string.IsNullOrEmpty(hex) || hex.Length < 64)
+            {
+                return new byte[32];
+            }
+            var bytes = new byte[32];
+            for (int i = 0; i < 32; i++)
+            {
+                bytes[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+            }
+            return bytes;
+        }
+
+        private static byte[] EncryptStringAes(string plainText, byte[] key)
+        {
+            using (var aes = new RijndaelManaged())
+            {
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                aes.Key = key;
+                var iv = new byte[16];
+                Buffer.BlockCopy(key, 0, iv, 0, 16);
+                aes.IV = iv;
+                using (var encryptor = aes.CreateEncryptor())
+                {
+                    var plainBytes = Encoding.UTF8.GetBytes(plainText);
+                    return encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
+                }
+            }
+        }
+
+        private static string DecryptStringAes(byte[] cipherData, byte[] key)
+        {
+            using (var aes = new RijndaelManaged())
+            {
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                aes.Key = key;
+                var iv = new byte[16];
+                Buffer.BlockCopy(key, 0, iv, 0, 16);
+                aes.IV = iv;
+                using (var decryptor = aes.CreateDecryptor())
+                {
+                    var decryptedBytes = decryptor.TransformFinalBlock(cipherData, 0, cipherData.Length);
+                    return Encoding.UTF8.GetString(decryptedBytes);
+                }
             }
         }
     }

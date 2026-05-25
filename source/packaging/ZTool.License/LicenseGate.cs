@@ -19,10 +19,46 @@ namespace ZTool.License
         private const string ProductId = "ztool";
         private const string AppVersion = "1.1";
 
+        private static bool VerifyAssemblyToken(System.Reflection.Assembly assembly)
+        {
+            if (assembly == null) return true;
+            try
+            {
+                var name = assembly.GetName();
+                if (name.Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase) ||
+                    name.Name.Equals("System", StringComparison.OrdinalIgnoreCase) ||
+                    name.Name.Equals("System.Core", StringComparison.OrdinalIgnoreCase) ||
+                    name.Name.Equals("System.Windows.Forms", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+                var tokenBytes = name.GetPublicKeyToken();
+                if (tokenBytes == null || tokenBytes.Length != 8) return false;
+                var tokenStr = string.Empty;
+                foreach (var b in tokenBytes)
+                {
+                    tokenStr += b.ToString("x2");
+                }
+                return string.Equals(tokenStr, "69848a58054312c2", StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static bool IsLicensed()
         {
             try
             {
+                var calling = System.Reflection.Assembly.GetCallingAssembly();
+                var entry = System.Reflection.Assembly.GetEntryAssembly();
+                if (!VerifyAssemblyToken(calling) || !VerifyAssemblyToken(entry))
+                {
+                    Log.Write("Untrusted assembly load blocked.");
+                    return false;
+                }
+
                 if (DemoMode.IsActive)
                 {
                     return true;
@@ -397,7 +433,11 @@ namespace ZTool.License
 
                 try
                 {
-                    return serializer.Deserialize<LicenseCache>(File.ReadAllText(path, Encoding.UTF8));
+                    var encryptedBytes = File.ReadAllBytes(path);
+                    var machineId = HardwareFingerprint.GetMachineId();
+                    var key = HexToBytes(machineId);
+                    var decryptedJson = DecryptStringAes(encryptedBytes, key);
+                    return serializer.Deserialize<LicenseCache>(decryptedJson);
                 }
                 catch (Exception ex)
                 {
@@ -408,7 +448,18 @@ namespace ZTool.License
 
             public void Save(LicenseCache cache)
             {
-                File.WriteAllText(path, serializer.Serialize(cache), Encoding.UTF8);
+                try
+                {
+                    var json = serializer.Serialize(cache);
+                    var machineId = HardwareFingerprint.GetMachineId();
+                    var key = HexToBytes(machineId);
+                    var encryptedBytes = EncryptStringAes(json, key);
+                    File.WriteAllBytes(path, encryptedBytes);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("License cache save failed: " + ex);
+                }
             }
 
             public void Delete()
@@ -418,12 +469,105 @@ namespace ZTool.License
                     File.Delete(path);
                 }
             }
+
+            private static byte[] HexToBytes(string hex)
+            {
+                if (string.IsNullOrEmpty(hex) || hex.Length < 64)
+                {
+                    return new byte[32];
+                }
+                var bytes = new byte[32];
+                for (int i = 0; i < 32; i++)
+                {
+                    bytes[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+                }
+                return bytes;
+            }
+
+            private static byte[] EncryptStringAes(string plainText, byte[] key)
+            {
+                using (var aes = new RijndaelManaged())
+                {
+                    aes.KeySize = 256;
+                    aes.BlockSize = 128;
+                    aes.Mode = CipherMode.CBC;
+                    aes.Padding = PaddingMode.PKCS7;
+                    aes.Key = key;
+                    var iv = new byte[16];
+                    Buffer.BlockCopy(key, 0, iv, 0, 16);
+                    aes.IV = iv;
+                    using (var encryptor = aes.CreateEncryptor())
+                    {
+                        var plainBytes = Encoding.UTF8.GetBytes(plainText);
+                        return encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
+                    }
+                }
+            }
+
+            private static string DecryptStringAes(byte[] cipherData, byte[] key)
+            {
+                using (var aes = new RijndaelManaged())
+                {
+                    aes.KeySize = 256;
+                    aes.BlockSize = 128;
+                    aes.Mode = CipherMode.CBC;
+                    aes.Padding = PaddingMode.PKCS7;
+                    aes.Key = key;
+                    var iv = new byte[16];
+                    Buffer.BlockCopy(key, 0, iv, 0, 16);
+                    aes.IV = iv;
+                    using (var decryptor = aes.CreateDecryptor())
+                    {
+                        var decryptedBytes = decryptor.TransformFinalBlock(cipherData, 0, cipherData.Length);
+                        return Encoding.UTF8.GetString(decryptedBytes);
+                    }
+                }
+            }
+        }
+
+        private static class StrongNameValidator
+        {
+            [System.Runtime.InteropServices.DllImport("mscoree.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode, SetLastError = true)]
+            private static extern bool StrongNameSignatureVerificationEx(string wszFilePath, bool fForceVerification, ref bool pfWasVerified);
+
+            public static bool IsValid(string path)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path)) return false;
+                    bool wasVerified = false;
+                    return StrongNameSignatureVerificationEx(path, true, ref wasVerified) && wasVerified;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
         }
 
         private static class LicenseValidator
         {
             public static bool IsUsable(LicenseCache cache, string machineId)
             {
+                var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
+                if (entryAssembly != null && !string.IsNullOrEmpty(entryAssembly.Location))
+                {
+                    if (!StrongNameValidator.IsValid(entryAssembly.Location))
+                    {
+                        Log.Write("Entry assembly strong-name validation failed.");
+                        return false;
+                    }
+                }
+                var currentAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+                if (currentAssembly != null && !string.IsNullOrEmpty(currentAssembly.Location))
+                {
+                    if (!StrongNameValidator.IsValid(currentAssembly.Location))
+                    {
+                        Log.Write("License assembly strong-name validation failed.");
+                        return false;
+                    }
+                }
+
                 if (cache == null || cache.MachineId == null || !cache.MachineId.Equals(machineId, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
@@ -1269,4 +1413,18 @@ namespace ZTool.License
         public const string PublicKeyXml = "";
     }
 #endif
+
+    internal static class Decryptor
+    {
+        public static string Dec(string str)
+        {
+            if (str == null) return null;
+            char[] chars = new char[str.Length];
+            for (int i = 0; i < str.Length; i++)
+            {
+                chars[i] = (char)(str[i] ^ 0x5A);
+            }
+            return new string(chars);
+        }
+    }
 }

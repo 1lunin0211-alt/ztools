@@ -455,14 +455,19 @@ function Patch-ProgramMainLicenseGate([dnlib.DotNet.ModuleDef]$Module, [string]$
         throw 'ZTool.Program::Main does not contain a return target.'
     }
 
+    $assemblyLoadRef = $Module.Import([System.Reflection.Assembly].GetMethod('Load', [type[]]@([string])))
+
     $lateContinue = $instructions[$contextIndex]
     $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Leave.ToInstruction($retInstruction))
     $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Brtrue_S.ToInstruction($lateContinue))
     $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Ldsfld.ToInstruction($canRunField))
     $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Stsfld.ToInstruction($canRunField))
     $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($isLicensed))
+    $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Pop.ToInstruction())
+    $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($assemblyLoadRef))
+    $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Ldstr.ToInstruction('ZTool.License, Version=1.1.0.0, Culture=neutral, PublicKeyToken=69848a58054312c2'))
 
-    $method.Body.MaxStack = [Math]::Max($method.Body.MaxStack, 1)
+    $method.Body.MaxStack = [Math]::Max($method.Body.MaxStack, 2)
     return 'ZTool.Program::Main direct LicenseGate fail-closed gate inserted=1'
 }
 

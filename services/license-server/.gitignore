@@ -1,0 +1,5 @@
+config.php
+keys/*
+!keys/.gitkeep
+vendor/
+*.log

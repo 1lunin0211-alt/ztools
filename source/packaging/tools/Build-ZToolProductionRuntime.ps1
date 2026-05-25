@@ -118,6 +118,123 @@ function Assert-StrongNameOk([string]$Path) {
     }
 }
 
+function Protect-LicenseAssembly([string]$DllPath, [string]$SnkPath) {
+    $repoRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
+    $dnlibPath = Join-Path $repoRoot '_archive\_reverse\packages\dnlib\lib\net45\dnlib.dll'
+    if (-not (Test-Path -LiteralPath $dnlibPath -PathType Leaf)) {
+        throw "dnlib.dll not found at $dnlibPath"
+    }
+    Add-Type -Path $dnlibPath -ErrorAction SilentlyContinue
+
+    $bytes = [System.IO.File]::ReadAllBytes($DllPath)
+    $module = [dnlib.DotNet.ModuleDefMD]::Load($bytes)
+    $strongNameKey = [dnlib.DotNet.StrongNameKey]::new($SnkPath)
+    
+    $decryptorType = $module.Find('ZTool.License.Decryptor', $true)
+    if ($null -eq $decryptorType) {
+        throw "Decryptor type not found in ZTool.License."
+    }
+    $decMethod = $null
+    foreach ($m in $decryptorType.Methods) {
+        if ($m.Name -eq 'Dec') {
+            $decMethod = $m
+            break
+        }
+    }
+    if ($null -eq $decMethod) {
+        throw "Decryptor::Dec method not found."
+    }
+
+    foreach ($type in $module.GetTypes()) {
+        if ($type.FullName -eq 'ZTool.License.Decryptor' -or $type.FullName.StartsWith('<Module>', [System.StringComparison]::Ordinal)) {
+            continue
+        }
+        foreach ($method in $type.Methods) {
+            if (-not $method.HasBody) { continue }
+            
+            $instrs = $method.Body.Instructions
+            $i = 0
+            while ($i -lt $instrs.Count) {
+                $inst = $instrs[$i]
+                if ($inst.OpCode -eq [dnlib.DotNet.Emit.OpCodes]::Ldstr) {
+                    $plain = [string]$inst.Operand
+                    if (-not [string]::IsNullOrEmpty($plain)) {
+                        $chars = [char[]]$plain
+                        for ($j = 0; $j -lt $chars.Length; $j++) {
+                            $chars[$j] = [char]([int]$chars[$j] -bxor 0x5A)
+                        }
+                        $encrypted = [string]::new($chars)
+                        $inst.Operand = $encrypted
+                        
+                        $callDec = [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($decMethod)
+                        $instrs.Insert($i + 1, $callDec)
+                        $i++
+                    }
+                }
+                $i++
+            }
+        }
+    }
+
+    $typesToPreserve = @(
+        'ZTool.License.LicenseGate',
+        'ZTool.License.LicenseCache',
+        'ZTool.License.EmbeddedLicenseConfig',
+        'ZTool.License.Decryptor'
+    )
+
+    $typeCounter = 1
+    $methodCounter = 1
+    $fieldCounter = 1
+    foreach ($type in $module.GetTypes()) {
+        if ($type.FullName.StartsWith('<Module>', [System.StringComparison]::Ordinal)) {
+            continue
+        }
+        
+        $shouldPreserve = $false
+        foreach ($p in $typesToPreserve) {
+            if ($type.FullName -eq $p -or $type.FullName.StartsWith($p + "+", [System.StringComparison]::Ordinal)) {
+                $shouldPreserve = $true
+                break
+            }
+        }
+
+        if ($shouldPreserve) {
+            foreach ($field in $type.Fields) {
+                if (-not $field.IsPublic) {
+                    $field.Name = "f_" + $fieldCounter++
+                }
+            }
+            foreach ($method in $type.Methods) {
+                if (-not $method.IsPublic -and -not $method.IsConstructor -and -not $method.IsSpecialName) {
+                    $method.Name = "m_" + $methodCounter++
+                }
+            }
+            continue
+        }
+
+        if (-not $type.IsPublic) {
+            $type.Name = "t_" + $typeCounter++
+        }
+
+        foreach ($method in $type.Methods) {
+            if (-not $method.IsConstructor -and -not $method.IsSpecialName) {
+                $method.Name = "m_" + $methodCounter++
+            }
+        }
+
+        foreach ($field in $type.Fields) {
+            $field.Name = "f_" + $fieldCounter++
+        }
+    }
+
+    $options = [dnlib.DotNet.Writer.ModuleWriterOptions]::new($module)
+    $options.Logger = [dnlib.DotNet.DummyLogger]::NoThrowInstance
+    $options.InitializeStrongNameSigning($module, $strongNameKey)
+    $module.Write($DllPath, $options)
+    $module.Dispose()
+}
+
 function Invoke-Csc([string[]]$Arguments) {
     $csc = Get-CscPath
     & $csc @Arguments
@@ -210,6 +327,7 @@ $licenseArgs = @(
     $generatedConfig
 )
 Invoke-Csc $licenseArgs
+Protect-LicenseAssembly $licenseDll $snkFull
 Assert-StrongNameOk $licenseDll
 
 $deactivateExe = Join-Path $outputRootFull 'ZTool License Deactivate.exe'

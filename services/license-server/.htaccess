@@ -1,0 +1,25 @@
+RewriteEngine On
+Options -Indexes
+
+<FilesMatch "^(config\.php|config\.example\.php|\.env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteRule ^(includes|keys|tools)(/|$) - [F,L]
+</IfModule>
+
+<FilesMatch "(\.sql|\.sh|\.md|composer\.(json|lock)|phpunit\.xml)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(php)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate"
+        Header set X-Frame-Options "DENY"
+        Header set X-Content-Type-Options "nosniff"
+        Header set Referrer-Policy "no-referrer"
+    </FilesMatch>
+</IfModule>
