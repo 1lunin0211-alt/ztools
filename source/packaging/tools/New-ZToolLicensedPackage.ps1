@@ -6,7 +6,7 @@ param(
     [string]$LicenseBaseUrl = 'https://license.vizbuka.ru/ztool',
     [string]$PublicKeyXmlPath = '',
     [string]$PublicKeyXml = '',
-    [string]$PayloadKey = 'ztool-secure-prod-key-2026',
+    [string]$PayloadKey = 'change-me-in-config-php',
     [int]$OfflineGraceDays = 7,
     [switch]$Package,
     [switch]$Production,
