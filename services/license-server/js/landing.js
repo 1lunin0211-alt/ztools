@@ -123,4 +123,49 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.add('revealed');
     });
   }
+
+  // 6. Lightbox Event Bindings
+  const lightbox = document.getElementById('lightbox');
+  const lightboxClose = document.getElementById('lightbox-close');
+
+  if (lightbox && lightboxClose) {
+    lightboxClose.addEventListener('click', window.closeLightbox);
+    
+    // Close on clicking backdrop
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        window.closeLightbox();
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+        window.closeLightbox();
+      }
+    });
+  }
 });
+
+// Global Lightbox Functions
+window.openLightbox = function(src, title) {
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxCaption = document.getElementById('lightbox-caption');
+
+  if (lightbox && lightboxImg && lightboxCaption) {
+    lightboxImg.src = src;
+    lightboxImg.alt = title;
+    lightboxCaption.textContent = title;
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden'; // Disable page scrolling
+  }
+};
+
+window.closeLightbox = function() {
+  const lightbox = document.getElementById('lightbox');
+  if (lightbox) {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = ''; // Restore page scrolling
+  }
+};
