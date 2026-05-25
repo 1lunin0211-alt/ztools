@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<CPTemplate>
+  <AppVersion>24</AppVersion>
+  <CPSheet>
+    <GroupBox Label="自定义属性卡" PropName="组框2" DefaultState="Expanded">
+      <Control Label="设计" PropName="设计" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path="D:\solidowrks模板\设计.txt" SourceType="Text" />
+      </Control>
+      <Control Label="零件名称" PropName="零件名称" ApplyTo="Global" Type="TextBox" DefaultValue="" Mode="Text" />
+      <Control Label="图号" PropName="图号" ApplyTo="Global" Type="TextBox" DefaultValue="" Mode="Text" />
+      <Control Label="材料" PropName="材料" ApplyTo="Global" Type="TextBox" DefaultValue="SW-Material" Mode="SWProperty" />
+      <Control Label="类型" PropName="类型" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path="D:\solidowrks模板\类型.txt" SourceType="Text" />
+      </Control>
+      <Control Label="版本" PropName="版本" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path="D:\solidowrks模板\版本.txt" SourceType="Text" />
+      </Control>
+      <Control Label="表面处理" PropName="表面处理" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path="D:\solidowrks模板\表面处理.txt" SourceType="Text" />
+      </Control>
+      <Control Label="品牌" PropName="品牌" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path="D:\solidowrks模板\品牌.txt" SourceType="Text" />
+      </Control>
+      <Control Label="设计日期" PropName="设计日期" ApplyTo="Global" Type="TextBox" DefaultValue="" Mode="Date" />
+      <Control Label="重量" PropName="重量" ApplyTo="Global" Type="TextBox" DefaultValue="SW-Mass" Mode="SWProperty" />
+    </GroupBox>
+  </CPSheet>
+</CPTemplate>

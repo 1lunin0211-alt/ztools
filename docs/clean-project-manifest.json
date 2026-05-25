@@ -1,0 +1,20 @@
+{
+  "CreatedAt": "2026-05-25T05:39:21",
+  "SourceRoot": "D:\\Development\\ZTool",
+  "CleanRoot": "D:\\Development\\ZTool-CLEAN",
+  "Included": [
+    "source\\packaging without bin/obj/pdb/log outputs",
+    "source\\README.md",
+    "reference\\ZTool-original",
+    "release\\active production package only",
+    "release\\installer"
+  ],
+  "Excluded": [
+    "_archive",
+    "_release archive folders",
+    "_release screenshots and temporary extracted help",
+    ".git working metadata",
+    ".devin/.vscode local editor metadata",
+    "packaging bin/obj build outputs"
+  ]
+}

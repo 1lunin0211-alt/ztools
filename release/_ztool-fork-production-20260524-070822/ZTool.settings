@@ -1,0 +1,1699 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CConfigDO xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SWver>0</SWver>
+  <materialpath>D:\Work\_Инструменты_Конструктора\03_Макросы_и_Плагины\Макросы_SW_ZTool_OnCad\ZTool\Шаблоны SW\MyMaterials.sldmat</materialpath>
+  <rowcolor>66</rowcolor>
+  <colorselrow>false</colorselrow>
+  <propname>
+    <string>Пром.обознач</string>
+    <string>Обозначение</string>
+    <string>Наименование</string>
+    <string>Наименование_ФБ</string>
+    <string>Конструктор</string>
+    <string>Формат</string>
+    <string>Раздел</string>
+    <string>Масса</string>
+    <string>Материал</string>
+    <string>SemanticMaterialLocation</string>
+    <string>SemanticMaterialCaption</string>
+    <string>SHAPE</string>
+    <string>SORTAMENT</string>
+    <string>MATERIAL</string>
+    <string>SemanticMaterialPostfix</string>
+    <string>Материал_Таблица</string>
+    <string>Исполнение</string>
+    <string>Контора</string>
+    <string>Проект</string>
+    <string>Масса_ФБ</string>
+    <string>Масса_Таблица</string>
+    <string>Материал_ФБ</string>
+    <string>Конфигурация</string>
+    <string>Габариты</string>
+    <string>DESCRIPTION</string>
+  </propname>
+  <rowheight>40</rowheight>
+  <proptype>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+    <string>Текст</string>
+  </proptype>
+  <outcfg>
+    <string>folder
+D:\1</string>
+    <string>Thisfolder
+True</string>
+    <string>Originalfolder
+False</string>
+    <string>custom_3d
+True</string>
+    <string>custom_2d
+True</string>
+    <string>withoutcfgname
+True</string>
+    <string>customname_3d
+$Обозначение$ $Наименование$</string>
+    <string>customname_2d
+$Обозначение$ $Наименование$</string>
+    <string>OUT_DetachedDraw
+False</string>
+    <string>OUT_PDF
+True</string>
+    <string>OUT_DXF
+False</string>
+    <string>CheckBox6
+False</string>
+    <string>OUT_JPG
+False</string>
+    <string>OUT_DWG
+False</string>
+    <string>OUT_PNG
+False</string>
+    <string>CheckBox4
+False</string>
+    <string>CheckBox3
+False</string>
+    <string>CheckBox2
+False</string>
+    <string>CheckBox1
+False</string>
+    <string>OUT_IGS
+False</string>
+    <string>CheckBox5
+False</string>
+    <string>OUT_STEP
+True</string>
+    <string>OUT_3DPDF
+False</string>
+    <string>CheckBox7
+False</string>
+    <string>OUT_JPG2
+False</string>
+    <string>OUT_PNG2
+False</string>
+    <string>exclude_unactive
+False</string>
+    <string>exclude_AsWelded
+False</string>
+    <string>exclude_AsMachined
+False</string>
+    <string>exclude_SpeedPak
+False</string>
+    <string>exclude_IsDerived
+False</string>
+    <string>exclude_SheetMetal
+False</string>
+    <string>ExportAllSheetsToPaperSpace
+True</string>
+    <string>Multiplesheet_dwg
+1</string>
+    <string>outputscale
+True</string>
+    <string>CADline
+0</string>
+    <string>CADfont
+0</string>
+    <string>CADVer
+5</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>Image_dpi
+6</string>
+    <string>ImageType
+1</string>
+    <string>Multiplesheet_pdf
+0</string>
+    <string>PDFline
+True</string>
+    <string>PDFfont
+True</string>
+    <string>PDFcolor
+True</string>
+    <string>img_postion
+0</string>
+    <string>img_y
+65</string>
+    <string>img_x
+15</string>
+    <string>img_angle
+0</string>
+    <string>img_path
+</string>
+    <string>img_transparency
+50</string>
+    <string>add_waterimg
+False</string>
+    <string>text_postion
+3</string>
+    <string>text_y
+1</string>
+    <string>text_x
+60</string>
+    <string>watertext
+</string>
+    <string>add_watertext
+False</string>
+    <string>SetScalebyfirstview
+False</string>
+    <string>forcurcfg
+True</string>
+    <string>HideSw1
+False</string>
+  </outcfg>
+  <printcfg />
+  <Unitset>
+    <string>Motion_Energy_Decimal
+2</string>
+    <string>Motion_Power_Decimal
+2</string>
+    <string>Motion_Force_Decimal
+2</string>
+    <string>Motion_Time_Decimal
+2</string>
+    <string>Motion_Energy
+0</string>
+    <string>Motion_Power
+0</string>
+    <string>Motion_Force
+2</string>
+    <string>Motion_Time
+0</string>
+    <string>Mass_Decimals
+3</string>
+    <string>Mass_Volume
+3</string>
+    <string>Mass_Mass
+2</string>
+    <string>Mass_Length
+3</string>
+    <string>Basic_Angle_Decimals
+2</string>
+    <string>Basic_DualDimension_Decimals
+2</string>
+    <string>Basic_Length_Decimals
+2</string>
+    <string>Basic_Angle
+0</string>
+    <string>Basic_DualDimension
+3</string>
+    <string>Basic_Length
+3</string>
+    <string>Unit_Custom
+False</string>
+    <string>Unit_IPS
+False</string>
+    <string>Unit_MMGS
+False</string>
+    <string>Unit_CGS
+False</string>
+    <string>Unit_MMKS
+True</string>
+    <string>Unit_MKS
+False</string>
+  </Unitset>
+  <ReadOnlyFolder />
+  <Preview_Hotkey>
+    <string>18</string>
+    <string>90</string>
+  </Preview_Hotkey>
+  <bompath />
+  <image_size>
+    <Width>64</Width>
+    <Height>48</Height>
+  </image_size>
+  <image_lockratio>true</image_lockratio>
+  <insertimagebool>0</insertimagebool>
+  <GetAllconfigsbool>-1</GetAllconfigsbool>
+  <ExcludePropList />
+  <ExcludePropbool>0</ExcludePropbool>
+  <FrmPreviewLocation>
+    <X>0</X>
+    <Y>0</Y>
+  </FrmPreviewLocation>
+  <DClick_OpenInSw>true</DClick_OpenInSw>
+  <RowFollowdisplay>false</RowFollowdisplay>
+  <DefaultDrw>false</DefaultDrw>
+  <ReNameRule>%Раздел%</ReNameRule>
+  <Excludevirtual>true</Excludevirtual>
+  <togetherConfig>false</togetherConfig>
+  <GetDataOption>0</GetDataOption>
+  <propshow>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+  </propshow>
+  <Dropdownlist>
+    <string>Контора
+ООО "НГС"
+BSL-Lab</string>
+    <string>Раздел
+Сборочные единицы
+Детали
+Стандартные изделия
+Прочие изделия
+Материалы</string>
+    <string>Наименование_ФБ
+&lt;FONT size=4&gt; &lt;FONT size=5&gt;%Наименование%</string>
+    <string>Материал_ФБ
+&lt;FONT size=1.8&gt; &lt;FONT size=3.5&gt;%SHAPE% &lt;STACK size=1&gt;%SORTAMENT%&lt;OVER&gt;%MATERIAL%&lt;/STACK&gt;</string>
+    <string>п_Разраб
+Лунин В.И.</string>
+    <string>Сборка
+</string>
+    <string>Конструктор
+Лунин В.И.</string>
+    <string>Масса_ФБ
+&lt;FONT size=1&gt; &lt;FONT size=3.5&gt;"SW-Mass"</string>
+    <string>Масса_Таблица
+</string>
+    <string>Имя детали
+</string>
+    <string>Материал_Таблица
+&lt;FONT size=1.8&gt; &lt;FONT size=3.5&gt;%SHAPE%&lt;STACK size=1&gt;%SORTAMENT%&lt;OVER&gt;%MATERIAL%&lt;/STACK&gt;</string>
+    <string>Сборка1_ФБ
+</string>
+    <string>SemanticMaterialPostfix
+</string>
+    <string>Плотность_ФБ
+</string>
+    <string>Пром.обознач
+</string>
+    <string>Формат
+</string>
+    <string>Масса
+</string>
+    <string>Конфигурация
+</string>
+  </Dropdownlist>
+  <savetoswcfg>
+    <string>TextBox1
+D:\BSL-Lab\BSL-R2\_Разработка\_Чертежи рабочие\3D\R2.01.00.000 Измерительный узел\R2.00.000-01 Торсион</string>
+    <string>CheckBox8
+True</string>
+    <string>CheckBox6
+True</string>
+    <string>LinkLabel1
+D:\</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>CheckBox7
+True</string>
+    <string>CheckBox4
+True</string>
+    <string>LinkLabel2
+Перейти к настройкам</string>
+    <string>ComboBox4
+0</string>
+    <string>CheckBox10
+False</string>
+    <string>CheckBox3
+False</string>
+    <string>CheckBox2
+False</string>
+    <string>CheckBox9
+False</string>
+    <string>CheckBox1
+False</string>
+    <string>ComboBox2
+0</string>
+    <string>ComboBox3
+0</string>
+    <string>ComboBox1
+1</string>
+  </savetoswcfg>
+  <bomsubfolder>false</bomsubfolder>
+  <ColIndex>
+    <string>0
+0</string>
+    <string>1
+1</string>
+    <string>2
+2</string>
+    <string>3
+3</string>
+    <string>4
+4</string>
+    <string>5
+5</string>
+    <string>6
+7</string>
+    <string>7
+61</string>
+    <string>8
+69</string>
+    <string>9
+63</string>
+    <string>10
+6</string>
+    <string>11
+62</string>
+    <string>12
+11</string>
+    <string>13
+12</string>
+    <string>14
+8</string>
+    <string>15
+64</string>
+    <string>16
+71</string>
+    <string>17
+65</string>
+    <string>18
+66</string>
+    <string>19
+70</string>
+    <string>20
+67</string>
+    <string>21
+9</string>
+    <string>22
+10</string>
+    <string>23
+14</string>
+    <string>24
+15</string>
+    <string>25
+16</string>
+    <string>26
+17</string>
+    <string>27
+20</string>
+    <string>28
+21</string>
+    <string>29
+22</string>
+    <string>30
+23</string>
+    <string>31
+24</string>
+    <string>32
+26</string>
+    <string>33
+27</string>
+    <string>34
+13</string>
+    <string>35
+28</string>
+    <string>36
+29</string>
+    <string>37
+30</string>
+    <string>38
+31</string>
+    <string>39
+32</string>
+    <string>40
+33</string>
+    <string>41
+34</string>
+    <string>42
+35</string>
+    <string>43
+37</string>
+    <string>44
+36</string>
+    <string>45
+38</string>
+    <string>46
+18</string>
+    <string>47
+39</string>
+    <string>48
+19</string>
+    <string>49
+40</string>
+    <string>50
+41</string>
+    <string>51
+42</string>
+    <string>52
+43</string>
+    <string>53
+44</string>
+    <string>54
+45</string>
+    <string>55
+46</string>
+    <string>56
+25</string>
+    <string>57
+47</string>
+    <string>58
+48</string>
+    <string>59
+49</string>
+    <string>60
+50</string>
+    <string>61
+51</string>
+    <string>62
+52</string>
+    <string>63
+53</string>
+    <string>64
+54</string>
+    <string>65
+55</string>
+    <string>66
+56</string>
+    <string>67
+57</string>
+    <string>68
+58</string>
+    <string>69
+59</string>
+    <string>70
+60</string>
+    <string>71
+68</string>
+  </ColIndex>
+  <ColWidth>
+    <string>5
+306</string>
+    <string>6
+176</string>
+    <string>7
+443</string>
+    <string>8
+382</string>
+    <string>9
+106</string>
+    <string>10
+163</string>
+    <string>11
+287</string>
+    <string>12
+98</string>
+    <string>13
+160</string>
+    <string>14
+148</string>
+    <string>15
+125</string>
+    <string>16
+121</string>
+    <string>17
+196</string>
+    <string>18
+100</string>
+    <string>19
+100</string>
+    <string>20
+100</string>
+    <string>21
+100</string>
+    <string>22
+100</string>
+    <string>23
+100</string>
+    <string>24
+183</string>
+    <string>25
+183</string>
+    <string>26
+212</string>
+    <string>27
+212</string>
+    <string>28
+100</string>
+    <string>29
+100</string>
+    <string>30
+100</string>
+    <string>31
+100</string>
+    <string>32
+100</string>
+    <string>33
+100</string>
+    <string>34
+398</string>
+    <string>35
+398</string>
+    <string>36
+100</string>
+    <string>37
+100</string>
+    <string>38
+100</string>
+    <string>39
+100</string>
+    <string>40
+100</string>
+    <string>41
+100</string>
+    <string>42
+100</string>
+    <string>43
+100</string>
+    <string>44
+100</string>
+    <string>45
+100</string>
+    <string>46
+213</string>
+    <string>47
+213</string>
+    <string>48
+100</string>
+    <string>49
+100</string>
+    <string>50
+100</string>
+    <string>51
+100</string>
+    <string>52
+100</string>
+    <string>53
+100</string>
+    <string>54
+100</string>
+    <string>55
+100</string>
+    <string>56
+100</string>
+    <string>57
+100</string>
+    <string>58
+100</string>
+    <string>59
+100</string>
+    <string>60
+100</string>
+    <string>61
+100</string>
+    <string>62
+100</string>
+    <string>63
+100</string>
+    <string>64
+100</string>
+    <string>65
+100</string>
+    <string>66
+100</string>
+    <string>67
+100</string>
+    <string>68
+100</string>
+    <string>69
+100</string>
+    <string>70
+282</string>
+    <string>71
+282</string>
+  </ColWidth>
+  <SetDrwCfg>
+    <string>TextBox4
+D:\Work\_Для пользователей\_Скрипты и макросы SW (Скопировать в корень диска С)\SWPlusMacro_v_2018_SP0.0\SpecEditor\MyStandard.sldstd</string>
+    <string>TextBox3
+D:\Work\_Для пользователей\_Скрипты и макросы SW (Скопировать в корень диска С)\SWPlusMacro_v_2018_SP0.0\SpecEditor\MyStandard.sldstd</string>
+    <string>TextBox1
+</string>
+    <string>CheckBox1
+True</string>
+    <string>TextBox2
+</string>
+    <string>CheckBox2
+True</string>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton4
+False</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>CheckBox4
+True</string>
+    <string>CheckBox3
+False</string>
+  </SetDrwCfg>
+  <DrawPaperA0 />
+  <DrawPaperA1 />
+  <DrawPaperA2 />
+  <DrawPaperA3 />
+  <DrawPaperA4V />
+  <DrawPaperA4H />
+  <DrawPaperOther />
+  <BomByVal>true</BomByVal>
+  <ReNameByFilter>true</ReNameByFilter>
+  <ReNameByRule>true</ReNameByRule>
+  <ReNameByCheck>false</ReNameByCheck>
+  <ReNameFilterarr />
+  <Colvisible>
+    <string>0
+False</string>
+    <string>1
+False</string>
+    <string>2
+True</string>
+    <string>3
+True</string>
+    <string>4
+True</string>
+    <string>5
+True</string>
+    <string>6
+True</string>
+    <string>7
+True</string>
+    <string>8
+False</string>
+    <string>9
+True</string>
+    <string>10
+True</string>
+    <string>11
+True</string>
+    <string>12
+True</string>
+    <string>13
+True</string>
+    <string>14
+False</string>
+    <string>15
+False</string>
+    <string>16
+False</string>
+    <string>17
+False</string>
+    <string>18
+False</string>
+    <string>19
+False</string>
+    <string>20
+False</string>
+    <string>21
+False</string>
+    <string>22
+False</string>
+    <string>24
+True</string>
+    <string>26
+True</string>
+    <string>28
+True</string>
+    <string>30
+True</string>
+    <string>32
+False</string>
+    <string>34
+True</string>
+    <string>36
+True</string>
+    <string>38
+False</string>
+    <string>40
+False</string>
+    <string>42
+False</string>
+    <string>44
+True</string>
+    <string>46
+True</string>
+    <string>48
+True</string>
+    <string>50
+False</string>
+    <string>52
+False</string>
+    <string>54
+False</string>
+    <string>56
+True</string>
+    <string>58
+False</string>
+    <string>60
+True</string>
+    <string>62
+True</string>
+    <string>64
+True</string>
+    <string>66
+False</string>
+    <string>68
+False</string>
+    <string>70
+True</string>
+  </Colvisible>
+  <ReadOnlyFolderbool>0</ReadOnlyFolderbool>
+  <ReConnectClearFilter>-1</ReConnectClearFilter>
+  <MenuStyle>2</MenuStyle>
+  <MenuColor>2</MenuColor>
+  <MenuColor2>2</MenuColor2>
+  <FilterRulesList>
+    <CustomRule>
+      <name>SHAPE</name>
+      <type>true</type>
+      <RuleList>
+        <string>%SHAPE%	|@#$%|содержит	|@#$%|Швеллер</string>
+        <string>%SHAPE%	|@#$%|содержит	|@#$%|Двутавр</string>
+        <string>%SHAPE%	|@#$%|содержит	|@#$%|Лист</string>
+        <string>%SHAPE%	|@#$%|содержит	|@#$%|Круг</string>
+        <string>%SHAPE%	|@#$%|содержит	|@#$%|Труба</string>
+        <string>%SHAPE%	|@#$%|содержит	|@#$%|Уголок</string>
+        <string>%SHAPE%	|@#$%|содержит	|@#$%|Профиль</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>Масса</name>
+      <type>true</type>
+      <RuleList>
+        <string>%Обозначение%	|@#$%|не равно	|@#$%|0</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>Конфигурация</name>
+      <type>true</type>
+      <RuleList>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|01</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|02</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|03</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|04</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|05</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|06</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|07</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|08</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|09</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|10</string>
+        <string>&lt;Конфигурация&gt;	|@#$%|равно	|@#$%|11</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>Обозначение</name>
+      <type>true</type>
+      <RuleList>
+        <string>$Пром.обознач$	|@#$%|не равно	|@#$%|</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>SHAPE( empty)</name>
+      <type>false</type>
+      <RuleList>
+        <string>%SHAPE%	|@#$%|равно	|@#$%|</string>
+        <string>&lt;Материал&gt;	|@#$%|не равно	|@#$%|</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>Переименование (исключение стандартных)</name>
+      <type>true</type>
+      <RuleList>
+        <string>%Раздел%	|@#$%|равно	|@#$%|Детали</string>
+        <string>%Раздел%	|@#$%|равно	|@#$%|Сборочные единицы</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>Сохранение (исключение стандлартных)</name>
+      <type>true</type>
+      <RuleList>
+        <string>%Раздел%	|@#$%|содержит	|@#$%|Прочие изделия</string>
+        <string>%Раздел%	|@#$%|содержит	|@#$%|Стандартные изделия</string>
+      </RuleList>
+    </CustomRule>
+  </FilterRulesList>
+  <ReNameFilterRule>
+    <string>Переименование (исключение стандартных)</string>
+  </ReNameFilterRule>
+  <ExpandMaterialList>false</ExpandMaterialList>
+  <OutSaveFolder>D:\1\</OutSaveFolder>
+  <HideSw1>false</HideSw1>
+  <SaveToSWFilterRule>
+    <string>Сохранение (исключение стандлартных)</string>
+  </SaveToSWFilterRule>
+  <ExcludeLight>true</ExcludeLight>
+  <FrozenCol>4</FrozenCol>
+  <QuickAccessToolbarini>&lt;siq:customUI xmlns:siq="http://schemas.microsoft.com/windows/2009/ribbon/qat"&gt;&lt;siq:ribbon minimized="false"&gt;&lt;siq:qat position="0"&gt;&lt;siq:sharedControls&gt;&lt;siq:control idQ="siq:1034" visible="true" argument="0" /&gt;&lt;siq:control idQ="siq:1033" visible="true" argument="0" /&gt;&lt;/siq:sharedControls&gt;&lt;/siq:qat&gt;&lt;/siq:ribbon&gt;&lt;/siq:customUI&gt;</QuickAccessToolbarini>
+  <ExportToBomFilterRule />
+  <ExportToBom_ByFilter1>true</ExportToBom_ByFilter1>
+  <ExportToBom_ByFilter2>false</ExportToBom_ByFilter2>
+  <Replacereferencecfg>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton4
+True</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>Replacereference_SpecificFolder
+</string>
+    <string>ToSpecificFolder
+False</string>
+    <string>UnMoveto
+False</string>
+    <string>MovetoRecycle
+True</string>
+    <string>Replacereference_folderpath
+</string>
+    <string>Containssubfolders
+False</string>
+  </Replacereferencecfg>
+  <Marknodrw>false</Marknodrw>
+  <Excludebyruler>false</Excludebyruler>
+  <Previewfortool>true</Previewfortool>
+  <regexlist />
+  <regexlist_split />
+  <needfillcolumns>
+    <string>Обозначение
+6</string>
+    <string>Наименование
+7</string>
+  </needfillcolumns>
+  <SplitColumncfg>
+    <string>RadioButton1
+True</string>
+    <string>RadioButton2
+False</string>
+    <string>ComboBox2
+0</string>
+    <string>ComboBox1
+0</string>
+  </SplitColumncfg>
+  <RealTimeFilter>true</RealTimeFilter>
+  <PreviewMode>1</PreviewMode>
+  <ptp>0</ptp>
+  <ipt>8080</ipt>
+  <Thumbnail_Savetolocal>false</Thumbnail_Savetolocal>
+  <Thumbnail_position>0</Thumbnail_position>
+  <bomsettings>
+    <bomsetting>
+      <name>Экспорт сводной спецификации</name>
+      <bomname>D:\Development\ZTool\_vendor\ZTool-original\Шаблоны BOM\bom_template.xlsx</bomname>
+      <type>0</type>
+      <insertimagebool>true</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>250</image_width>
+      <image_height>188</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>true</marknodrw>
+      <autocolumnwidth>true</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>false</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>Экспорт иерархической спецификации</name>
+      <bomname>D:\Work\_Для пользователей\_Скрипты и макросы SW (Скопировать в корень диска С)\ZTool\Шаблоны BOM\bom_template.xlsx</bomname>
+      <type>0</type>
+      <insertimagebool>true</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>150</image_width>
+      <image_height>112</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>false</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>Экспорт спецификации верхнего уровня</name>
+      <bomname>D:\Work\_Для пользователей\_Скрипты и макросы SW (Скопировать в корень диска С)\ZTool\Шаблоны BOM\bom_template.xlsx</bomname>
+      <type>2</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+  </bomsettings>
+  <K3code />
+  <macrolist />
+  <checkupdata>true</checkupdata>
+  <IsCollpased>false</IsCollpased>
+  <Splitwidth>300</Splitwidth>
+  <copyswfilecfg>
+    <string>error_box
+</string>
+    <string>c_usefolder
+False</string>
+    <string>c_folder
+</string>
+    <string>c_othername
+.pdf;.dwg;.dxf</string>
+    <string>c_suffix
+</string>
+    <string>c_Includeother
+False</string>
+    <string>c_Includevirtual
+False</string>
+    <string>c_overwrite
+False</string>
+    <string>c_Include3d
+False</string>
+    <string>c_Includedrw
+True</string>
+    <string>c_addsuffix
+False</string>
+    <string>c_addprefix
+False</string>
+    <string>c_prefix
+</string>
+  </copyswfilecfg>
+  <namemappinglist>
+    <columnnamemapping>
+      <name>PropVal_0</name>
+      <name2>PropResolvedVal_0</name2>
+      <text>Пром.обознач</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_1</name>
+      <name2>PropResolvedVal_1</name2>
+      <text>Обозначение</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_2</name>
+      <name2>PropResolvedVal_2</name2>
+      <text>Наименование</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_3</name>
+      <name2>PropResolvedVal_3</name2>
+      <text>Наименование_ФБ</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_4</name>
+      <name2>PropResolvedVal_4</name2>
+      <text>Конструктор</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_5</name>
+      <name2>PropResolvedVal_5</name2>
+      <text>Формат</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_6</name>
+      <name2>PropResolvedVal_6</name2>
+      <text>Раздел</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_7</name>
+      <name2>PropResolvedVal_7</name2>
+      <text>Масса</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_8</name>
+      <name2>PropResolvedVal_8</name2>
+      <text>Материал</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_9</name>
+      <name2>PropResolvedVal_9</name2>
+      <text>SemanticMaterialLocation</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_10</name>
+      <name2>PropResolvedVal_10</name2>
+      <text>SemanticMaterialCaption</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_11</name>
+      <name2>PropResolvedVal_11</name2>
+      <text>SHAPE</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_12</name>
+      <name2>PropResolvedVal_12</name2>
+      <text>SORTAMENT</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_13</name>
+      <name2>PropResolvedVal_13</name2>
+      <text>MATERIAL</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_14</name>
+      <name2>PropResolvedVal_14</name2>
+      <text>SemanticMaterialPostfix</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_15</name>
+      <name2>PropResolvedVal_15</name2>
+      <text>Материал_Таблица</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_16</name>
+      <name2>PropResolvedVal_16</name2>
+      <text>Исполнение</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_17</name>
+      <name2>PropResolvedVal_17</name2>
+      <text>Контора</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_18</name>
+      <name2>PropResolvedVal_18</name2>
+      <text>Проект</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_19</name>
+      <name2>PropResolvedVal_19</name2>
+      <text>Масса_ФБ</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_20</name>
+      <name2>PropResolvedVal_20</name2>
+      <text>Масса_Таблица</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_21</name>
+      <name2>PropResolvedVal_21</name2>
+      <text>Материал_ФБ</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_22</name>
+      <name2>PropResolvedVal_22</name2>
+      <text>Конфигурация</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_23</name>
+      <name2>PropResolvedVal_23</name2>
+      <text>Габариты</text>
+      <mappingname />
+    </columnnamemapping>
+  </namemappinglist>
+  <usenpoi>false</usenpoi>
+  <customcolors>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+  </customcolors>
+  <frmsortcfg>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton4
+True</string>
+    <string>ComboBox2
+4</string>
+    <string>RadioButton1
+True</string>
+    <string>RadioButton2
+False</string>
+    <string>ComboBox1
+4</string>
+  </frmsortcfg>
+  <fillsettings>
+    <fillsetting>
+      <name>Материал_ФБ</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>SHAPE</string>
+      </RulesList>
+      <colindex>64</colindex>
+      <fillcontent>&lt;FONT size=1.8&gt; &lt;FONT size=3.5&gt;%SHAPE% &lt;STACK size=1&gt;%SORTAMENT%&lt;OVER&gt;%MATERIAL%&lt;/STACK&gt;</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Масса_ФБ</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>Масса</string>
+      </RulesList>
+      <colindex>60</colindex>
+      <fillcontent>&lt;FONT size=1&gt; 
+&lt;FONT size=3.5&gt;"SW-Mass"</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Назначени конфы</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>Конфигурация</string>
+      </RulesList>
+      <colindex>66</colindex>
+      <fillcontent>-&lt;Конфигурация&gt;</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Обозначение</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>Обозначение</string>
+      </RulesList>
+      <colindex>24</colindex>
+      <fillcontent>%Пром.обознач%%Конфигурация%</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Наименование_ФБ</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>Масса</string>
+      </RulesList>
+      <colindex>28</colindex>
+      <fillcontent>&lt;FONT size=4&gt; 
+&lt;FONT size=5&gt; %Наименование%</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Материал_ФБ(2)</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>SHAPE( empty)</string>
+      </RulesList>
+      <colindex>64</colindex>
+      <fillcontent>&lt;FONT size=1.8&gt; &lt;FONT size=3.5&gt;&lt;Материал&gt;</fillcontent>
+    </fillsetting>
+  </fillsettings>
+  <tfont>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5Gb250BAAAAAROYW1lBFNpemUFU3R5bGUEVW5pdAEABAQLGFN5c3RlbS5EcmF3aW5nLkZvbnRTdHlsZQIAAAAbU3lzdGVtLkRyYXdpbmcuR3JhcGhpY3NVbml0AgAAAAIAAAAGAwAAAA9NaWNyb3NvZnQgWWFIZWkAABBBBfz///8YU3lzdGVtLkRyYXdpbmcuRm9udFN0eWxlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAX7////G1N5c3RlbS5EcmF3aW5nLkdyYXBoaWNzVW5pdAEAAAAHdmFsdWVfXwAIAgAAAAMAAAALAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</tfont>
+  <tcolor>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Db2xvcgQAAAAEbmFtZQV2YWx1ZQprbm93bkNvbG9yBXN0YXRlAQAAAAkHBwIAAAAKAAAAAAAAAAAjAAEACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</tcolor>
+  <itemlist />
+  <filterindex>0</filterindex>
+  <viewtype>0</viewtype>
+  <mainformsize>
+    <Width>873</Width>
+    <Height>621</Height>
+  </mainformsize>
+  <mainformLocation>
+    <X>40</X>
+    <Y>80</Y>
+  </mainformLocation>
+  <mainformWindowState>2</mainformWindowState>
+  <usematerialcolor>true</usematerialcolor>
+  <markrepeat>-1</markrepeat>
+  <fillcolumncfg>
+    <string>ComboBox4
+22</string>
+    <string>ComboBox3
+19</string>
+    <string>rcolnumer2
+2</string>
+    <string>rcolnumer1
+1</string>
+    <string>srownumer
+2</string>
+    <string>datasource
+C:\Users\Vladimir\Desktop\1100.00.000 Ёмкость для гидры-20240420.xls</string>
+  </fillcolumncfg>
+  <relatedfilldata>AAEAAAD/////AQAAAAAAAAAMAgAAAE5TeXN0ZW0uRGF0YSwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABVTeXN0ZW0uRGF0YS5EYXRhVGFibGUDAAAAGURhdGFUYWJsZS5SZW1vdGluZ1ZlcnNpb24JWG1sU2NoZW1hC1htbERpZmZHcmFtAwEBDlN5c3RlbS5WZXJzaW9uAgAAAAkDAAAABgQAAADmBjw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9InV0Zi0xNiI/Pg0KPHhzOnNjaGVtYSB4bWxucz0iIiB4bWxuczp4cz0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOm1zZGF0YT0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTp4bWwtbXNkYXRhIj4NCiAgPHhzOmVsZW1lbnQgbmFtZT0iVGFibGUxIj4NCiAgICA8eHM6Y29tcGxleFR5cGU+DQogICAgICA8eHM6c2VxdWVuY2U+DQogICAgICAgIDx4czplbGVtZW50IG5hbWU9ItCe0LHQvtC30L3QsNGH0LXQvdC40LUiIHR5cGU9InhzOnN0cmluZyIgbXNkYXRhOnRhcmdldE5hbWVzcGFjZT0iIiBtaW5PY2N1cnM9IjAiIC8+DQogICAgICAgIDx4czplbGVtZW50IG5hbWU9ItCa0L7QvdGB0YLRgNGD0LrRgtC+0YAiIHR5cGU9InhzOnN0cmluZyIgbXNkYXRhOnRhcmdldE5hbWVzcGFjZT0iIiBtaW5PY2N1cnM9IjAiIC8+DQogICAgICAgIDx4czplbGVtZW50IG5hbWU9ItCc0LDRgdGB0LBf0KTQkSIgdHlwZT0ieHM6c3RyaW5nIiBtc2RhdGE6dGFyZ2V0TmFtZXNwYWNlPSIiIG1pbk9jY3Vycz0iMCIgLz4NCiAgICAgIDwveHM6c2VxdWVuY2U+DQogICAgPC94czpjb21wbGV4VHlwZT4NCiAgPC94czplbGVtZW50Pg0KICA8eHM6ZWxlbWVudCBuYW1lPSJ0bXBEYXRhU2V0IiBtc2RhdGE6SXNEYXRhU2V0PSJ0cnVlIiBtc2RhdGE6TWFpbkRhdGFUYWJsZT0iVGFibGUxIiBtc2RhdGE6VXNlQ3VycmVudExvY2FsZT0idHJ1ZSI+DQogICAgPHhzOmNvbXBsZXhUeXBlPg0KICAgICAgPHhzOmNob2ljZSBtaW5PY2N1cnM9IjAiIG1heE9jY3Vycz0idW5ib3VuZGVkIiAvPg0KICAgIDwveHM6Y29tcGxleFR5cGU+DQogIDwveHM6ZWxlbWVudD4NCjwveHM6c2NoZW1hPgYFAAAA6AM8ZGlmZmdyOmRpZmZncmFtIHhtbG5zOm1zZGF0YT0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTp4bWwtbXNkYXRhIiB4bWxuczpkaWZmZ3I9InVybjpzY2hlbWFzLW1pY3Jvc29mdC1jb206eG1sLWRpZmZncmFtLXYxIj4NCiAgPHRtcERhdGFTZXQ+DQogICAgPFRhYmxlMSBkaWZmZ3I6aWQ9IlRhYmxlMTEiIG1zZGF0YTpyb3dPcmRlcj0iMCIgZGlmZmdyOmhhc0NoYW5nZXM9Imluc2VydGVkIj4NCiAgICAgIDzQntCx0L7Qt9C90LDRh9C10L3QuNC1PjM8L9Ce0LHQvtC30L3QsNGH0LXQvdC40LU+DQogICAgICA80JrQvtC90YHRgtGA0YPQutGC0L7RgD4zPC/QmtC+0L3RgdGC0YDRg9C60YLQvtGAPg0KICAgICAgPNCc0LDRgdGB0LBf0KTQkT4mbHQ7Rk9OVCBzaXplPTEmZ3Q7IA0KJmx0O0ZPTlQgc2l6ZT0zLjUmZ3Q7IlNXLU1hc3MiPC/QnNCw0YHRgdCwX9Ck0JE+DQogICAgPC9UYWJsZTE+DQogIDwvdG1wRGF0YVNldD4NCjwvZGlmZmdyOmRpZmZncmFtPgQDAAAADlN5c3RlbS5WZXJzaW9uBAAAAAZfTWFqb3IGX01pbm9yBl9CdWlsZAlfUmV2aXNpb24AAAAACAgICAIAAAAAAAAA//////////8L</relatedfilldata>
+  <columnInfolist>
+    <ColumnInfo>
+      <index>0</index>
+      <DisplayIndex>0</DisplayIndex>
+      <Width>53</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>1</index>
+      <DisplayIndex>1</DisplayIndex>
+      <Width>40</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>2</index>
+      <DisplayIndex>2</DisplayIndex>
+      <Width>44</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>3</index>
+      <DisplayIndex>3</DisplayIndex>
+      <Width>44</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>4</index>
+      <DisplayIndex>4</DisplayIndex>
+      <Width>90</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>5</index>
+      <DisplayIndex>5</DisplayIndex>
+      <Width>170</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>6</index>
+      <DisplayIndex>7</DisplayIndex>
+      <Width>486</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>7</index>
+      <DisplayIndex>61</DisplayIndex>
+      <Width>443</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>8</index>
+      <DisplayIndex>69</DisplayIndex>
+      <Width>382</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>9</index>
+      <DisplayIndex>63</DisplayIndex>
+      <Width>106</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>10</index>
+      <DisplayIndex>6</DisplayIndex>
+      <Width>470</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>11</index>
+      <DisplayIndex>62</DisplayIndex>
+      <Width>287</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>12</index>
+      <DisplayIndex>11</DisplayIndex>
+      <Width>98</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>13</index>
+      <DisplayIndex>12</DisplayIndex>
+      <Width>148</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>14</index>
+      <DisplayIndex>8</DisplayIndex>
+      <Width>148</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>15</index>
+      <DisplayIndex>64</DisplayIndex>
+      <Width>125</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>16</index>
+      <DisplayIndex>71</DisplayIndex>
+      <Width>121</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>17</index>
+      <DisplayIndex>65</DisplayIndex>
+      <Width>196</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>18</index>
+      <DisplayIndex>66</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>19</index>
+      <DisplayIndex>70</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>20</index>
+      <DisplayIndex>67</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>21</index>
+      <DisplayIndex>9</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>22</index>
+      <DisplayIndex>10</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>23</index>
+      <DisplayIndex>14</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>24</index>
+      <DisplayIndex>15</DisplayIndex>
+      <Width>183</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>25</index>
+      <DisplayIndex>16</DisplayIndex>
+      <Width>183</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>26</index>
+      <DisplayIndex>17</DisplayIndex>
+      <Width>212</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>27</index>
+      <DisplayIndex>20</DisplayIndex>
+      <Width>212</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>28</index>
+      <DisplayIndex>21</DisplayIndex>
+      <Width>275</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>29</index>
+      <DisplayIndex>22</DisplayIndex>
+      <Width>275</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>30</index>
+      <DisplayIndex>23</DisplayIndex>
+      <Width>100</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>31</index>
+      <DisplayIndex>24</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>32</index>
+      <DisplayIndex>26</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>33</index>
+      <DisplayIndex>27</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>34</index>
+      <DisplayIndex>13</DisplayIndex>
+      <Width>398</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>35</index>
+      <DisplayIndex>28</DisplayIndex>
+      <Width>398</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>36</index>
+      <DisplayIndex>29</DisplayIndex>
+      <Width>100</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>37</index>
+      <DisplayIndex>30</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>38</index>
+      <DisplayIndex>31</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>39</index>
+      <DisplayIndex>32</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>40</index>
+      <DisplayIndex>33</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>41</index>
+      <DisplayIndex>34</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>42</index>
+      <DisplayIndex>35</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>43</index>
+      <DisplayIndex>37</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>44</index>
+      <DisplayIndex>36</DisplayIndex>
+      <Width>100</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>45</index>
+      <DisplayIndex>38</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>46</index>
+      <DisplayIndex>18</DisplayIndex>
+      <Width>213</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>47</index>
+      <DisplayIndex>39</DisplayIndex>
+      <Width>213</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>48</index>
+      <DisplayIndex>19</DisplayIndex>
+      <Width>100</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>49</index>
+      <DisplayIndex>40</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>50</index>
+      <DisplayIndex>41</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>51</index>
+      <DisplayIndex>42</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>52</index>
+      <DisplayIndex>43</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>53</index>
+      <DisplayIndex>44</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>54</index>
+      <DisplayIndex>45</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>55</index>
+      <DisplayIndex>46</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>56</index>
+      <DisplayIndex>25</DisplayIndex>
+      <Width>100</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>57</index>
+      <DisplayIndex>47</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>58</index>
+      <DisplayIndex>48</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>59</index>
+      <DisplayIndex>49</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>60</index>
+      <DisplayIndex>50</DisplayIndex>
+      <Width>100</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>61</index>
+      <DisplayIndex>51</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>62</index>
+      <DisplayIndex>52</DisplayIndex>
+      <Width>100</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>63</index>
+      <DisplayIndex>53</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>64</index>
+      <DisplayIndex>54</DisplayIndex>
+      <Width>100</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>65</index>
+      <DisplayIndex>55</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>66</index>
+      <DisplayIndex>56</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>67</index>
+      <DisplayIndex>57</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>68</index>
+      <DisplayIndex>58</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>69</index>
+      <DisplayIndex>59</DisplayIndex>
+      <Width>100</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>70</index>
+      <DisplayIndex>60</DisplayIndex>
+      <Width>282</Width>
+      <Visible>true</Visible>
+    </ColumnInfo>
+    <ColumnInfo>
+      <index>71</index>
+      <DisplayIndex>68</DisplayIndex>
+      <Width>282</Width>
+      <Visible>false</Visible>
+    </ColumnInfo>
+  </columnInfolist>
+</CConfigDO>

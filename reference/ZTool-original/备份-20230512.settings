@@ -1,0 +1,1804 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CConfigDO xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SWver>8</SWver>
+  <materialpath>C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang\russian\sldmaterials\solidworks materials.sldmat</materialpath>
+  <rowcolor>66</rowcolor>
+  <colorselrow>false</colorselrow>
+  <propname>
+    <string>设计</string>
+    <string>零件名称</string>
+    <string>图号</string>
+    <string>材料</string>
+    <string>类型</string>
+    <string>版本</string>
+    <string>数量</string>
+    <string>表面处理</string>
+    <string>设计日期</string>
+    <string>重量</string>
+    <string>Обозначение</string>
+    <string>Наименование</string>
+    <string>Наименование_ФБ</string>
+    <string>Обозначение2</string>
+    <string>Наименование2</string>
+    <string>Конструктор</string>
+    <string>Сборка</string>
+    <string>Классификатор</string>
+    <string>Формат</string>
+    <string>Раздел</string>
+    <string>Масса</string>
+    <string>Материал</string>
+    <string>Типоразмер</string>
+    <string>Заготовка</string>
+    <string>Перв_Примен</string>
+    <string>Вид_документа</string>
+    <string>Код_документа</string>
+    <string>п_Разраб</string>
+    <string>п_Разраб_Дата</string>
+    <string>п_Пров</string>
+    <string>п_Пров_Дата</string>
+    <string>п_Т_контр</string>
+    <string>п_Т_контр_Дата</string>
+    <string>п_Доп_графа</string>
+    <string>п_Доп_графа_Дата</string>
+    <string>п_Н_контр</string>
+    <string>п_Н_контр_Дата</string>
+    <string>п_Утв</string>
+    <string>п_Утв_Дата</string>
+    <string>а_Инв_№_подл</string>
+    <string>а_п_Инв_№_подл</string>
+    <string>а_п_Инв_№_подл_Дата</string>
+    <string>а_Взам_Инв_№</string>
+    <string>а_Инв_№_дубл</string>
+    <string>а_п_Инв_№_дубл</string>
+    <string>а_п_Инв_№_дубл_Дата</string>
+    <string>а_Справ_№</string>
+    <string>Лит</string>
+    <string>Процент_завершения</string>
+    <string>SemanticMaterialLocation</string>
+    <string>SemanticMaterialCaption</string>
+    <string>SHAPE</string>
+    <string>SORTAMENT</string>
+    <string>MATERIAL</string>
+    <string>SemanticMaterialPostfix</string>
+    <string>Материал_Таблица</string>
+    <string>assort_name</string>
+    <string>tech_specs</string>
+    <string>Исполнение</string>
+    <string>Код_ФБ</string>
+    <string>Формат_ФБ</string>
+    <string>Единицы</string>
+    <string>Литера_ФБ</string>
+    <string>Литера_Таблица</string>
+    <string>Контора</string>
+    <string>Проект</string>
+    <string>Применение2</string>
+    <string>Справочный_номер</string>
+    <string>Плотность_ФБ</string>
+    <string>Масса_ФБ</string>
+    <string>Масса_Таблица</string>
+    <string>Материал_ФБ</string>
+    <string>Сборка1_ФБ</string>
+    <string>Сборка2_ФБ</string>
+    <string>Проверил</string>
+    <string>Техконтроль</string>
+    <string>Начальник</string>
+    <string>Нормоконтроль</string>
+    <string>Утвердил</string>
+    <string>Характер_работы</string>
+    <string>Вложенность обознач</string>
+    <string>Конфигурация</string>
+    <string>Пром.обознач</string>
+  </propname>
+  <rowheight>35</rowheight>
+  <proptype>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>数字</string>
+    <string>文字</string>
+    <string>日期</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+  </proptype>
+  <outcfg>
+    <string>Out_overwrite
+True</string>
+    <string>folder
+D:\1</string>
+    <string>Thisfolder
+False</string>
+    <string>Originalfolder
+True</string>
+    <string>add_suffix
+True</string>
+    <string>add_Prefix
+True</string>
+    <string>withoutcfgname
+True</string>
+    <string>name_suffix
+$Конструктор$</string>
+    <string>name_Prefix
+$Обозначение$</string>
+    <string>OUT_DetachedDraw
+False</string>
+    <string>OUT_PDF
+True</string>
+    <string>OUT_DXF
+True</string>
+    <string>CheckBox6
+False</string>
+    <string>OUT_JPG
+False</string>
+    <string>OUT_DWG
+False</string>
+    <string>OUT_PNG
+False</string>
+    <string>CheckBox4
+False</string>
+    <string>CheckBox3
+False</string>
+    <string>CheckBox2
+False</string>
+    <string>CheckBox1
+False</string>
+    <string>OUT_IGS
+False</string>
+    <string>CheckBox5
+False</string>
+    <string>OUT_STEP
+True</string>
+    <string>OUT_3DPDF
+False</string>
+    <string>CheckBox7
+False</string>
+    <string>OUT_JPG2
+False</string>
+    <string>OUT_PNG2
+False</string>
+    <string>exclude_AsWelded
+False</string>
+    <string>exclude_AsMachined
+False</string>
+    <string>exclude_SpeedPak
+True</string>
+    <string>exclude_IsDerived
+False</string>
+    <string>exclude_SheetMetal
+True</string>
+    <string>ExportAllSheetsToPaperSpace
+True</string>
+    <string>Multiplesheet_dwg
+1</string>
+    <string>outputscale
+True</string>
+    <string>CADline
+1</string>
+    <string>CADfont
+0</string>
+    <string>CADVer
+5</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>Image_dpi
+6</string>
+    <string>ImageType
+1</string>
+    <string>Multiplesheet_pdf
+0</string>
+    <string>PDFline
+True</string>
+    <string>PDFfont
+True</string>
+    <string>PDFcolor
+True</string>
+    <string>img_postion
+0</string>
+    <string>img_y
+65</string>
+    <string>img_x
+15</string>
+    <string>img_angle
+0</string>
+    <string>img_path
+</string>
+    <string>img_transparency
+50</string>
+    <string>add_waterimg
+False</string>
+    <string>text_postion
+0</string>
+    <string>text_y
+65</string>
+    <string>text_x
+15</string>
+    <string>watertext
+</string>
+    <string>add_watertext
+False</string>
+    <string>SetScalebyfirstview
+False</string>
+    <string>forcurcfg
+False</string>
+    <string>HideSw1
+False</string>
+  </outcfg>
+  <printcfg />
+  <Unitset>
+    <string>Motion_Energy_Decimal
+2</string>
+    <string>Motion_Power_Decimal
+2</string>
+    <string>Motion_Force_Decimal
+2</string>
+    <string>Motion_Time_Decimal
+2</string>
+    <string>Motion_Energy
+0</string>
+    <string>Motion_Power
+0</string>
+    <string>Motion_Force
+2</string>
+    <string>Motion_Time
+0</string>
+    <string>Mass_Decimals
+1</string>
+    <string>Mass_Volume
+3</string>
+    <string>Mass_Mass
+2</string>
+    <string>Mass_Length
+3</string>
+    <string>Basic_Angle_Decimals
+2</string>
+    <string>Basic_DualDimension_Decimals
+2</string>
+    <string>Basic_Length_Decimals
+2</string>
+    <string>Basic_Angle
+0</string>
+    <string>Basic_DualDimension
+3</string>
+    <string>Basic_Length
+3</string>
+    <string>Unit_Custom
+False</string>
+    <string>Unit_IPS
+False</string>
+    <string>Unit_MMGS
+False</string>
+    <string>Unit_CGS
+False</string>
+    <string>Unit_MMKS
+True</string>
+    <string>Unit_MKS
+False</string>
+  </Unitset>
+  <ReadOnlyFolder />
+  <Preview_Hotkey>
+    <string>18</string>
+    <string>90</string>
+  </Preview_Hotkey>
+  <bompath />
+  <image_size>
+    <Width>64</Width>
+    <Height>48</Height>
+  </image_size>
+  <image_lockratio>true</image_lockratio>
+  <insertimagebool>0</insertimagebool>
+  <GetAllconfigsbool>0</GetAllconfigsbool>
+  <ExcludePropList />
+  <ExcludePropbool>0</ExcludePropbool>
+  <FrmPreviewLocation>
+    <X>0</X>
+    <Y>0</Y>
+  </FrmPreviewLocation>
+  <DClick_OpenInSw>false</DClick_OpenInSw>
+  <RowFollowdisplay>true</RowFollowdisplay>
+  <DefaultDrw>true</DefaultDrw>
+  <ReNameRule>УГ1-9.00.03.{001} %Наименование%</ReNameRule>
+  <Excludevirtual>true</Excludevirtual>
+  <togetherConfig>false</togetherConfig>
+  <GetDataOption>0</GetDataOption>
+  <propshow>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+  </propshow>
+  <Dropdownlist>
+    <string>Контора
+ООО "НГС"
+BSL-Lab</string>
+    <string>Раздел
+Сборочные единицы
+Детали
+Стандартные изделия
+Прочие изделия
+Материалы</string>
+    <string>Наименование_ФБ
+&lt;FONT size=4&gt; &lt;FONT size=5&gt;%Наименование%</string>
+    <string>Материал_ФБ
+&lt;FONT size=1.8&gt; &lt;FONT size=3.5&gt;%SHAPE% &lt;STACK size=1&gt;%SORTAMENT%&lt;OVER&gt;%MATERIAL%&lt;/STACK&gt;</string>
+    <string>п_Разраб
+Лунин В.И.</string>
+    <string>Сборка
+</string>
+    <string>Конструктор
+Лунин В.И.</string>
+    <string>Масса_ФБ
+&lt;FONT size=1&gt; &lt;FONT size=3.5&gt;"SW-Mass"</string>
+    <string>Масса_Таблица
+</string>
+    <string>零件名称
+</string>
+    <string>Материал_Таблица
+&lt;FONT size=1.8&gt; &lt;FONT size=3.5&gt;%SHAPE%&lt;STACK size=1&gt;%SORTAMENT%&lt;OVER&gt;%MATERIAL%&lt;/STACK&gt;</string>
+    <string>Сборка1_ФБ
+</string>
+    <string>SemanticMaterialPostfix
+</string>
+    <string>Плотность_ФБ
+</string>
+  </Dropdownlist>
+  <savetoswcfg>
+    <string>TextBox1
+D:\Work\_Проекты\1. УН1-2250\1-УН-2250.1.00.00.000 Насос ГРП</string>
+    <string>CheckBox8
+True</string>
+    <string>CheckBox6
+True</string>
+    <string>LinkLabel1
+D:\</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>CheckBox7
+True</string>
+    <string>CheckBox4
+True</string>
+    <string>ComboBox4
+0</string>
+    <string>CheckBox10
+True</string>
+    <string>CheckBox3
+True</string>
+    <string>CheckBox2
+False</string>
+    <string>CheckBox9
+False</string>
+    <string>CheckBox1
+True</string>
+    <string>ComboBox2
+0</string>
+    <string>ComboBox3
+0</string>
+    <string>ComboBox1
+3</string>
+  </savetoswcfg>
+  <bomsubfolder>false</bomsubfolder>
+  <ColIndex>
+    <string>0
+0</string>
+    <string>1
+1</string>
+    <string>2
+2</string>
+    <string>3
+3</string>
+    <string>4
+4</string>
+    <string>5
+5</string>
+    <string>6
+6</string>
+    <string>7
+7</string>
+    <string>8
+28</string>
+    <string>9
+29</string>
+    <string>10
+30</string>
+    <string>11
+31</string>
+    <string>12
+32</string>
+    <string>13
+33</string>
+    <string>14
+35</string>
+    <string>15
+37</string>
+    <string>16
+38</string>
+    <string>17
+76</string>
+    <string>18
+77</string>
+    <string>19
+39</string>
+    <string>20
+41</string>
+    <string>21
+8</string>
+    <string>22
+9</string>
+    <string>23
+10</string>
+    <string>24
+11</string>
+    <string>25
+12</string>
+    <string>26
+13</string>
+    <string>27
+14</string>
+    <string>28
+15</string>
+    <string>29
+16</string>
+    <string>30
+17</string>
+    <string>31
+18</string>
+    <string>32
+19</string>
+    <string>33
+20</string>
+    <string>34
+21</string>
+    <string>35
+22</string>
+    <string>36
+23</string>
+    <string>37
+24</string>
+    <string>38
+25</string>
+    <string>39
+26</string>
+    <string>40
+27</string>
+    <string>41
+40</string>
+    <string>42
+42</string>
+    <string>43
+43</string>
+    <string>44
+44</string>
+    <string>45
+45</string>
+    <string>46
+46</string>
+    <string>47
+47</string>
+    <string>48
+48</string>
+    <string>49
+49</string>
+    <string>50
+50</string>
+    <string>51
+51</string>
+    <string>52
+52</string>
+    <string>53
+53</string>
+    <string>54
+54</string>
+    <string>55
+55</string>
+    <string>56
+56</string>
+    <string>57
+57</string>
+    <string>58
+59</string>
+    <string>59
+36</string>
+    <string>60
+60</string>
+    <string>61
+61</string>
+    <string>62
+62</string>
+    <string>63
+63</string>
+    <string>64
+64</string>
+    <string>65
+65</string>
+    <string>66
+66</string>
+    <string>67
+67</string>
+    <string>68
+68</string>
+    <string>69
+69</string>
+    <string>70
+70</string>
+    <string>71
+71</string>
+    <string>72
+72</string>
+    <string>73
+73</string>
+    <string>74
+74</string>
+    <string>75
+75</string>
+    <string>76
+79</string>
+    <string>77
+78</string>
+    <string>78
+80</string>
+    <string>79
+81</string>
+    <string>80
+82</string>
+    <string>81
+83</string>
+    <string>82
+84</string>
+    <string>83
+85</string>
+    <string>84
+87</string>
+    <string>85
+88</string>
+    <string>86
+89</string>
+    <string>87
+90</string>
+    <string>88
+91</string>
+    <string>89
+92</string>
+    <string>90
+93</string>
+    <string>91
+94</string>
+    <string>92
+95</string>
+    <string>93
+96</string>
+    <string>94
+97</string>
+    <string>95
+98</string>
+    <string>96
+99</string>
+    <string>97
+100</string>
+    <string>98
+101</string>
+    <string>99
+102</string>
+    <string>100
+103</string>
+    <string>101
+104</string>
+    <string>102
+105</string>
+    <string>103
+106</string>
+    <string>104
+107</string>
+    <string>105
+108</string>
+    <string>106
+109</string>
+    <string>107
+110</string>
+    <string>108
+111</string>
+    <string>109
+112</string>
+    <string>110
+113</string>
+    <string>111
+114</string>
+    <string>112
+115</string>
+    <string>113
+116</string>
+    <string>114
+117</string>
+    <string>115
+118</string>
+    <string>116
+119</string>
+    <string>117
+120</string>
+    <string>118
+121</string>
+    <string>119
+122</string>
+    <string>120
+123</string>
+    <string>121
+124</string>
+    <string>122
+125</string>
+    <string>123
+126</string>
+    <string>124
+127</string>
+    <string>125
+128</string>
+    <string>126
+129</string>
+    <string>127
+130</string>
+    <string>128
+131</string>
+    <string>129
+132</string>
+    <string>130
+133</string>
+    <string>131
+134</string>
+    <string>132
+135</string>
+    <string>133
+86</string>
+    <string>134
+136</string>
+    <string>135
+137</string>
+    <string>136
+138</string>
+    <string>137
+139</string>
+    <string>138
+140</string>
+    <string>139
+141</string>
+    <string>140
+142</string>
+    <string>141
+143</string>
+    <string>142
+144</string>
+    <string>143
+145</string>
+    <string>144
+146</string>
+    <string>145
+147</string>
+    <string>146
+148</string>
+    <string>147
+149</string>
+    <string>148
+150</string>
+    <string>149
+151</string>
+    <string>150
+152</string>
+    <string>151
+153</string>
+    <string>152
+154</string>
+    <string>153
+155</string>
+    <string>154
+156</string>
+    <string>155
+157</string>
+    <string>156
+158</string>
+    <string>157
+159</string>
+    <string>158
+160</string>
+    <string>159
+161</string>
+    <string>160
+162</string>
+    <string>161
+163</string>
+    <string>162
+164</string>
+    <string>163
+165</string>
+    <string>164
+166</string>
+    <string>165
+167</string>
+    <string>166
+168</string>
+    <string>167
+169</string>
+    <string>168
+170</string>
+    <string>169
+171</string>
+    <string>170
+172</string>
+    <string>171
+173</string>
+    <string>172
+174</string>
+    <string>173
+175</string>
+    <string>174
+176</string>
+    <string>175
+177</string>
+    <string>176
+178</string>
+    <string>177
+179</string>
+    <string>178
+180</string>
+    <string>179
+181</string>
+    <string>180
+182</string>
+    <string>181
+183</string>
+    <string>182
+184</string>
+    <string>183
+58</string>
+    <string>184
+185</string>
+    <string>185
+34</string>
+    <string>186
+186</string>
+  </ColIndex>
+  <ColWidth>
+    <string>5
+283</string>
+    <string>6
+239</string>
+    <string>7
+262</string>
+    <string>8
+154</string>
+    <string>9
+510</string>
+    <string>10
+148</string>
+    <string>11
+221</string>
+    <string>12
+111</string>
+    <string>13
+74</string>
+    <string>14
+148</string>
+    <string>15
+125</string>
+    <string>16
+121</string>
+    <string>17
+100</string>
+    <string>18
+100</string>
+    <string>19
+100</string>
+    <string>20
+100</string>
+    <string>21
+100</string>
+    <string>22
+100</string>
+    <string>23
+100</string>
+    <string>24
+100</string>
+    <string>25
+100</string>
+    <string>26
+100</string>
+    <string>27
+100</string>
+    <string>28
+100</string>
+    <string>29
+100</string>
+    <string>30
+100</string>
+    <string>31
+100</string>
+    <string>32
+100</string>
+    <string>33
+100</string>
+    <string>34
+100</string>
+    <string>35
+100</string>
+    <string>36
+100</string>
+    <string>37
+100</string>
+    <string>38
+100</string>
+    <string>39
+100</string>
+    <string>40
+100</string>
+    <string>41
+189</string>
+    <string>42
+189</string>
+    <string>43
+176</string>
+    <string>44
+176</string>
+    <string>45
+307</string>
+    <string>46
+307</string>
+    <string>47
+100</string>
+    <string>48
+100</string>
+    <string>49
+100</string>
+    <string>50
+100</string>
+    <string>51
+100</string>
+    <string>52
+100</string>
+    <string>53
+100</string>
+    <string>54
+100</string>
+    <string>55
+100</string>
+    <string>56
+100</string>
+    <string>57
+100</string>
+    <string>58
+100</string>
+    <string>59
+157</string>
+    <string>60
+157</string>
+    <string>61
+199</string>
+    <string>62
+199</string>
+    <string>63
+100</string>
+    <string>64
+100</string>
+    <string>65
+100</string>
+    <string>66
+100</string>
+    <string>67
+100</string>
+    <string>68
+100</string>
+    <string>69
+100</string>
+    <string>70
+100</string>
+    <string>71
+100</string>
+    <string>72
+100</string>
+    <string>73
+100</string>
+    <string>74
+100</string>
+    <string>75
+100</string>
+    <string>76
+100</string>
+    <string>77
+100</string>
+    <string>78
+100</string>
+    <string>79
+100</string>
+    <string>80
+100</string>
+    <string>81
+100</string>
+    <string>82
+100</string>
+    <string>83
+100</string>
+    <string>84
+100</string>
+    <string>85
+100</string>
+    <string>86
+100</string>
+    <string>87
+100</string>
+    <string>88
+100</string>
+    <string>89
+100</string>
+    <string>90
+100</string>
+    <string>91
+100</string>
+    <string>92
+100</string>
+    <string>93
+100</string>
+    <string>94
+100</string>
+    <string>95
+100</string>
+    <string>96
+100</string>
+    <string>97
+100</string>
+    <string>98
+100</string>
+    <string>99
+100</string>
+    <string>100
+100</string>
+    <string>101
+100</string>
+    <string>102
+100</string>
+    <string>103
+100</string>
+    <string>104
+100</string>
+    <string>105
+100</string>
+    <string>106
+100</string>
+    <string>107
+100</string>
+    <string>108
+100</string>
+    <string>109
+100</string>
+    <string>110
+100</string>
+    <string>111
+100</string>
+    <string>112
+100</string>
+    <string>113
+100</string>
+    <string>114
+100</string>
+    <string>115
+100</string>
+    <string>116
+100</string>
+    <string>117
+100</string>
+    <string>118
+100</string>
+    <string>119
+100</string>
+    <string>120
+100</string>
+    <string>121
+100</string>
+    <string>122
+100</string>
+    <string>123
+100</string>
+    <string>124
+100</string>
+    <string>125
+100</string>
+    <string>126
+100</string>
+    <string>127
+100</string>
+    <string>128
+100</string>
+    <string>129
+100</string>
+    <string>130
+100</string>
+    <string>131
+100</string>
+    <string>132
+100</string>
+    <string>133
+100</string>
+    <string>134
+100</string>
+    <string>135
+100</string>
+    <string>136
+100</string>
+    <string>137
+100</string>
+    <string>138
+100</string>
+    <string>139
+100</string>
+    <string>140
+100</string>
+    <string>141
+100</string>
+    <string>142
+100</string>
+    <string>143
+100</string>
+    <string>144
+100</string>
+    <string>145
+100</string>
+    <string>146
+100</string>
+    <string>147
+100</string>
+    <string>148
+100</string>
+    <string>149
+100</string>
+    <string>150
+100</string>
+    <string>151
+100</string>
+    <string>152
+100</string>
+    <string>153
+100</string>
+    <string>154
+100</string>
+    <string>155
+100</string>
+    <string>156
+100</string>
+    <string>157
+100</string>
+    <string>158
+100</string>
+    <string>159
+100</string>
+    <string>160
+100</string>
+    <string>161
+100</string>
+    <string>162
+100</string>
+    <string>163
+100</string>
+    <string>164
+100</string>
+    <string>165
+100</string>
+    <string>166
+100</string>
+    <string>167
+100</string>
+    <string>168
+100</string>
+    <string>169
+100</string>
+    <string>170
+100</string>
+    <string>171
+100</string>
+    <string>172
+100</string>
+    <string>173
+100</string>
+    <string>174
+100</string>
+    <string>175
+100</string>
+    <string>176
+100</string>
+    <string>177
+100</string>
+    <string>178
+100</string>
+    <string>179
+100</string>
+    <string>180
+100</string>
+    <string>181
+100</string>
+    <string>182
+100</string>
+    <string>183
+100</string>
+    <string>184
+100</string>
+    <string>185
+166</string>
+    <string>186
+166</string>
+  </ColWidth>
+  <SetDrwCfg>
+    <string>TextBox1
+C:\SWPlusMacro_v_2018_SP0.0\SpecEditor\MyStandard.sldstd</string>
+    <string>CheckBox1
+True</string>
+    <string>TextBox2
+C:\SWPlusMacro_v_2018_SP0.0\Основные надписи</string>
+    <string>CheckBox2
+True</string>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton4
+False</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>CheckBox4
+False</string>
+    <string>CheckBox3
+False</string>
+  </SetDrwCfg>
+  <DrawPaperA0 />
+  <DrawPaperA1 />
+  <DrawPaperA2 />
+  <DrawPaperA3>A3-A-1.slddrt</DrawPaperA3>
+  <DrawPaperA4V>A4-P-2.slddrt</DrawPaperA4V>
+  <DrawPaperA4H>A4-P-1.slddrt</DrawPaperA4H>
+  <DrawPaperOther />
+  <BomByVal>true</BomByVal>
+  <ReNameByFilter>true</ReNameByFilter>
+  <ReNameByRule>true</ReNameByRule>
+  <ReNameFilterarr />
+  <Colvisible>
+    <string>0
+False</string>
+    <string>1
+False</string>
+    <string>2
+True</string>
+    <string>3
+True</string>
+    <string>4
+True</string>
+    <string>5
+True</string>
+    <string>6
+False</string>
+    <string>7
+True</string>
+    <string>8
+False</string>
+    <string>9
+False</string>
+    <string>10
+True</string>
+    <string>11
+True</string>
+    <string>12
+True</string>
+    <string>13
+True</string>
+    <string>14
+False</string>
+    <string>15
+False</string>
+    <string>16
+False</string>
+    <string>17
+False</string>
+    <string>18
+False</string>
+    <string>19
+False</string>
+    <string>20
+False</string>
+    <string>21
+False</string>
+    <string>23
+False</string>
+    <string>25
+False</string>
+    <string>27
+False</string>
+    <string>29
+False</string>
+    <string>31
+False</string>
+    <string>33
+False</string>
+    <string>35
+False</string>
+    <string>37
+False</string>
+    <string>39
+False</string>
+    <string>41
+True</string>
+    <string>43
+True</string>
+    <string>45
+True</string>
+    <string>47
+False</string>
+    <string>49
+False</string>
+    <string>51
+True</string>
+    <string>53
+True</string>
+    <string>55
+False</string>
+    <string>57
+True</string>
+    <string>59
+True</string>
+    <string>61
+True</string>
+    <string>63
+False</string>
+    <string>65
+False</string>
+    <string>67
+False</string>
+    <string>69
+False</string>
+    <string>71
+False</string>
+    <string>73
+False</string>
+    <string>75
+False</string>
+    <string>77
+False</string>
+    <string>79
+False</string>
+    <string>81
+False</string>
+    <string>83
+False</string>
+    <string>85
+False</string>
+    <string>87
+False</string>
+    <string>89
+False</string>
+    <string>91
+False</string>
+    <string>93
+False</string>
+    <string>95
+False</string>
+    <string>97
+False</string>
+    <string>99
+False</string>
+    <string>101
+False</string>
+    <string>103
+False</string>
+    <string>105
+False</string>
+    <string>107
+False</string>
+    <string>109
+False</string>
+    <string>111
+False</string>
+    <string>113
+False</string>
+    <string>115
+False</string>
+    <string>117
+False</string>
+    <string>119
+False</string>
+    <string>121
+False</string>
+    <string>123
+True</string>
+    <string>125
+True</string>
+    <string>127
+True</string>
+    <string>129
+False</string>
+    <string>131
+False</string>
+    <string>133
+False</string>
+    <string>135
+False</string>
+    <string>137
+False</string>
+    <string>139
+False</string>
+    <string>141
+False</string>
+    <string>143
+False</string>
+    <string>145
+False</string>
+    <string>147
+False</string>
+    <string>149
+True</string>
+    <string>151
+False</string>
+    <string>153
+False</string>
+    <string>155
+False</string>
+    <string>157
+False</string>
+    <string>159
+False</string>
+    <string>161
+False</string>
+    <string>163
+True</string>
+    <string>165
+False</string>
+    <string>167
+False</string>
+    <string>169
+False</string>
+    <string>171
+False</string>
+    <string>173
+False</string>
+    <string>175
+False</string>
+    <string>177
+False</string>
+    <string>179
+False</string>
+    <string>181
+False</string>
+    <string>183
+True</string>
+    <string>185
+True</string>
+  </Colvisible>
+  <ReadOnlyFolderbool>0</ReadOnlyFolderbool>
+  <ReConnectClearFilter>0</ReConnectClearFilter>
+  <MenuStyle>2</MenuStyle>
+  <MenuColor>2</MenuColor>
+  <MenuColor2>2</MenuColor2>
+  <FilterRulesList>
+    <CustomRule>
+      <name>SHAPE</name>
+      <type>true</type>
+      <RuleList>
+        <string>%SHAPE%	|@#$%|包含	|@#$%|Швеллер</string>
+        <string>%SHAPE%	|@#$%|包含	|@#$%|Двутавр</string>
+        <string>%SHAPE%	|@#$%|包含	|@#$%|Лист</string>
+        <string>%SHAPE%	|@#$%|包含	|@#$%|Круг</string>
+        <string>%SHAPE%	|@#$%|包含	|@#$%|Труба</string>
+        <string>%SHAPE%	|@#$%|包含	|@#$%|Уголок</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>Масса</name>
+      <type>true</type>
+      <RuleList>
+        <string>%Обозначение%	|@#$%|不等于	|@#$%|0</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>Конфигурация</name>
+      <type>true</type>
+      <RuleList>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|01</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|02</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|03</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|04</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|05</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|06</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|07</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|08</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|09</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|10</string>
+        <string>&lt;配置&gt;	|@#$%|等于	|@#$%|11</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>Обозначение</name>
+      <type>true</type>
+      <RuleList>
+        <string>$Пром.обознач$	|@#$%|不等于	|@#$%|</string>
+      </RuleList>
+    </CustomRule>
+  </FilterRulesList>
+  <ReNameFilterRule />
+  <ExpandMaterialList>true</ExpandMaterialList>
+  <OutSaveFolder>D:\</OutSaveFolder>
+  <HideSw1>false</HideSw1>
+  <SaveToSWFilterRule>
+    <string>00</string>
+  </SaveToSWFilterRule>
+  <ExcludeLight>true</ExcludeLight>
+  <FrozenCol>5</FrozenCol>
+  <QuickAccessToolbarini>&lt;siq:customUI xmlns:siq="http://schemas.microsoft.com/windows/2009/ribbon/qat"&gt;&lt;siq:ribbon minimized="false"&gt;&lt;siq:qat position="0"&gt;&lt;siq:sharedControls&gt;&lt;siq:control idQ="siq:1034" visible="true" argument="0" /&gt;&lt;/siq:sharedControls&gt;&lt;/siq:qat&gt;&lt;/siq:ribbon&gt;&lt;/siq:customUI&gt;</QuickAccessToolbarini>
+  <ExportToBomFilterRule />
+  <ExportToBom_ByFilter1>true</ExportToBom_ByFilter1>
+  <ExportToBom_ByFilter2>false</ExportToBom_ByFilter2>
+  <Replacereferencecfg>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton4
+True</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>Replacereference_SpecificFolder
+</string>
+    <string>ToSpecificFolder
+False</string>
+    <string>UnMoveto
+True</string>
+    <string>MovetoRecycle
+False</string>
+    <string>Replacereference_folderpath
+</string>
+    <string>Containssubfolders
+False</string>
+  </Replacereferencecfg>
+  <Marknodrw>false</Marknodrw>
+  <Excludebyruler>true</Excludebyruler>
+  <Previewfortool>true</Previewfortool>
+  <regexlist />
+  <needfillcolumns>
+    <string>Пром.обознач
+0</string>
+    <string>Наименование
+6</string>
+  </needfillcolumns>
+  <SplitColumncfg>
+    <string>RadioButton1
+False</string>
+    <string>RadioButton2
+True</string>
+    <string>ComboBox2
+0</string>
+    <string>ComboBox1
+0</string>
+  </SplitColumncfg>
+  <RealTimeFilter>true</RealTimeFilter>
+  <PreviewMode>1</PreviewMode>
+  <ptp>0</ptp>
+  <ipt>8080</ipt>
+  <Thumbnail_Savetolocal>false</Thumbnail_Savetolocal>
+  <bomsettings>
+    <bomsetting>
+      <name>导出汇总BOM</name>
+      <bomname>D:\Work\_Для пользователей\_Скрипты и макросы SW (Скопировать в корень диска С)\ZTool\BOM表模板\bom模板.xlsx</bomname>
+      <type>0</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>true</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>导出缩进式BOM</name>
+      <bomname>D:\Work\_Для пользователей\_Скрипты и макросы SW (Скопировать в корень диска С)\ZTool\BOM表模板\bom模板.xlsx</bomname>
+      <type>1</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>导出顶层BOM</name>
+      <bomname>D:\Work\_Для пользователей\_Скрипты и макросы SW (Скопировать в корень диска С)\ZTool\BOM表模板\bom模板.xlsx</bomname>
+      <type>2</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>1</name>
+      <bomname>D:\Work\_Для пользователей\_Скрипты и макросы SW (Скопировать в корень диска С)\ZTool\BOM表模板\bom模板.xls</bomname>
+      <type>0</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>true</marknodrw>
+      <autocolumnwidth>true</autocolumnwidth>
+      <ByRuler>true</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+  </bomsettings>
+  <K3code />
+  <macrolist />
+  <checkupdata>true</checkupdata>
+  <IsCollpased>false</IsCollpased>
+  <Splitwidth>300</Splitwidth>
+  <copyswfilecfg>
+    <string>error_box
+</string>
+    <string>c_usefolder
+False</string>
+    <string>c_folder
+</string>
+    <string>c_othername
+.pdf;.dwg;.dxf</string>
+    <string>c_suffix
+</string>
+    <string>c_Includeother
+False</string>
+    <string>c_Includevirtual
+False</string>
+    <string>c_overwrite
+False</string>
+    <string>c_Include3d
+False</string>
+    <string>c_Includedrw
+True</string>
+    <string>c_addsuffix
+False</string>
+    <string>c_addprefix
+False</string>
+    <string>c_prefix
+</string>
+  </copyswfilecfg>
+  <namemappinglist>
+    <columnnamemapping>
+      <name>PropVal_0</name>
+      <name2>PropResolvedVal_0</name2>
+      <text>设计</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_1</name>
+      <name2>PropResolvedVal_1</name2>
+      <text>零件名称</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_2</name>
+      <name2>PropResolvedVal_2</name2>
+      <text>图号</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_3</name>
+      <name2>PropResolvedVal_3</name2>
+      <text>材料</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_4</name>
+      <name2>PropResolvedVal_4</name2>
+      <text>类型</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_5</name>
+      <name2>PropResolvedVal_5</name2>
+      <text>版本</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_6</name>
+      <name2>PropResolvedVal_6</name2>
+      <text>数量</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_7</name>
+      <name2>PropResolvedVal_7</name2>
+      <text>表面处理</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_8</name>
+      <name2>PropResolvedVal_8</name2>
+      <text>设计日期</text>
+      <mappingname />
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_9</name>
+      <name2>PropResolvedVal_9</name2>
+      <text>重量</text>
+      <mappingname />
+    </columnnamemapping>
+  </namemappinglist>
+  <usenpoi>false</usenpoi>
+  <customcolors>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+    <int>16777215</int>
+  </customcolors>
+  <frmsortcfg>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton4
+True</string>
+    <string>ComboBox2
+4</string>
+    <string>RadioButton1
+True</string>
+    <string>RadioButton2
+False</string>
+    <string>ComboBox1
+4</string>
+  </frmsortcfg>
+  <fillsettings>
+    <fillsetting>
+      <name>Материал_ФБ</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>SHAPE</string>
+      </RulesList>
+      <colindex>163</colindex>
+      <fillcontent>&lt;FONT size=1.8&gt; &lt;FONT size=3.5&gt;%SHAPE% &lt;STACK size=1&gt;%SORTAMENT%&lt;OVER&gt;%MATERIAL%&lt;/STACK&gt;</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Наименование_ФБ</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>Обозначение</string>
+      </RulesList>
+      <colindex>45</colindex>
+      <fillcontent>&lt;FONT size=4&gt; &lt;FONT size=5&gt;%Наименование%</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Масса_ФБ</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>Масса</string>
+      </RulesList>
+      <colindex>159</colindex>
+      <fillcontent>&lt;FONT size=1&gt; &lt;FONT size=3.5&gt;"SW-Mass"</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Назначени конфы</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>Конфигурация</string>
+      </RulesList>
+      <colindex>183</colindex>
+      <fillcontent>-&lt;配置&gt;</fillcontent>
+    </fillsetting>
+    <fillsetting>
+      <name>Обозначение</name>
+      <checked>true</checked>
+      <RulesList>
+        <string>Обозначение</string>
+      </RulesList>
+      <colindex>41</colindex>
+      <fillcontent>%Пром.обознач%%Конфигурация%</fillcontent>
+    </fillsetting>
+  </fillsettings>
+  <itemlist />
+  <filterindex>0</filterindex>
+  <viewtype>0</viewtype>
+</CConfigDO>

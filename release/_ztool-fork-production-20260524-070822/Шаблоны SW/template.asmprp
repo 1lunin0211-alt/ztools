@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CPTemplate>
+  <AppVersion>24</AppVersion>
+  <CPSheet>
+    <MessageBox>Вкладка свойств</MessageBox>
+    <GroupBox Label="Свойства основной надписи" PropName="Группа2" DefaultState="Expanded">
+      <Control Label="Конструктор" PropName="Конструктор" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path=".\Шаблоны SW\designers.txt" SourceType="Text" />
+      </Control>
+      <Control Label="Наименование детали" PropName="Наименование детали" ApplyTo="Global" Type="TextBox" DefaultValue="" Mode="Text" />
+      <Control Label="Обозначение" PropName="Обозначение" ApplyTo="Global" Type="TextBox" DefaultValue="" Mode="Text" />
+      <Control Label="Тип" PropName="Тип" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path=".\Шаблоны SW	ype.txt" SourceType="Text" />
+      </Control>
+      <Control Label="Версия" PropName="Версия" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path=".\Шаблоны SW\version.txt" SourceType="Text" />
+      </Control>
+      <Control Label="Бренд" PropName="Бренд" ApplyTo="Global" Type="ComboBox" UserDefineable="True">
+        <Data Path=".\Шаблоны SW\brand.txt" SourceType="Text" />
+      </Control>
+      <Control Label="Дата разработки" PropName="Дата разработки" ApplyTo="Global" Type="TextBox" DefaultValue="" Mode="Date" />
+      <Control Label="Масса" PropName="Масса" ApplyTo="Global" Type="TextBox" DefaultValue="SW-Mass" Mode="SWProperty" />
+    </GroupBox>
+  </CPSheet>
+</CPTemplate>

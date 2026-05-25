@@ -1,0 +1,874 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CConfigDO xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SWver>0</SWver>
+  <materialpath>D:\ZTool\SW模板\MyMaterials.sldmat</materialpath>
+  <rowcolor>73</rowcolor>
+  <colorselrow>false</colorselrow>
+  <propname>
+    <string>设计</string>
+    <string>零件名称</string>
+    <string>图号</string>
+    <string>材料</string>
+    <string>类型</string>
+    <string>版本</string>
+    <string>表面处理</string>
+    <string>设计日期</string>
+    <string>重量</string>
+    <string>品牌</string>
+  </propname>
+  <rowheight>48</rowheight>
+  <proptype>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>文字</string>
+    <string>日期</string>
+    <string>文字</string>
+    <string>文字</string>
+  </proptype>
+  <outcfg>
+    <string>Out_overwrite
+True</string>
+    <string>folder
+</string>
+    <string>Thisfolder
+False</string>
+    <string>Originalfolder
+True</string>
+    <string>OUT_DetachedDraw
+False</string>
+    <string>OUT_PDF
+False</string>
+    <string>OUT_DXF
+False</string>
+    <string>CheckBox6
+False</string>
+    <string>OUT_JPG
+True</string>
+    <string>OUT_DWG
+False</string>
+    <string>OUT_PNG
+False</string>
+    <string>CheckBox4
+False</string>
+    <string>CheckBox3
+False</string>
+    <string>CheckBox2
+False</string>
+    <string>CheckBox1
+False</string>
+    <string>OUT_IGS
+False</string>
+    <string>CheckBox5
+False</string>
+    <string>OUT_STEP
+True</string>
+    <string>OUT_3DPDF
+False</string>
+    <string>CheckBox7
+False</string>
+    <string>OUT_JPG2
+True</string>
+    <string>OUT_PNG2
+False</string>
+    <string>Multiplesheet_dwg
+1</string>
+    <string>outputscale
+True</string>
+    <string>CADline
+1</string>
+    <string>CADfont
+0</string>
+    <string>CADVer
+5</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>Image_dpi
+6</string>
+    <string>ImageType
+1</string>
+    <string>Multiplesheet_pdf
+0</string>
+    <string>PDFline
+True</string>
+    <string>PDFfont
+True</string>
+    <string>PDFcolor
+True</string>
+    <string>SetScalebyfirstview
+False</string>
+    <string>withoutcfgname
+False</string>
+    <string>forcurcfg
+False</string>
+    <string>HideSw1
+False</string>
+    <string>exclude_AsWelded
+False</string>
+    <string>exclude_AsMachined
+False</string>
+    <string>exclude_SpeedPak
+True</string>
+    <string>exclude_IsDerived
+False</string>
+    <string>exclude_SheetMetal
+True</string>
+  </outcfg>
+  <printcfg>
+    <string>HideSw1
+False</string>
+    <string>Print_PrintToFilePath
+</string>
+    <string>Print_PrintToFile
+False</string>
+    <string>forcurcfg
+False</string>
+    <string>Print_AutoRotation
+True</string>
+    <string>Print_BlackAndWhite
+True</string>
+    <string>Print_Color
+False</string>
+    <string>Print_AutoColor
+False</string>
+    <string>Print_ScaleNum
+100</string>
+    <string>Print_HighQuality
+False</string>
+    <string>Print_Scale
+False</string>
+    <string>Print_ScaleToFit
+True</string>
+    <string>Print_Printername
+2</string>
+  </printcfg>
+  <Unitset />
+  <ReadOnlyFolder />
+  <Preview_Hotkey>
+    <string>18</string>
+    <string>90</string>
+  </Preview_Hotkey>
+  <image_size>
+    <Width>64</Width>
+    <Height>48</Height>
+  </image_size>
+  <image_lockratio>true</image_lockratio>
+  <insertimagebool>0</insertimagebool>
+  <GetAllconfigsbool>0</GetAllconfigsbool>
+  <ExcludePropList />
+  <ExcludePropbool>0</ExcludePropbool>
+  <FrmPreviewLocation>
+    <X>2399</X>
+    <Y>616</Y>
+  </FrmPreviewLocation>
+  <DClick_OpenInSw>false</DClick_OpenInSw>
+  <RowFollowdisplay>true</RowFollowdisplay>
+  <DefaultDrw>false</DefaultDrw>
+  <ReNameRule />
+  <Excludevirtual>false</Excludevirtual>
+  <togetherConfig>false</togetherConfig>
+  <GetDataOption>0</GetDataOption>
+  <propshow>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+    <string>1</string>
+  </propshow>
+  <Dropdownlist>
+    <string>类型
+组件
+机加
+钣金
+外购
+铸件</string>
+    <string>表面处理
+本色阳极
+黑色阳极
+表面镀硬铬
+表面镀彩锌
+表面发黑
+调质处理，HRC20～30</string>
+    <string>图号
+</string>
+    <string>测试
+</string>
+    <string>重量
+</string>
+    <string>品牌
+MISUMI
+怡合达
+SMC
+CKD
+FESTO
+亚德客
+气立可
+松下
+三菱
+安川
+东方马达
+多摩川
+三洋
+利明
+西门子
+欧姆龙
+基恩士
+神视
+FAULHABER
+</string>
+    <string>材料
+</string>
+    <string>版本
+</string>
+    <string>设计日期
+</string>
+  </Dropdownlist>
+  <savetoswcfg>
+    <string>TextBox1
+C:\Users\zt\Desktop\Test-1</string>
+    <string>CheckBox8
+True</string>
+    <string>CheckBox6
+True</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>CheckBox7
+True</string>
+    <string>CheckBox4
+True</string>
+    <string>ComboBox4
+0</string>
+    <string>CheckBox10
+True</string>
+    <string>CheckBox3
+False</string>
+    <string>CheckBox2
+False</string>
+    <string>CheckBox9
+True</string>
+    <string>CheckBox1
+True</string>
+    <string>ComboBox2
+0</string>
+    <string>ComboBox3
+0</string>
+    <string>ComboBox1
+0</string>
+  </savetoswcfg>
+  <bomsubfolder>false</bomsubfolder>
+  <ColIndex>
+    <string>0
+0</string>
+    <string>1
+1</string>
+    <string>2
+2</string>
+    <string>3
+3</string>
+    <string>4
+4</string>
+    <string>5
+5</string>
+    <string>6
+6</string>
+    <string>7
+8</string>
+    <string>8
+7</string>
+    <string>9
+27</string>
+    <string>10
+28</string>
+    <string>11
+29</string>
+    <string>12
+30</string>
+    <string>13
+31</string>
+    <string>14
+32</string>
+    <string>15
+33</string>
+    <string>16
+34</string>
+    <string>17
+40</string>
+    <string>18
+37</string>
+    <string>19
+39</string>
+    <string>20
+35</string>
+    <string>21
+9</string>
+    <string>22
+10</string>
+    <string>23
+11</string>
+    <string>24
+12</string>
+    <string>25
+13</string>
+    <string>26
+14</string>
+    <string>27
+15</string>
+    <string>28
+16</string>
+    <string>29
+17</string>
+    <string>30
+18</string>
+    <string>31
+19</string>
+    <string>32
+20</string>
+    <string>33
+21</string>
+    <string>34
+22</string>
+    <string>35
+23</string>
+    <string>36
+24</string>
+    <string>37
+25</string>
+    <string>38
+26</string>
+    <string>39
+36</string>
+    <string>40
+38</string>
+  </ColIndex>
+  <ColWidth>
+    <string>5
+344</string>
+    <string>6
+440</string>
+    <string>7
+150</string>
+    <string>8
+140</string>
+    <string>9
+400</string>
+    <string>10
+140</string>
+    <string>11
+140</string>
+    <string>12
+200</string>
+    <string>13
+100</string>
+    <string>14
+200</string>
+    <string>15
+200</string>
+    <string>16
+200</string>
+    <string>17
+200</string>
+    <string>18
+200</string>
+    <string>19
+200</string>
+    <string>20
+200</string>
+    <string>21
+200</string>
+    <string>22
+200</string>
+    <string>23
+200</string>
+    <string>24
+200</string>
+    <string>25
+200</string>
+    <string>26
+200</string>
+    <string>27
+200</string>
+    <string>28
+200</string>
+    <string>29
+136</string>
+    <string>30
+136</string>
+    <string>31
+118</string>
+    <string>32
+118</string>
+    <string>33
+200</string>
+    <string>34
+200</string>
+    <string>35
+200</string>
+    <string>36
+200</string>
+    <string>37
+200</string>
+    <string>38
+200</string>
+    <string>39
+200</string>
+    <string>40
+200</string>
+  </ColWidth>
+  <SetDrwCfg />
+  <BomByVal>true</BomByVal>
+  <ReNameByFilter>true</ReNameByFilter>
+  <ReNameByRule>false</ReNameByRule>
+  <ReNameFilterarr />
+  <Colvisible>
+    <string>0
+True</string>
+    <string>1
+False</string>
+    <string>2
+True</string>
+    <string>3
+True</string>
+    <string>4
+True</string>
+    <string>5
+True</string>
+    <string>6
+False</string>
+    <string>7
+True</string>
+    <string>8
+True</string>
+    <string>9
+False</string>
+    <string>10
+False</string>
+    <string>11
+True</string>
+    <string>12
+False</string>
+    <string>13
+False</string>
+    <string>14
+False</string>
+    <string>15
+False</string>
+    <string>16
+False</string>
+    <string>17
+False</string>
+    <string>18
+False</string>
+    <string>19
+False</string>
+    <string>20
+False</string>
+    <string>21
+True</string>
+    <string>23
+True</string>
+    <string>25
+True</string>
+    <string>27
+True</string>
+    <string>29
+True</string>
+    <string>31
+True</string>
+    <string>33
+True</string>
+    <string>35
+True</string>
+    <string>37
+True</string>
+    <string>39
+True</string>
+  </Colvisible>
+  <ReadOnlyFolderbool>0</ReadOnlyFolderbool>
+  <ReConnectClearFilter>0</ReConnectClearFilter>
+  <MenuStyle>2</MenuStyle>
+  <MenuColor>2</MenuColor>
+  <MenuColor2>2</MenuColor2>
+  <FilterRulesList>
+    <CustomRule>
+      <name>有表面处理的加工件</name>
+      <type>false</type>
+      <RuleList>
+        <string>$类型$	|@#$%|包含	|@#$%|机加;钣金;铸件;焊件</string>
+        <string>$表面处理$	|@#$%|不等于	|@#$%|</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>没有表面处理的加工件</name>
+      <type>false</type>
+      <RuleList>
+        <string>$类型$	|@#$%|包含	|@#$%|机加;钣金;铸件;焊件</string>
+        <string>$表面处理$	|@#$%|等于	|@#$%|</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>有工程图的加工件</name>
+      <type>false</type>
+      <RuleList>
+        <string>$类型$	|@#$%|包含	|@#$%|机加;钣金;铸件;焊件</string>
+        <string>&lt;有无工程图&gt;	|@#$%|等于	|@#$%|有</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>没有工程图的加工件</name>
+      <type>false</type>
+      <RuleList>
+        <string>$类型$	|@#$%|包含	|@#$%|机加;钣金;铸件;焊件</string>
+        <string>&lt;有无工程图&gt;	|@#$%|等于	|@#$%|无</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>加工件</name>
+      <type>false</type>
+      <RuleList>
+        <string>$类型$	|@#$%|包含	|@#$%|机加;钣金;铸件;焊件</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>缺必填属性的项</name>
+      <type>true</type>
+      <RuleList>
+        <string>%类型%	|@#$%|等于	|@#$%|</string>
+        <string>%图号%	|@#$%|等于	|@#$%|</string>
+        <string>%材料%	|@#$%|等于	|@#$%|</string>
+        <string>%重量%	|@#$%|等于	|@#$%|</string>
+        <string>%零件名称%	|@#$%|等于	|@#$%|</string>
+      </RuleList>
+    </CustomRule>
+    <CustomRule>
+      <name>外购件</name>
+      <type>false</type>
+      <RuleList>
+        <string>$类型$	|@#$%|包含	|@#$%|外购;市购;</string>
+      </RuleList>
+    </CustomRule>
+  </FilterRulesList>
+  <ReNameFilterRule />
+  <ExpandMaterialList>false</ExpandMaterialList>
+  <OutSaveFolder>C:\Users\zt\Desktop\test04\</OutSaveFolder>
+  <HideSw1>false</HideSw1>
+  <SaveToSWFilterRule>
+    <string>加工件
+False</string>
+    <string>外购件
+False</string>
+    <string>零件
+False</string>
+  </SaveToSWFilterRule>
+  <ExcludeLight>false</ExcludeLight>
+  <FrozenCol>5</FrozenCol>
+  <QuickAccessToolbarini>&lt;siq:customUI xmlns:siq="http://schemas.microsoft.com/windows/2009/ribbon/qat"&gt;&lt;siq:ribbon minimized="false"&gt;&lt;siq:qat position="0" /&gt;&lt;/siq:ribbon&gt;&lt;/siq:customUI&gt;</QuickAccessToolbarini>
+  <ExportToBomFilterRule />
+  <ExportToBom_ByFilter1>true</ExportToBom_ByFilter1>
+  <ExportToBom_ByFilter2>false</ExportToBom_ByFilter2>
+  <Replacereferencecfg>
+    <string>RadioButton3
+False</string>
+    <string>RadioButton4
+True</string>
+    <string>RadioButton2
+False</string>
+    <string>RadioButton1
+True</string>
+    <string>Replacereference_SpecificFolder
+</string>
+    <string>ToSpecificFolder
+False</string>
+    <string>UnMoveto
+True</string>
+    <string>MovetoRecycle
+False</string>
+    <string>Replacereference_folderpath
+C:\Users\zt\Desktop\test05</string>
+    <string>Containssubfolders
+True</string>
+  </Replacereferencecfg>
+  <Marknodrw>false</Marknodrw>
+  <Excludebyruler>true</Excludebyruler>
+  <Previewfortool>true</Previewfortool>
+  <regexlist>
+    <string>取前10位
+\A.{10}</string>
+    <string>取后10位
+.{10}\z</string>
+    <string>从第10位开始向后取10位
+(?&lt;=^.{9}).{10}</string>
+    <string>从第10位开始向后最少取10位，最大取20位
+(?&lt;=^.{9}).{10，20}</string>
+    <string>取开头到_|(（[【空格或结尾之间的字符
+\A.*?(?=_|\(|\（|\[|\【|\s|\z)</string>
+    <string>取_或空格到结尾
+(?&lt;=_|\s).*\z</string>
+    <string>取()内字符
+(?&lt;=\().*?(?=\))</string>
+    <string>取类似V1.1的字符
+[A-HJ-NP-Z][0-9][.][0-9]</string>
+    <string>取结尾处类似V1.1的字符
+[A-HJ-NP-Z][0-9][.][0-9](?=\z)</string>
+    <string>取中文字符
+[\u4e00-\u9fa5]+</string>
+  </regexlist>
+  <needfillcolumns>
+    <string>零件名称
+0</string>
+    <string>图号
+0</string>
+  </needfillcolumns>
+  <SplitColumncfg>
+    <string>TextBox1
+\s+|_+</string>
+    <string>RadioButton1
+True</string>
+    <string>RadioButton2
+False</string>
+    <string>ComboBox1
+0</string>
+  </SplitColumncfg>
+  <RealTimeFilter>true</RealTimeFilter>
+  <PreviewMode>1</PreviewMode>
+  <ptp>0</ptp>
+  <ipt>8080</ipt>
+  <Thumbnail_Savetolocal>false</Thumbnail_Savetolocal>
+  <bomsettings>
+    <bomsetting>
+      <name>汇总BOM</name>
+      <bomname>D:\ZTool\BOM表模板\bom模板.xlsx</bomname>
+      <type>0</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>汇总BOM（带缩略图）</name>
+      <bomname>D:\ZTool\BOM表模板\bom模板.xlsx</bomname>
+      <type>0</type>
+      <insertimagebool>true</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>缩进BOM</name>
+      <bomname>D:\ZTool\BOM表模板\bom模板.xls</bomname>
+      <type>1</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>缩进BOM（带缩略图）</name>
+      <bomname>D:\ZTool\BOM表模板\bom模板.xls</bomname>
+      <type>1</type>
+      <insertimagebool>true</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>false</ByRuler>
+      <ByFilter>true</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>加工件</name>
+      <bomname>D:\ZTool\BOM表模板\bom模板.xlsx</bomname>
+      <type>0</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>true</ByRuler>
+      <ByFilter>false</ByFilter>
+      <RulesList>
+        <string>加工件</string>
+      </RulesList>
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>外购件</name>
+      <bomname>D:\ZTool\BOM表模板\bom模板.xls</bomname>
+      <type>0</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>true</ByRuler>
+      <ByFilter>false</ByFilter>
+      <RulesList>
+        <string>外购件</string>
+      </RulesList>
+      <includetop>true</includetop>
+    </bomsetting>
+    <bomsetting>
+      <name>顶层BOM</name>
+      <bomname>D:\ZTool\BOM表模板\bom模板.xls</bomname>
+      <type>2</type>
+      <insertimagebool>false</insertimagebool>
+      <lockratio>true</lockratio>
+      <image_width>64</image_width>
+      <image_height>48</image_height>
+      <Propertyvalue>true</Propertyvalue>
+      <marknodrw>false</marknodrw>
+      <autocolumnwidth>false</autocolumnwidth>
+      <ByRuler>true</ByRuler>
+      <ByFilter>false</ByFilter>
+      <RulesList />
+      <includetop>true</includetop>
+    </bomsetting>
+  </bomsettings>
+  <K3code>
+    <string>ComboBox4
+-1</string>
+    <string>ComboBox3
+3</string>
+    <string>ComboBox2
+-1</string>
+    <string>ComboBox1
+0</string>
+  </K3code>
+  <macrolist>
+    <string>D:\ZTool\宏程序\等轴测显示并保存.swp</string>
+  </macrolist>
+  <checkupdata>true</checkupdata>
+  <IsCollpased>false</IsCollpased>
+  <copyswfilecfg>
+    <string>error_box
+</string>
+    <string>c_usefolder
+True</string>
+    <string>c_folder
+C:\Users\zt\Desktop\Test-2222</string>
+    <string>c_othername
+.pdf;.dwg;.dxf;.step</string>
+    <string>c_suffix
+</string>
+    <string>c_Includeother
+False</string>
+    <string>c_Includevirtual
+False</string>
+    <string>c_overwrite
+True</string>
+    <string>c_Include3d
+True</string>
+    <string>c_Includedrw
+True</string>
+    <string>c_addsuffix
+False</string>
+    <string>c_addprefix
+False</string>
+    <string>c_prefix
+</string>
+  </copyswfilecfg>
+  <namemappinglist>
+    <columnnamemapping>
+      <name>PropVal_0</name>
+      <name2>PropResolvedVal_0</name2>
+      <text>设计</text>
+      <mappingname>设计</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_1</name>
+      <name2>PropResolvedVal_1</name2>
+      <text>零件名称</text>
+      <mappingname>零件名称</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_2</name>
+      <name2>PropResolvedVal_2</name2>
+      <text>图号</text>
+      <mappingname>图号</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_3</name>
+      <name2>PropResolvedVal_3</name2>
+      <text>材料</text>
+      <mappingname>材料</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_4</name>
+      <name2>PropResolvedVal_4</name2>
+      <text>类型</text>
+      <mappingname>类型</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_5</name>
+      <name2>PropResolvedVal_5</name2>
+      <text>版本</text>
+      <mappingname>版本</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_6</name>
+      <name2>PropResolvedVal_6</name2>
+      <text>表面处理</text>
+      <mappingname>表面处理</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_7</name>
+      <name2>PropResolvedVal_7</name2>
+      <text>设计日期</text>
+      <mappingname>设计日期</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_8</name>
+      <name2>PropResolvedVal_8</name2>
+      <text>重量</text>
+      <mappingname>重量</mappingname>
+    </columnnamemapping>
+    <columnnamemapping>
+      <name>PropVal_9</name>
+      <name2>PropResolvedVal_9</name2>
+      <text>品牌</text>
+      <mappingname>品牌</mappingname>
+    </columnnamemapping>
+  </namemappinglist>
+  <usenpoi>true</usenpoi>
+</CConfigDO>
