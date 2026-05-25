@@ -51,6 +51,11 @@ function isValidZToolKey(string $key): bool
     return preg_match('/^[A-Z0-9]{8}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{9}$/', $key) === 1;
 }
 
+function isValidTransferPassword(string $password): bool
+{
+    return preg_match('/^(?=.*[A-Za-z])(?=.*\d)[\x20-\x7E]{8,64}$/', $password) === 1;
+}
+
 function generateZToolKey(): string
 {
     $groups = [8, 5, 5, 5, 9];
@@ -102,18 +107,42 @@ function logAction(PDO $db, ?int $licenseId, ?string $licenseKey, ?string $machi
     ]);
 }
 
-function enforceRateLimit(PDO $db, string $scope, int $maxAttempts, int $windowSeconds): void
+function rateLimitKey(string $scope): string
 {
-    $key = $scope . ':' . clientIp();
+    return $scope . ':' . clientIp();
+}
+
+function pruneExpiredRateLimits(PDO $db): void
+{
     $db->prepare('DELETE FROM rate_limits WHERE expires_at < NOW()')->execute();
+}
+
+function getRateLimitAttemptCount(PDO $db, string $scope): int
+{
+    pruneExpiredRateLimits($db);
 
     $stmt = $db->prepare('SELECT COUNT(*) FROM rate_limits WHERE rate_key = ?');
-    $stmt->execute([$key]);
-    $count = (int)$stmt->fetchColumn();
-    if ($count >= $maxAttempts) {
+    $stmt->execute([rateLimitKey($scope)]);
+
+    return (int)$stmt->fetchColumn();
+}
+
+function recordRateLimitAttempt(PDO $db, string $scope, int $windowSeconds): void
+{
+    $stmt = $db->prepare('INSERT INTO rate_limits (rate_key, expires_at) VALUES (?, DATE_ADD(NOW(), INTERVAL ? SECOND))');
+    $stmt->execute([rateLimitKey($scope), $windowSeconds]);
+}
+
+function isRateLimited(PDO $db, string $scope, int $maxAttempts): bool
+{
+    return getRateLimitAttemptCount($db, $scope) >= $maxAttempts;
+}
+
+function enforceRateLimit(PDO $db, string $scope, int $maxAttempts, int $windowSeconds): void
+{
+    if (isRateLimited($db, $scope, $maxAttempts)) {
         jsonError('Too many attempts. Try again later.', 429);
     }
 
-    $stmt = $db->prepare('INSERT INTO rate_limits (rate_key, expires_at) VALUES (?, DATE_ADD(NOW(), INTERVAL ? SECOND))');
-    $stmt->execute([$key, $windowSeconds]);
+    recordRateLimitAttempt($db, $scope, $windowSeconds);
 }

@@ -2,6 +2,28 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
+function configureAdminSession(): void
+{
+    ini_set('session.use_strict_mode', '1');
+    session_name('ztool_license_admin_session');
+
+    $secure = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    if (PHP_VERSION_ID >= 70300) {
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '',
+            'domain' => '',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+        return;
+    }
+
+    session_set_cookie_params(0, '', '', $secure, true);
+}
+
+configureAdminSession();
 session_start();
 
 function isAdminLoggedIn(): bool
@@ -22,6 +44,31 @@ function h(?string $value): string
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
 
+function csrfToken(): string
+{
+    if (empty($_SESSION['ztool_license_csrf']) || !is_string($_SESSION['ztool_license_csrf'])) {
+        $_SESSION['ztool_license_csrf'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['ztool_license_csrf'];
+}
+
+function isValidCsrfToken(): bool
+{
+    $posted = (string)($_POST['csrf_token'] ?? '');
+    return $posted !== '' && hash_equals(csrfToken(), $posted);
+}
+
+function isAdminLoginAllowed(PDO $db): bool
+{
+    return !isRateLimited($db, 'ztool_admin_login', LOGIN_MAX_ATTEMPTS);
+}
+
+function recordAdminLoginFailure(PDO $db): void
+{
+    recordRateLimitAttempt($db, 'ztool_admin_login', LOGIN_LOCKOUT_SECONDS);
+}
+
 $db = getDB();
 $error = '';
 $message = '';
@@ -36,12 +83,19 @@ if (isset($_GET['logout'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login') {
     $user = (string)($_POST['user'] ?? '');
     $pass = (string)($_POST['password'] ?? '');
-    if ($user === ADMIN_USER && ADMIN_PASS_HASH !== '' && password_verify($pass, ADMIN_PASS_HASH)) {
+    if (!isValidCsrfToken()) {
+        $error = 'Invalid request token.';
+    } elseif (!isAdminLoginAllowed($db)) {
+        $error = 'Too many failed login attempts. Try again later.';
+    } elseif ($user === ADMIN_USER && ADMIN_PASS_HASH !== '' && password_verify($pass, ADMIN_PASS_HASH)) {
+        session_regenerate_id(true);
         $_SESSION['ztool_license_admin'] = true;
         header('Location: ./');
         exit;
+    } else {
+        recordAdminLoginFailure($db);
+        $error = 'Invalid login.';
     }
-    $error = 'Invalid login.';
 }
 
 if (!isAdminLoggedIn()) {
@@ -54,6 +108,7 @@ if (!isAdminLoggedIn()) {
 <?php if ($error !== ''): ?><p style="color:#a00"><?= h($error) ?></p><?php endif; ?>
 <form method="post">
   <input type="hidden" name="action" value="login">
+  <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
   <p><label>User<br><input name="user" autocomplete="username"></label></p>
   <p><label>Password<br><input name="password" type="password" autocomplete="current-password"></label></p>
   <button type="submit">Login</button>
@@ -67,7 +122,10 @@ if (!isAdminLoggedIn()) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string)($_POST['action'] ?? '');
 
-    if ($action === 'create') {
+    if (!isValidCsrfToken()) {
+        http_response_code(400);
+        $error = 'Invalid request token.';
+    } elseif ($action === 'create') {
         $key = generateZToolKey();
         $stmt = $db->prepare(
             'INSERT INTO license_keys (license_key, customer_name, customer_email, organization, notes, transfer_allowed)
@@ -88,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $db->prepare(
             'UPDATE license_keys
              SET machine_id = NULL, machine_label = NULL, machine_meta = NULL, platform = NULL,
-                 app_version = NULL, activated_at = NULL, current_activations = 0
+                 app_version = NULL, transfer_password_hash = NULL, activated_at = NULL, current_activations = 0
              WHERE id = ?'
         );
         $stmt->execute([$id]);
@@ -131,6 +189,7 @@ $licenses = $db->query('SELECT * FROM license_keys ORDER BY id DESC LIMIT 200')-
 <h2>Create Key</h2>
 <form method="post">
   <input type="hidden" name="action" value="create">
+  <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
   <p><label>Customer<br><input name="customer_name" required></label></p>
   <p><label>Email<br><input name="customer_email"></label></p>
   <p><label>Organization<br><input name="organization"></label></p>
@@ -169,11 +228,13 @@ $licenses = $db->query('SELECT * FROM license_keys ORDER BY id DESC LIMIT 200')-
       <td class="row-actions">
         <form method="post">
           <input type="hidden" name="action" value="reset">
+          <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
           <input type="hidden" name="id" value="<?= (int)$license['id'] ?>">
           <button type="submit">Reset binding</button>
         </form>
         <form method="post">
           <input type="hidden" name="action" value="revoke">
+          <input type="hidden" name="csrf_token" value="<?= h(csrfToken()) ?>">
           <input type="hidden" name="id" value="<?= (int)$license['id'] ?>">
           <input type="hidden" name="reason" value="revoked by admin">
           <button type="submit">Revoke</button>

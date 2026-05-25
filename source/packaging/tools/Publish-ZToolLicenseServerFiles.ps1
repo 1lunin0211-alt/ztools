@@ -84,7 +84,10 @@ if ([string]::IsNullOrWhiteSpace($RemoteHost)) {
 }
 
 $rootFull = Resolve-FullPath $Root
-$serverRoot = Join-Path $rootFull '_archive\services\license-server'
+$serverRoot = Join-Path $rootFull '..\services\license-server'
+if (-not (Test-Path -LiteralPath $serverRoot -PathType Container)) {
+    $serverRoot = Join-Path $rootFull '_archive\services\license-server'
+}
 if (-not (Test-Path -LiteralPath $serverRoot -PathType Container)) {
     throw "License server source not found: $serverRoot"
 }
@@ -120,7 +123,7 @@ $remoteRootTrimmed = $RemoteRoot.TrimEnd('/')
 $published = New-Object System.Collections.Generic.List[object]
 
 foreach ($relative in $files) {
-    $local = Join-Path $serverRoot ($relative -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+    $local = Resolve-FullPath (Join-Path $serverRoot ($relative -replace '/', [System.IO.Path]::DirectorySeparatorChar))
     if (-not (Test-Path -LiteralPath $local -PathType Leaf)) {
         throw "Local file not found: $local"
     }
@@ -128,8 +131,27 @@ foreach ($relative in $files) {
     $remoteFile = $remoteRootTrimmed + '/' + $relative
     $remoteDir = [System.IO.Path]::GetDirectoryName($remoteFile).Replace('\', '/')
 
-    Invoke-External 'ssh' ($sshArgsBase + @($RemoteHost, 'mkdir -p ' + (ConvertTo-RemoteSingleQuoted $remoteDir))) | Out-Null
-    Invoke-External 'scp' ($scpArgsBase + @($local, $RemoteHost + ':' + (ConvertTo-RemoteSingleQuoted $remoteFile))) | Out-Null
+    if ($DryRun) {
+        $published.Add([pscustomobject]@{
+            Local = $local
+            Remote = $RemoteHost + ':' + $remoteFile
+            Sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $local).Hash.ToUpperInvariant()
+        })
+        continue
+    }
+
+    $sshKeyArg = if (-not [string]::IsNullOrWhiteSpace($SshKeyPath)) { @('-i', (Resolve-FullPath $SshKeyPath)) } else { @() }
+    $sshKnownHostsArg = if (-not [string]::IsNullOrWhiteSpace($SshKnownHostsPath)) { @('-o', 'StrictHostKeyChecking=yes', '-o', "UserKnownHostsFile=$(Resolve-FullPath $SshKnownHostsPath)") } else { @() }
+
+    & ssh -o BatchMode=yes -o ConnectTimeout=15 -o ConnectionAttempts=1 @sshKeyArg @sshKnownHostsArg $RemoteHost "mkdir -p $remoteDir"
+    if ($LASTEXITCODE -ne 0) {
+        throw "ssh failed with exit code $LASTEXITCODE."
+    }
+
+    & scp -o BatchMode=yes -o ConnectTimeout=15 -o ConnectionAttempts=1 @sshKeyArg @sshKnownHostsArg $local "${RemoteHost}:${remoteFile}"
+    if ($LASTEXITCODE -ne 0) {
+        throw "scp failed with exit code $LASTEXITCODE."
+    }
 
     $published.Add([pscustomobject]@{
         Local = $local
