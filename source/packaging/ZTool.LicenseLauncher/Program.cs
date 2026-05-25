@@ -925,24 +925,32 @@ namespace ZTool.LicenseLauncher
 
         public ActivationForm()
         {
+            float scale = 1.0f;
+            using (var g = CreateGraphics())
+            {
+                scale = g.DpiX / 96.0f;
+            }
+            var Scale = (Func<int, int>)delegate(int px) { return (int)Math.Round(px * scale); };
+
             Text = "Активация ZTool";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new System.Drawing.Size(430, 190);
+            ClientSize = new System.Drawing.Size(Scale(430), Scale(190));
+            Font = new Font("Segoe UI", 9F * scale);
 
-            var keyLabel = new Label { Left = 16, Top = 18, Width = 390, Text = "Ключ лицензии:" };
-            keyBox = new TextBox { Left = 16, Top = 40, Width = 395 };
+            var keyLabel = new Label { Left = Scale(16), Top = Scale(18), AutoSize = true, Text = "Ключ лицензии:" };
+            keyBox = new TextBox { Left = Scale(16), Top = Scale(40), Width = Scale(395) };
 
-            var passwordLabel = new Label { Left = 16, Top = 74, Width = 390, Text = "Пароль переноса (8-64 символа, буквы и цифры):" };
-            passwordBox = new TextBox { Left = 16, Top = 96, Width = 395, UseSystemPasswordChar = false };
+            var passwordLabel = new Label { Left = Scale(16), Top = Scale(74), AutoSize = true, Text = "Пароль переноса (8-64 символа, буквы и цифры):" };
+            passwordBox = new TextBox { Left = Scale(16), Top = Scale(96), Width = Scale(395), UseSystemPasswordChar = false };
 
-            var showPassword = new CheckBox { Left = 16, Top = 124, Width = 140, Text = "Показать пароль", Checked = true };
+            var showPassword = new CheckBox { Left = Scale(16), Top = Scale(124), AutoSize = true, Text = "Показать пароль", Checked = true };
             showPassword.CheckedChanged += delegate { passwordBox.UseSystemPasswordChar = !showPassword.Checked; };
 
-            var activateButton = new Button { Left = 235, Top = 148, Width = 85, Text = "Активировать", DialogResult = DialogResult.OK };
-            var cancelButton = new Button { Left = 326, Top = 148, Width = 85, Text = "Отмена", DialogResult = DialogResult.Cancel };
+            var activateButton = new Button { Left = Scale(235), Top = Scale(148), Width = Scale(85), Height = Scale(26), Text = "Активировать", DialogResult = DialogResult.OK };
+            var cancelButton = new Button { Left = Scale(326), Top = Scale(148), Width = Scale(85), Height = Scale(26), Text = "Отмена", DialogResult = DialogResult.Cancel };
 
             Controls.AddRange(new Control[] { keyLabel, keyBox, passwordLabel, passwordBox, showPassword, activateButton, cancelButton });
             AcceptButton = activateButton;
@@ -966,19 +974,27 @@ namespace ZTool.LicenseLauncher
 
         public PasswordForm()
         {
+            float scale = 1.0f;
+            using (var g = CreateGraphics())
+            {
+                scale = g.DpiX / 96.0f;
+            }
+            var Scale = (Func<int, int>)delegate(int px) { return (int)Math.Round(px * scale); };
+
             Text = "Деактивация ZTool";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new System.Drawing.Size(390, 165);
+            ClientSize = new System.Drawing.Size(Scale(390), Scale(165));
+            Font = new Font("Segoe UI", 9F * scale);
 
-            var passwordLabel = new Label { Left = 16, Top = 16, Width = 350, Text = "Пароль переноса:" };
-            passwordBox = new TextBox { Left = 16, Top = 38, Width = 355, UseSystemPasswordChar = false };
-            var showPassword = new CheckBox { Left = 16, Top = 66, Width = 140, Text = "Показать пароль", Checked = true };
+            var passwordLabel = new Label { Left = Scale(16), Top = Scale(16), AutoSize = true, Text = "Пароль переноса:" };
+            passwordBox = new TextBox { Left = Scale(16), Top = Scale(38), Width = Scale(355), UseSystemPasswordChar = false };
+            var showPassword = new CheckBox { Left = Scale(16), Top = Scale(66), AutoSize = true, Text = "Показать пароль", Checked = true };
             showPassword.CheckedChanged += delegate { passwordBox.UseSystemPasswordChar = !showPassword.Checked; };
-            var okButton = new Button { Left = 195, Top = 112, Width = 85, Text = "ОК", DialogResult = DialogResult.OK };
-            var cancelButton = new Button { Left = 286, Top = 112, Width = 85, Text = "Отмена", DialogResult = DialogResult.Cancel };
+            var okButton = new Button { Left = Scale(195), Top = Scale(112), Width = Scale(85), Height = Scale(26), Text = "ОК", DialogResult = DialogResult.OK };
+            var cancelButton = new Button { Left = Scale(286), Top = Scale(112), Width = Scale(85), Height = Scale(26), Text = "Отмена", DialogResult = DialogResult.Cancel };
             Controls.AddRange(new Control[] { passwordLabel, passwordBox, showPassword, okButton, cancelButton });
             AcceptButton = okButton;
             CancelButton = cancelButton;
