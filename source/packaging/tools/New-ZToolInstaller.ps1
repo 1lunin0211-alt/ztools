@@ -1,8 +1,8 @@
-﻿param(
-    [string]$PackageRoot = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path '_release\_ztool-fork-production-20260522-183441'),
-    [string]$OutputDir = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path '_release\installer'),
+param(
+    [string]$PackageRoot = '',
+    [string]$OutputDir = '',
     [string]$AppVersion = '1.1',
-    [string]$Publisher = 'Лунин В.И.',
+    [string]$Publisher = ([char[]] @(0x041B, 0x0443, 0x043D, 0x0438, 0x043D, 0x0020, 0x0412, 0x002E, 0x0418, 0x002E) -join ''),
     [string]$NsisPath = '',
     [switch]$SkipPackageGate
 )
@@ -136,10 +136,30 @@ function ConvertTo-NsisQuotedString([string]$Value) {
     '"' + ($Value -replace '\$', '$$' -replace '"', '$\"') + '"'
 }
 
-$repoRoot = Resolve-FullPath (Join-Path $PSScriptRoot '..\..')
+$sourceRoot = Resolve-FullPath (Join-Path $PSScriptRoot '..\..')
+$repoRoot = Split-Path -Parent $sourceRoot
+
+if ([string]::IsNullOrWhiteSpace($PackageRoot)) {
+    $releaseDir = Join-Path $repoRoot 'release'
+    if (Test-Path -LiteralPath $releaseDir -PathType Container) {
+        $latestDir = Get-ChildItem -LiteralPath $releaseDir -Filter '_ztool-fork-production-*' -Directory |
+                     Sort-Object CreationTime -Descending |
+                     Select-Object -First 1
+        if ($null -ne $latestDir) {
+            $PackageRoot = $latestDir.FullName
+        }
+    }
+    if ([string]::IsNullOrWhiteSpace($PackageRoot)) {
+        $PackageRoot = Join-Path $repoRoot 'release\_ztool-fork-production-placeholder'
+    }
+}
+if ([string]::IsNullOrWhiteSpace($OutputDir)) {
+    $OutputDir = Join-Path $repoRoot 'release\installer'
+}
+
 $packageRootFull = Resolve-FullPath $PackageRoot
 $outputDirFull = Resolve-FullPath $OutputDir
-$installerScript = Join-Path $repoRoot 'packaging\installer\ZToolInstaller.nsi'
+$installerScript = Join-Path $sourceRoot 'packaging\installer\ZToolInstaller.nsi'
 
 if (-not (Test-Path -LiteralPath $packageRootFull -PathType Container)) {
     throw "PackageRoot not found: $packageRootFull"
@@ -165,8 +185,8 @@ New-Item -ItemType Directory -Force -Path $outputDirFull | Out-Null
 $nsis = Get-NsisPath $NsisPath
 $versionQuad = Get-AppVersionQuad $AppVersion
 $installerPath = Join-Path $outputDirFull "ZTool-Setup-$AppVersion.exe"
-$installerIcon = Join-Path $repoRoot 'packaging\obj\installer\ZTool.ico'
-$installerConfig = Join-Path $repoRoot 'packaging\obj\installer\ZToolInstaller.config.nsh'
+$installerIcon = Join-Path $sourceRoot 'packaging\obj\installer\ZTool.ico'
+$installerConfig = Join-Path $sourceRoot 'packaging\obj\installer\ZToolInstaller.config.nsh'
 New-IcoFromBitmap -BitmapPath (Join-Path $packageRootFull 'ZTool.bmp') -IconPath $installerIcon
 $configText = @(
     "!define APP_PUBLISHER $(ConvertTo-NsisQuotedString $Publisher)"

@@ -74,10 +74,13 @@ try {
 }
 
 if (-not $compiled) {
-    # Try finding any pre-compiled Russian help.CHM in the repository (size < 1MB)
-    $candidateFiles = Get-ChildItem -Path $rootFull -Filter help.CHM -Recurse -File -ErrorAction SilentlyContinue
+    # Try finding any pre-compiled Russian help.CHM in the repository
+    $repoRoot = Split-Path -Parent $rootFull
+    $candidateFiles = Get-ChildItem -Path $repoRoot -Filter help.CHM -Recurse -File -ErrorAction SilentlyContinue |
+                      Where-Object { $_.FullName -notlike "*\packaging\obj\*" } |
+                      Sort-Object Length
     foreach ($file in $candidateFiles) {
-        if ($file.Length -lt 1000000 -and $file.Length -gt 1000) {
+        if ($file.Length -gt 1000) {
             Copy-Item -LiteralPath $file.FullName -Destination $compiledPath -Force
             $compiled = $true
             Write-Verbose "Found precompiled Russian help.CHM at $($file.FullName) (size $($file.Length) bytes)"

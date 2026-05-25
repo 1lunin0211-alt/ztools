@@ -1102,7 +1102,7 @@ $ztoolProtocolToken = '9EF1CBF0BCFAD9F118EA30863B1874'
 
 $resourceName = 'ZTool.9eAd0SlNKphk.png'
 $strongNameKey = [dnlib.DotNet.StrongNameKey]::new($snkFull)
-$originalAddInPublicKeys = Get-OriginalAssemblyRefPublicKeys (Join-Path $repoRoot 'ZTool-original\ZTool.dll')
+$originalAddInPublicKeys = Get-OriginalAssemblyRefPublicKeys (Join-Path (Split-Path -Parent $repoRoot) 'reference\ZTool-original\ZTool.dll')
 $payloadTemp = Join-Path ([System.IO.Path]::GetTempPath()) ("ztool-disable-update-payload-" + [guid]::NewGuid().ToString('N') + ".dll")
 $payloadPatched = Join-Path ([System.IO.Path]::GetTempPath()) ("ztool-disable-update-payload-patched-" + [guid]::NewGuid().ToString('N') + ".dll")
 $exePatched = Join-Path ([System.IO.Path]::GetTempPath()) ("ztool-disable-update-exe-" + [guid]::NewGuid().ToString('N') + ".exe")

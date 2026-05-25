@@ -1,9 +1,0 @@
-{
-  "CreatedAtUtc": "2026-05-24T02:08:23.2492041Z",
-  "Production": true,
-  "Sha256": "FB01CF582B5C1E3EEC9160CE1A775BEA29702D28D7FCE0A4106A7701F463C5D5",
-  "SourcePath": "..\\..\\..\\..\\..\\packaging\\ZTool.License\\LicenseGate.cs",
-  "LicenseBaseUrl": "https://license.vizbuka.ru/ztool",
-  "ActivationHelpUrl": "https://license.vizbuka.ru/ztool",
-  "PublicKeySha256": "34775FF1491BF2F297C5D5404E36CB60B209E00531939DAA5C4160596921E15A"
-}

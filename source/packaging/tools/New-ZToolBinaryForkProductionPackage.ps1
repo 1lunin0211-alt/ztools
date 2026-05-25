@@ -77,6 +77,7 @@ function Set-ZToolSettingsSolidWorksDefaults([string]$PackageRoot) {
 }
 
 $rootFull = Resolve-FullPath $Root
+$repoRoot = Split-Path -Parent $rootFull
 if ([string]::IsNullOrWhiteSpace($SourceRoot)) {
     $defaultSourceRoot = Join-Path $rootFull '_localized-full-20260511-091044'
     if (Test-Path -LiteralPath $defaultSourceRoot -PathType Container) {
@@ -87,7 +88,7 @@ if ([string]::IsNullOrWhiteSpace($SourceRoot)) {
 }
 if ([string]::IsNullOrWhiteSpace($OutputRoot)) {
     $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-    $OutputRoot = Join-Path $rootFull "_ztool-fork-production-$stamp"
+    $OutputRoot = Join-Path $repoRoot "release\_ztool-fork-production-$stamp"
 }
 
 $sourceRootFull = Resolve-FullPath $SourceRoot
@@ -102,7 +103,7 @@ if (Test-Path -LiteralPath $outputRootFull) {
         throw "OutputRoot already exists: $outputRootFull. Pass -Force to replace it."
     }
 
-    Assert-UnderRoot $outputRootFull $rootFull
+    Assert-UnderRoot $outputRootFull $repoRoot
     Remove-Item -LiteralPath $outputRootFull -Recurse -Force
 }
 
