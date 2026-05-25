@@ -38,15 +38,48 @@ namespace ZTool.LicenseLauncher
                 }
 
                 var cache = store.Load();
-                if (!LicenseValidator.IsUsable(cache, config, machineId))
+                bool needOnlineCheck = false;
+                if (cache != null)
                 {
-                    cache = ShowActivation(config, machineId);
-                    if (cache == null)
+                    var age = DateTime.UtcNow - cache.LastOnlineCheckUtc;
+                    if (age.TotalDays > config.OfflineGraceDays)
                     {
-                        return;
+                        needOnlineCheck = true;
+                    }
+                }
+
+                if (!LicenseValidator.IsUsable(cache, config, machineId) || needOnlineCheck)
+                {
+                    if (cache != null && LicenseValidator.IsUsable(cache, config, machineId) && needOnlineCheck)
+                    {
+                        try
+                        {
+                            var client = new LicenseClient(config);
+                            var newCache = client.Activate(cache.Key, string.Empty, machineId);
+                            if (LicenseValidator.IsUsable(newCache, config, machineId))
+                            {
+                                cache = newCache;
+                                store.Save(cache);
+                                needOnlineCheck = false;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Write("Online revalidation failed: " + ex.Message);
+                            cache = null;
+                        }
                     }
 
-                    store.Save(cache);
+                    if (cache == null || !LicenseValidator.IsUsable(cache, config, machineId))
+                    {
+                        cache = ShowActivation(config, machineId);
+                        if (cache == null)
+                        {
+                            return;
+                        }
+
+                        store.Save(cache);
+                    }
                 }
 
                 var payloadKey = string.Empty;
@@ -358,9 +391,13 @@ namespace ZTool.LicenseLauncher
 
         private static byte[] DeriveKey(string payloadKey)
         {
+            if (string.IsNullOrEmpty(payloadKey))
+            {
+                throw new InvalidOperationException("Ключ расшифровки payload отсутствует.");
+            }
             using (var sha = SHA256.Create())
             {
-                return sha.ComputeHash(Encoding.UTF8.GetBytes(string.IsNullOrEmpty(payloadKey) ? EmbeddedLicenseConfig.PayloadKey : payloadKey));
+                return sha.ComputeHash(Encoding.UTF8.GetBytes(payloadKey));
             }
         }
     }

@@ -6,6 +6,7 @@ param(
     [string]$LicenseBaseUrl = 'https://license.vizbuka.ru/ztool',
     [string]$PublicKeyXmlPath = '',
     [string]$PublicKeyXml = '',
+    [string]$PayloadKey = 'ztool-secure-prod-key-2026',
     [int]$OfflineGraceDays = 7,
     [switch]$Package,
     [switch]$Production,
@@ -228,7 +229,7 @@ if ($Production -and [string]::IsNullOrWhiteSpace($PublicKeyXml)) {
     throw 'Production package requires -PublicKeyXmlPath or -PublicKeyXml.'
 }
 
-$payloadKey = [Guid]::NewGuid().ToString('N') + [Guid]::NewGuid().ToString('N')
+$payloadKey = if (-not [string]::IsNullOrWhiteSpace($PayloadKey)) { $PayloadKey } else { [Guid]::NewGuid().ToString('N') + [Guid]::NewGuid().ToString('N') }
 $generatedConfig = Join-Path $rootFull 'packaging\ZTool.LicenseLauncher\obj\LicenseBuildConfig.generated.cs'
 New-Item -ItemType Directory -Force -Path ([System.IO.Path]::GetDirectoryName($generatedConfig)) | Out-Null
 @"

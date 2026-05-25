@@ -789,7 +789,7 @@ try {
     $errors.Add("Cannot inspect ZTool.settings SolidWorks version: $($_.Exception.Message)")
 }
 
-$expectedForkToken = '69848a58054312c2'
+$expectedForkToken = '609176c10962aecc'
 $expectedZToolProtocolToken = '9EF1CBF0BCFAD9F118EA30863B1874'
 Ensure-DnlibLoaded
 foreach ($relative in @('ZTool.exe', 'ZTool.dll', 'ZTool.Init.exe', 'ZTool.License.dll', 'ZTool Updater.exe', 'ZTool License Deactivate.exe')) {

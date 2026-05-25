@@ -39,7 +39,7 @@ namespace ZTool.License
                 {
                     tokenStr += b.ToString("x2");
                 }
-                return string.Equals(tokenStr, "69848a58054312c2", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(tokenStr, "609176c10962aecc", StringComparison.OrdinalIgnoreCase);
             }
             catch
             {
@@ -78,9 +78,40 @@ namespace ZTool.License
                     store.Delete();
                 }
 
-                if (LicenseValidator.IsUsable(cache, machineId))
+                bool needOnlineCheck = false;
+                if (cache != null)
+                {
+                    var age = DateTime.UtcNow - cache.LastOnlineCheckUtc;
+                    if (age.TotalDays > EmbeddedLicenseConfig.OfflineGraceDays)
+                    {
+                        needOnlineCheck = true;
+                    }
+                }
+
+                if (cache != null && LicenseValidator.IsUsable(cache, machineId) && !needOnlineCheck)
                 {
                     return true;
+                }
+
+                if (cache != null && LicenseValidator.IsUsable(cache, machineId) && needOnlineCheck)
+                {
+                    try
+                    {
+                        var client = new LicenseClient();
+                        var newCache = client.Activate(cache.Key, string.Empty, machineId);
+                        if (LicenseValidator.IsUsable(newCache, machineId))
+                        {
+                            cache = newCache;
+                            store.Save(cache);
+                            return true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write("Online revalidation failed: " + ex.Message);
+                        store.Delete();
+                        cache = null;
+                    }
                 }
 
                 var demoRequested = false;
@@ -1411,6 +1442,7 @@ namespace ZTool.License
         public const string LicenseBaseUrl = "https://license.vizbuka.ru/ztool";
         public const string ActivationHelpUrl = "https://license.vizbuka.ru/ztool";
         public const string PublicKeyXml = "";
+        public const int OfflineGraceDays = 7;
     }
 #endif
 

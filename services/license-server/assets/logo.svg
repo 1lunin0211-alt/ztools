@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 48" width="180" height="48">
+  <defs>
+    <!-- Vibrant Gradient for the geometric emblem -->
+    <linearGradient id="emblemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Emblem: Hexagonal mechanical gear-like shape with Z path -->
+  <g transform="translate(4, 4)">
+    <!-- Outer Hexagon -->
+    <polygon points="20,2 38,12 38,32 20,42 2,32 2,12" fill="none" stroke="url(#emblemGrad)" stroke-width="2.5" stroke-linejoin="round" opacity="0.4"/>
+    
+    <!-- Inner Z Line (Cutting/Mechanical style) -->
+    <path d="M 11,13 L 29,13 L 11,31 L 29,31" fill="none" stroke="url(#emblemGrad)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+  
+  <!-- Text Content: ZTool -->
+  <text x="56" y="32" font-family="'Inter', 'Segoe UI', -apple-system, sans-serif" font-weight="800" font-size="24" fill="#ffffff" letter-spacing="0.5">Z<tspan fill="url(#emblemGrad)" font-weight="400">Tool</tspan></text>
+</svg>

@@ -97,7 +97,12 @@ $files = @(
     'api/deactivate.php',
     'api/public-key.php',
     'includes/helpers.php',
-    'includes/signer.php'
+    'includes/signer.php',
+    'index.php',
+    '.htaccess',
+    'css/landing.css',
+    'js/landing.js',
+    'assets/logo.svg'
 )
 
 $sshArgsBase = @()

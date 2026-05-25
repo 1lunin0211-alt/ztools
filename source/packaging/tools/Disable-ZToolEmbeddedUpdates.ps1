@@ -347,6 +347,23 @@ function Get-OriginalAssemblyRefPublicKeys([string]$OriginalAssemblyPath) {
 function Repair-TokenSizedPublicKeyAssemblyRefs([dnlib.DotNet.ModuleDef]$Module, [hashtable]$OriginalPublicKeys) {
     $patched = New-Object System.Collections.Generic.List[string]
     foreach ($assemblyRef in $Module.GetAssemblyRefs()) {
+        if ($assemblyRef.Name -eq 'ZTool.License') {
+            $newLicenseTokenBytes = New-Object byte[] 8
+            $newLicenseTokenBytes[0] = 0x60
+            $newLicenseTokenBytes[1] = 0x91
+            $newLicenseTokenBytes[2] = 0x76
+            $newLicenseTokenBytes[3] = 0xc1
+            $newLicenseTokenBytes[4] = 0x09
+            $newLicenseTokenBytes[5] = 0x62
+            $newLicenseTokenBytes[6] = 0xae
+            $newLicenseTokenBytes[7] = 0xcc
+            
+            $assemblyRef.PublicKeyOrToken = [dnlib.DotNet.PublicKeyToken]::new($newLicenseTokenBytes)
+            $assemblyRef.HasPublicKey = $false
+            $patched.Add("ZTool.License reference updated to rotated token")
+            continue
+        }
+
         $publicKeyOrToken = [string]$assemblyRef.PublicKeyOrToken
         if (-not $assemblyRef.HasPublicKey -or
             [string]::IsNullOrWhiteSpace($publicKeyOrToken) -or
@@ -465,7 +482,7 @@ function Patch-ProgramMainLicenseGate([dnlib.DotNet.ModuleDef]$Module, [string]$
     $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($isLicensed))
     $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Pop.ToInstruction())
     $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($assemblyLoadRef))
-    $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Ldstr.ToInstruction('ZTool.License, Version=1.1.0.0, Culture=neutral, PublicKeyToken=69848a58054312c2'))
+    $instructions.Insert($contextIndex, [dnlib.DotNet.Emit.OpCodes]::Ldstr.ToInstruction('ZTool.License, Version=1.1.0.0, Culture=neutral, PublicKeyToken=609176c10962aecc'))
 
     $method.Body.MaxStack = [Math]::Max($method.Body.MaxStack, 2)
     return 'ZTool.Program::Main direct LicenseGate fail-closed gate inserted=1'

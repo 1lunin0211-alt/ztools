@@ -63,6 +63,21 @@ internal static class ZToolLicenseWorkflowSmoke
             Assert((bool)InvokeStatic(validatorType, "IsUsable", cache, machineId), "activated payload is usable");
             Console.WriteLine("activation=ok");
 
+            var signedPayloadProperty = cache.GetType().GetProperty("SignedPayload");
+            var signedPayload = (string)signedPayloadProperty.GetValue(cache, null);
+            var match = System.Text.RegularExpressions.Regex.Match(signedPayload, "\"payloadKey\"\\s*:\\s*\"([^\"]+)\"");
+            Assert(match.Success, "payloadKey is present in signed payload");
+            var payloadKey = match.Groups[1].Value;
+
+            var payloadPath = Path.Combine(packageRoot, "ZTool.Core.payload");
+            if (File.Exists(payloadPath))
+            {
+                var encryptedBytes = File.ReadAllBytes(payloadPath);
+                var decryptedBytes = DecryptPayload(encryptedBytes, payloadKey);
+                Assert(decryptedBytes.Length > 2 && decryptedBytes[0] == 0x4D && decryptedBytes[1] == 0x5A, "Decrypted payload has valid MZ header");
+                Console.WriteLine("payloadDecryption=ok");
+            }
+
             if (mode == "activate-store")
             {
                 InvokeInstance(store, "Save", cache);
@@ -154,6 +169,34 @@ internal static class ZToolLicenseWorkflowSmoke
         if (!condition)
         {
             throw new InvalidOperationException("Workflow smoke failed: " + message);
+        }
+    }
+
+    private static byte[] DecryptPayload(byte[] encrypted, string payloadKey)
+    {
+        var iv = new byte[16];
+        Array.Copy(encrypted, 0, iv, 0, 16);
+
+        var cipher = new byte[encrypted.Length - 16];
+        Array.Copy(encrypted, 16, cipher, 0, cipher.Length);
+
+        using (var aes = new System.Security.Cryptography.RijndaelManaged())
+        {
+            aes.KeySize = 256;
+            aes.BlockSize = 128;
+            aes.Mode = System.Security.Cryptography.CipherMode.CBC;
+            aes.Padding = System.Security.Cryptography.PaddingMode.PKCS7;
+
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+            {
+                aes.Key = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(payloadKey));
+            }
+            aes.IV = iv;
+
+            using (var decryptor = aes.CreateDecryptor())
+            {
+                return decryptor.TransformFinalBlock(cipher, 0, cipher.Length);
+            }
         }
     }
 }

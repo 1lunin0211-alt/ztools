@@ -8,6 +8,7 @@ param(
     [string]$PublicKeyXmlUri = '',
     [string]$PublicKeyXml = '',
     [string]$SnkPath = '',
+    [int]$OfflineGraceDays = 7,
     [switch]$Force,
     [switch]$SkipGate
 )
@@ -111,6 +112,7 @@ $runtimeArgs = @{
     Root = $rootFull
     OutputRoot = $runtimeRoot
     LicenseBaseUrl = $LicenseBaseUrl
+    OfflineGraceDays = $OfflineGraceDays
 }
 if (-not [string]::IsNullOrWhiteSpace($ActivationHelpUrl)) {
     $runtimeArgs.ActivationHelpUrl = $ActivationHelpUrl

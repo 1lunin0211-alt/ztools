@@ -7,6 +7,7 @@ param(
     [string]$PublicKeyXmlUri = '',
     [string]$PublicKeyXml = '',
     [string]$SnkPath = '',
+    [int]$OfflineGraceDays = 7,
     [switch]$AllowDevelopmentEmptyPublicKey
 )
 
@@ -316,6 +317,7 @@ namespace ZTool.License
         public const string LicenseBaseUrl = $(ConvertTo-CSharpLiteral $LicenseBaseUrl.TrimEnd('/'));
         public const string ActivationHelpUrl = $(ConvertTo-CSharpLiteral $activationHelpUrlResolved);
         public const string PublicKeyXml = $(ConvertTo-CSharpLiteral $PublicKeyXml);
+        public const int OfflineGraceDays = $($OfflineGraceDays);
     }
 }
 "@ | Set-Content -LiteralPath $generatedConfig -Encoding UTF8

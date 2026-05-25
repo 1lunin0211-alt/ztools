@@ -30,7 +30,7 @@ function buildLicensePayload(array $license, string $machineId): array
         'offlineAllowed' => true,
         'transferAllowed' => !empty($license['transfer_allowed']),
         'seats' => (int)($license['max_activations'] ?? 1),
-        'payloadKey' => 'ztool-secure-prod-key-2026',
+        'payloadKey' => defined('PAYLOAD_KEY') ? PAYLOAD_KEY : 'ztool-secure-prod-key-2026',
     ];
 }
 

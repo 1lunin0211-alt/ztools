@@ -12,6 +12,8 @@ define('DB_CHARSET', 'utf8mb4');
 define('PRIVATE_KEY_PATH', __DIR__ . '/keys/license_private.pem');
 define('PUBLIC_KEY_PATH', __DIR__ . '/keys/license_public.pem');
 
+define('PAYLOAD_KEY', 'ztool-secure-prod-key-2026');
+
 define('ADMIN_USER', 'admin');
 // Generate: php -r "echo password_hash('change-me', PASSWORD_BCRYPT), PHP_EOL;"
 // Or rotate config.php with: ZTOOL_ADMIN_PASSWORD='new-password' php tools/set_admin_password.php
