@@ -135,6 +135,7 @@ $runtimeJson = & $buildRuntime @runtimeArgs
 $runtime = ($runtimeJson | ForEach-Object { [string]$_ }) -join "`n" | ConvertFrom-Json
 
 Copy-DirectoryContents -Source $sourceRootFull -Destination $outputRootFull
+& (Join-Path $PSScriptRoot 'Patch-SWToolNativePayloadResources.ps1') -PackageRoot $outputRootFull -Language 'Russian' | Out-Null
 Set-ZToolSettingsSolidWorksDefaults $outputRootFull
 
 $buildRussianHelp = Join-Path $PSScriptRoot 'Build-ZToolRussianHelp.ps1'
@@ -154,6 +155,10 @@ if (-not [string]::IsNullOrWhiteSpace($SnkPath)) {
     $disableUpdateArgs.SnkPath = $SnkPath
 }
 $disableUpdateResult = & $disableUpdates @disableUpdateArgs
+
+if ($runtime.SolidWorksAddInDll -and (Test-Path -LiteralPath $runtime.SolidWorksAddInDll -PathType Leaf)) {
+    Copy-Item -LiteralPath $runtime.SolidWorksAddInDll -Destination (Join-Path $outputRootFull 'ZTool.dll') -Force
+}
 
 $resignInit = Join-Path $PSScriptRoot 'Resign-ZToolInitExe.ps1'
 $resignInitArgs = @{

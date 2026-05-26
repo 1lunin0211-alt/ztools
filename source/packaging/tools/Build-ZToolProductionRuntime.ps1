@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path,
     [string]$OutputRoot = '',
     [string]$LicenseBaseUrl = 'https://license.vizbuka.ru/ztool',
@@ -253,7 +253,8 @@ function Protect-LicenseAssembly([string]$DllPath, [string]$SnkPath) {
 
 function Invoke-Csc([string[]]$Arguments) {
     $csc = Get-CscPath
-    & $csc @Arguments
+    $finalArgs = @('/codepage:65001') + $Arguments
+    & $csc $finalArgs
     if ($LASTEXITCODE -ne 0) {
         throw "C# compilation failed with exit code $LASTEXITCODE."
     }
@@ -380,6 +381,126 @@ $updateArgs = @(
 Invoke-Csc $updateArgs
 Assert-StrongNameOk $updateStub
 
+$solidWorksRoot = 'C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS'
+$swInterop = Join-Path $solidWorksRoot 'SolidWorks.Interop.sldworks.dll'
+$swConstInterop = Join-Path $solidWorksRoot 'SolidWorks.Interop.swconst.dll'
+$swPublishedInterop = Join-Path $solidWorksRoot 'SolidWorks.Interop.swpublished.dll'
+$solidWorksAddInDll = Join-Path $outputRootFull 'ZTool.dll'
+if ((Test-Path -LiteralPath $swInterop -PathType Leaf) -and (Test-Path -LiteralPath $swConstInterop -PathType Leaf) -and (Test-Path -LiteralPath $swPublishedInterop -PathType Leaf)) {
+    Add-Type -AssemblyName System.Drawing
+    $iconResourceRoot = Join-Path $outputRootFull 'SolidWorksAddInResources'
+    New-Item -ItemType Directory -Force -Path $iconResourceRoot | Out-Null
+    $baseIcon = Join-Path (Split-Path -Parent $rootFull) 'reference\ZTool-original\ZTool.bmp'
+    if (-not (Test-Path -LiteralPath $baseIcon -PathType Leaf)) {
+        throw "Base SolidWorks add-in icon was not found: $baseIcon"
+    }
+
+    function New-ResizedIcon([string]$Path, [int]$Width, [int]$Height, [string]$Format) {
+        $source = [System.Drawing.Image]::FromFile($baseIcon)
+        try {
+            $bitmap = [System.Drawing.Bitmap]::new($Width, $Height)
+            $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+            try {
+                $graphics.Clear([System.Drawing.Color]::Transparent)
+                $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+                $graphics.DrawImage($source, 0, 0, $Width, $Height)
+                if ($Format -eq 'Png') {
+                    $bitmap.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
+                } else {
+                    $bitmap.Save($Path, [System.Drawing.Imaging.ImageFormat]::Bmp)
+                }
+            } finally {
+                $graphics.Dispose()
+                $bitmap.Dispose()
+            }
+        } finally {
+            $source.Dispose()
+        }
+    }
+
+    function New-IconStrip([string]$Path, [int]$IconWidth, [int]$IconHeight, [int]$Count, [string]$Format) {
+        $source = [System.Drawing.Image]::FromFile($baseIcon)
+        try {
+            $bitmap = [System.Drawing.Bitmap]::new($IconWidth * $Count, $IconHeight)
+            $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+            try {
+                $graphics.Clear([System.Drawing.Color]::Transparent)
+                $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+                for ($i = 0; $i -lt $Count; $i++) {
+                    $graphics.DrawImage($source, $i * $IconWidth, 0, $IconWidth, $IconHeight)
+                }
+                if ($Format -eq 'Png') {
+                    $bitmap.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
+                } else {
+                    $bitmap.Save($Path, [System.Drawing.Imaging.ImageFormat]::Bmp)
+                }
+            } finally {
+                $graphics.Dispose()
+                $bitmap.Dispose()
+            }
+        } finally {
+            $source.Dispose()
+        }
+    }
+
+    $main16 = Join-Path $iconResourceRoot 'MainIconSmall_16.bmp'
+    $main24 = Join-Path $iconResourceRoot 'MainIconLarge_24.bmp'
+    $main32 = Join-Path $iconResourceRoot 'MainIconLarge_32.bmp'
+    $toolbar16 = Join-Path $iconResourceRoot 'ToolbarSmall_16.bmp'
+    $toolbar24 = Join-Path $iconResourceRoot 'ToolbarLarge_24.bmp'
+    $toolbar32 = Join-Path $iconResourceRoot 'ToolbarLarge_32.bmp'
+    $fly16 = Join-Path $iconResourceRoot 'flyGroupicon_16.png'
+    $fly24 = Join-Path $iconResourceRoot 'flyGroupicon_24.png'
+    $fly32 = Join-Path $iconResourceRoot 'flyGroupicon_32.png'
+    $flyList16 = Join-Path $iconResourceRoot 'flyGroupiconlist_16.png'
+    $flyList24 = Join-Path $iconResourceRoot 'flyGroupiconlist_24.png'
+    $flyList32 = Join-Path $iconResourceRoot 'flyGroupiconlist_32.png'
+    New-ResizedIcon $main16 16 16 Bmp
+    New-ResizedIcon $main24 24 24 Bmp
+    New-ResizedIcon $main32 32 32 Bmp
+    New-IconStrip $toolbar16 16 16 18 Bmp
+    New-IconStrip $toolbar24 24 24 18 Bmp
+    New-IconStrip $toolbar32 32 32 18 Bmp
+    New-ResizedIcon $fly16 16 16 Png
+    New-ResizedIcon $fly24 24 24 Png
+    New-ResizedIcon $fly32 32 32 Png
+    New-IconStrip $flyList16 16 16 2 Png
+    New-IconStrip $flyList24 24 24 2 Png
+    New-IconStrip $flyList32 32 32 2 Png
+
+    $solidWorksAddInArgs = @(
+        '/nologo',
+        '/target:library',
+        '/optimize+',
+        '/debug:pdbonly',
+        "/keyfile:$snkFull",
+        "/out:$solidWorksAddInDll",
+        '/reference:System.dll',
+        '/reference:System.Core.dll',
+        '/reference:System.Xml.dll',
+        "/link:$swInterop",
+        "/link:$swConstInterop",
+        "/link:$swPublishedInterop",
+        "/resource:$main16,ZTool.MainIconSmall_16.bmp",
+        "/resource:$main24,ZTool.MainIconLarge_24.bmp",
+        "/resource:$main32,ZTool.MainIconLarge_32.bmp",
+        "/resource:$toolbar16,ZTool.ToolbarSmall_16.bmp",
+        "/resource:$toolbar24,ZTool.ToolbarLarge_24.bmp",
+        "/resource:$toolbar32,ZTool.ToolbarLarge_32.bmp",
+        "/resource:$fly16,ZTool.flyGroupicon_16.png",
+        "/resource:$fly24,ZTool.flyGroupicon_24.png",
+        "/resource:$fly32,ZTool.flyGroupicon_32.png",
+        "/resource:$flyList16,ZTool.flyGroupiconlist_16.png",
+        "/resource:$flyList24,ZTool.flyGroupiconlist_24.png",
+        "/resource:$flyList32,ZTool.flyGroupiconlist_32.png",
+        (Join-Path $rootFull 'packaging\ZTool.SolidWorksAddIn\SwAddin.cs')
+    )
+    Invoke-Csc $solidWorksAddInArgs
+    Assert-StrongNameOk $solidWorksAddInDll
+} else {
+    Write-Warning "SolidWorks interop assemblies were not found under $solidWorksRoot. Clean ZTool.dll SolidWorks add-in was not built."
+}
+
 $publicKeyFingerprint = if ([string]::IsNullOrWhiteSpace($PublicKeyXml)) {
     ''
 } else {
@@ -413,6 +534,14 @@ $manifest = [pscustomobject]@{
             Path = 'ZTool.UpdateDisabled.exe'
             Sha256 = Get-FileSha256 $updateStub
         }
+        SolidWorksAddInDll = if (Test-Path -LiteralPath $solidWorksAddInDll -PathType Leaf) {
+            [pscustomobject]@{
+                Path = 'ZTool.dll'
+                Sha256 = Get-FileSha256 $solidWorksAddInDll
+            }
+        } else {
+            $null
+        }
     }
 }
 
@@ -438,6 +567,7 @@ Remove-Item -LiteralPath $generatedConfig -Force -ErrorAction SilentlyContinue
     LicenseDll = $licenseDll
     DeactivateExe = $deactivateExe
     UpdateDisabledExe = $updateStub
+    SolidWorksAddInDll = if (Test-Path -LiteralPath $solidWorksAddInDll -PathType Leaf) { $solidWorksAddInDll } else { '' }
     Manifest = $runtimeManifest
     Production = $manifest.Production
     PublicKeySha256 = $publicKeyFingerprint

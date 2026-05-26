@@ -184,7 +184,7 @@ New-Item -ItemType Directory -Force -Path $outputDirFull | Out-Null
 
 $nsis = Get-NsisPath $NsisPath
 $versionQuad = Get-AppVersionQuad $AppVersion
-$installerPath = Join-Path $outputDirFull "ZTool-Setup-$AppVersion.exe"
+$installerPath = Join-Path $outputDirFull "SWTool-Setup-$AppVersion.exe"
 $installerIcon = Join-Path $sourceRoot 'packaging\obj\installer\ZTool.ico'
 $installerConfig = Join-Path $sourceRoot 'packaging\obj\installer\ZToolInstaller.config.nsh'
 New-IcoFromBitmap -BitmapPath (Join-Path $packageRootFull 'ZTool.bmp') -IconPath $installerIcon

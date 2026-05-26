@@ -102,9 +102,9 @@ if (!isAdminLoggedIn()) {
     ?>
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>ZTool License Admin</title></head>
+<head><meta charset="utf-8"><title>SWTool License Admin</title></head>
 <body>
-<h1>ZTool License Admin</h1>
+<h1>SWTool License Admin</h1>
 <?php if ($error !== ''): ?><p style="color:#a00"><?= h($error) ?></p><?php endif; ?>
 <form method="post">
   <input type="hidden" name="action" value="login">
@@ -168,7 +168,7 @@ $licenses = $db->query('SELECT * FROM license_keys ORDER BY id DESC LIMIT 200')-
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>ZTool License Admin</title>
+  <title>SWTool License Admin</title>
   <style>
     body{font-family:Segoe UI,Arial,sans-serif;margin:24px;color:#202124}
     table{border-collapse:collapse;width:100%;margin-top:20px}
@@ -182,7 +182,7 @@ $licenses = $db->query('SELECT * FROM license_keys ORDER BY id DESC LIMIT 200')-
 </head>
 <body>
 <p style="float:right"><a href="?logout=1">Logout</a></p>
-<h1>ZTool License Admin</h1>
+<h1>SWTool License Admin</h1>
 <?php if ($message !== ''): ?><p class="ok"><?= h($message) ?></p><?php endif; ?>
 <?php if ($error !== ''): ?><p class="bad"><?= h($error) ?></p><?php endif; ?>
 

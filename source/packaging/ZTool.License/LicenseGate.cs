@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -61,13 +61,19 @@ namespace ZTool.License
 
                 if (DemoMode.IsActive)
                 {
+                    RuntimeBranding.Start();
                     return true;
                 }
 
                 var machineId = HardwareFingerprint.GetMachineId();
+                TimeSpan demoRemaining;
+                if (DemoMode.TryGetActiveLease(machineId, out demoRemaining))
+                {
+                    return DemoMode.Start(demoRemaining, false);
+                }
+
                 var store = new LicenseStore();
                 var cache = store.Load();
-                TimeSpan demoRemaining;
                 if (DemoMode.IsUsableCache(cache, machineId, out demoRemaining))
                 {
                     return DemoMode.Start(demoRemaining, false);
@@ -90,6 +96,7 @@ namespace ZTool.License
 
                 if (cache != null && LicenseValidator.IsUsable(cache, machineId) && !needOnlineCheck)
                 {
+                    RuntimeBranding.Start();
                     return true;
                 }
 
@@ -103,6 +110,7 @@ namespace ZTool.License
                         {
                             cache = newCache;
                             store.Save(cache);
+                            RuntimeBranding.Start();
                             return true;
                         }
                     }
@@ -119,6 +127,7 @@ namespace ZTool.License
                 if (cache != null && LicenseValidator.IsUsable(cache, machineId))
                 {
                     store.Save(cache);
+                    RuntimeBranding.Start();
                     return true;
                 }
 
@@ -126,6 +135,7 @@ namespace ZTool.License
                 {
                     var demoCache = DemoMode.CreateCache(machineId);
                     store.Save(demoCache);
+
                     return DemoMode.StartUntil(demoCache.DemoExpiresAtUtc, true);
                 }
 
@@ -135,14 +145,81 @@ namespace ZTool.License
                 }
 
                 store.Save(cache);
+                RuntimeBranding.Start();
                 return true;
             }
             catch (Exception ex)
             {
                 Log.Write("License gate failed: " + ex);
-                MessageBox.Show("Не удалось проверить лицензию ZTool.\r\n\r\n" + ex.Message, "ZTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Не удалось проверить лицензию SWTool.\r\n\r\n" + ex.Message, "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
+        }
+
+        private static bool IsSolidWorksCommandModeInvocation()
+        {
+            try
+            {
+                var args = Environment.GetCommandLineArgs();
+                if (args == null || args.Length < 5)
+                {
+                    return false;
+                }
+
+                int swMajor;
+                int swProcessId;
+                int commandType;
+                long addinWindowHandle;
+                return int.TryParse(args[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out swMajor) &&
+                    int.TryParse(args[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out swProcessId) &&
+                    int.TryParse(args[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out commandType) &&
+                    long.TryParse(args[4], NumberStyles.Integer, CultureInfo.InvariantCulture, out addinWindowHandle) &&
+                    swMajor >= 20 &&
+                    swProcessId > 0 &&
+                    addinWindowHandle > 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static string BrandWindowTitle(string title)
+        {
+            return BrandText(title);
+        }
+
+        private static string BrandText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return text;
+            }
+
+            var result = text
+                .Replace("ZTool", "SWTool")
+                .Replace("Ztool", "SWTool")
+                .Replace("3.8.4", AppVersion)
+                .Replace("www.z-tool.cn", "license.vizbuka.ru/ztool")
+                .Replace("mail@z-tool.cn", "sales@z-tool.ru")
+                .Replace("823539419", "license.vizbuka.ru/ztool")
+                .Replace("Solidworks", "SolidWorks")
+                .Replace("高效辅助", "инструменты")
+                .Replace("高效辅助...", "инструменты")
+                .Replace("О программеSWTool-SolidWorksинструменты...", "О программе SWTool - инструменты для SolidWorks")
+                .Replace("О программеSWTool-SolidWorksинструменты", "О программе SWTool - инструменты для SolidWorks")
+                .Replace("SWTool-SolidWorksинструменты", "SWTool - инструменты для SolidWorks")
+                .Replace("适用于SolidWorks2012及以上版本", "Поддерживается SolidWorks 2012 и новее")
+                .Replace("适用于Solidworks2012及以上版本", "Поддерживается SolidWorks 2012 и новее")
+                .Replace("QQ-группа: license.vizbuka.ru/ztool", "Поддержка: license.vizbuka.ru/ztool")
+                .Replace("QQ group: license.vizbuka.ru/ztool", "Поддержка: license.vizbuka.ru/ztool");
+
+            if (result.StartsWith("Email:", StringComparison.OrdinalIgnoreCase))
+            {
+                result = result.Replace("Email:", "Email:");
+            }
+
+            return result;
         }
 
         public static bool DeactivateInteractive()
@@ -167,7 +244,7 @@ namespace ZTool.License
                 var cache = store.Load();
                 if (cache == null || string.IsNullOrWhiteSpace(cache.Key) || DemoMode.IsDemoCache(cache))
                 {
-                    MessageBox.Show("На этом пользователе нет сохраненной лицензии ZTool.", "ZTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("На этом пользователе нет сохраненной лицензии SWTool.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return false;
                 }
 
@@ -192,13 +269,13 @@ namespace ZTool.License
 
                 new LicenseClient().Deactivate(cache.Key, transferPassword, deactivationMachineId);
                 store.Delete();
-                MessageBox.Show("Лицензия деактивирована. Теперь ключ можно активировать на другом ПК.", "ZTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Лицензия деактивирована. Теперь ключ можно активировать на другом ПК.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return true;
             }
             catch (Exception ex)
             {
                 Log.Write("Deactivation failed: " + ex);
-                MessageBox.Show(ex.Message, "Деактивация ZTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(ex.Message, "Деактивация SWTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
         }
@@ -227,7 +304,7 @@ namespace ZTool.License
                         var cache = new LicenseClient().Activate(form.LicenseKey, form.TransferPassword, machineId);
                         if (!LicenseValidator.IsUsable(cache, machineId))
                         {
-                            MessageBox.Show("Сервер вернул лицензию, но локальная проверка не прошла.", "ZTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Сервер вернул лицензию, но локальная проверка не прошла.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             continue;
                         }
 
@@ -236,7 +313,7 @@ namespace ZTool.License
                     catch (Exception ex)
                     {
                         Log.Write("Activation failed: " + ex);
-                        MessageBox.Show(ex.Message, "Активация ZTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show(ex.Message, "Активация SWTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }
@@ -809,7 +886,7 @@ namespace ZTool.License
 
             public ActivationForm()
             {
-                Text = "Активация ZTool";
+                Text = "Активация SWTool";
                 FormBorderStyle = FormBorderStyle.FixedDialog;
                 MaximizeBox = false;
                 MinimizeBox = false;
@@ -819,11 +896,7 @@ namespace ZTool.License
                 AutoScaleMode = AutoScaleMode.Font;
                 Font = new Font("Segoe UI", 9F);
 
-                float scale = 1.0f;
-                using (var g = CreateGraphics())
-                {
-                    scale = g.DpiX / 96f;
-                }
+                const int scale = 1;
                 
                 AutoSize = true;
                 AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -877,7 +950,7 @@ namespace ZTool.License
 
                 var demoHint = new Label
                 {
-                    Text = "Без активации можно продолжить в демо-режиме. После окончания таймера ZTool закроется.",
+                    Text = "Без активации можно продолжить в демо-режиме. После окончания таймера SWTool закроется.",
                     Dock = DockStyle.Fill,
                     AutoSize = true,
                     Margin = new Padding(0, 0, 0, (int)(10 * scale))
@@ -940,7 +1013,7 @@ namespace ZTool.License
                 catch (Exception ex)
                 {
                     Log.Write("Activation help open failed: " + ex);
-                    MessageBox.Show("Не удалось открыть локальную справку или инструкцию автоматически.\r\n\r\n" + url, "ZTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Не удалось открыть локальную справку или инструкцию автоматически.\r\n\r\n" + url, "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
 
@@ -1096,7 +1169,7 @@ namespace ZTool.License
 
             public PasswordForm()
             {
-                Text = "Деактивация ZTool";
+                Text = "Деактивация SWTool";
                 FormBorderStyle = FormBorderStyle.FixedDialog;
                 MaximizeBox = false;
                 MinimizeBox = false;
@@ -1106,11 +1179,7 @@ namespace ZTool.License
                 AutoScaleMode = AutoScaleMode.Font;
                 Font = new Font("Segoe UI", 9F);
                 
-                float scale = 1.0f;
-                using (var g = CreateGraphics())
-                {
-                    scale = g.DpiX / 96f;
-                }
+                const int scale = 1;
                 
                 AutoSize = true;
                 AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -1166,6 +1235,198 @@ namespace ZTool.License
             public string TransferPassword { get { return passwordBox.Text; } }
         }
 
+        private static class RuntimeBranding
+        {
+            private static System.Windows.Forms.Timer timer;
+            private static int ticks;
+
+            public static void Start()
+            {
+                if (timer != null)
+                {
+                    return;
+                }
+
+                try
+                {
+                    ticks = 0;
+                    timer = new System.Windows.Forms.Timer();
+                    timer.Interval = 500;
+                    timer.Tick += delegate { BrandOpenForms(); };
+                    timer.Start();
+                    BrandOpenForms();
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Runtime branding failed: " + ex.Message);
+                }
+            }
+
+            private static void BrandOpenForms()
+            {
+                try
+                {
+                    ticks++;
+                    foreach (Form form in Application.OpenForms)
+                    {
+                        if (form == null || form.IsDisposed || !form.IsHandleCreated)
+                        {
+                            continue;
+                        }
+
+                        var branded = BrandWindowTitle(form.Text);
+                        if (!string.Equals(form.Text, branded, StringComparison.Ordinal))
+                        {
+                            form.Text = branded;
+                        }
+
+                        BrandControls(form.Controls);
+                        if (form.ContextMenuStrip != null)
+                        {
+                            BrandToolStrip(form.ContextMenuStrip);
+                        }
+                    }
+
+                    if (ticks >= 240 && timer != null)
+                    {
+                        timer.Stop();
+                        timer.Dispose();
+                        timer = null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Runtime branding tick failed: " + ex.Message);
+                }
+            }
+
+            private static void BrandControls(Control.ControlCollection controls)
+            {
+                foreach (Control control in controls)
+                {
+                    if (control == null || control.IsDisposed)
+                    {
+                        continue;
+                    }
+
+                    var branded = BrandText(control.Text);
+                    if (!string.Equals(control.Text, branded, StringComparison.Ordinal))
+                    {
+                        control.Text = branded;
+                    }
+
+                    var linkLabel = control as LinkLabel;
+                    if (linkLabel != null)
+                    {
+                        branded = BrandText(linkLabel.Text);
+                        if (!string.Equals(linkLabel.Text, branded, StringComparison.Ordinal))
+                        {
+                            linkLabel.Text = branded;
+                        }
+                    }
+
+                    var comboBox = control as ComboBox;
+                    if (comboBox != null)
+                    {
+                        for (var i = 0; i < comboBox.Items.Count; i++)
+                        {
+                            var value = comboBox.Items[i] as string;
+                            if (value == null)
+                            {
+                                continue;
+                            }
+
+                            branded = BrandText(value);
+                            if (!string.Equals(value, branded, StringComparison.Ordinal))
+                            {
+                                comboBox.Items[i] = branded;
+                            }
+                        }
+                    }
+
+                    var listBox = control as ListBox;
+                    if (listBox != null)
+                    {
+                        for (var i = 0; i < listBox.Items.Count; i++)
+                        {
+                            var value = listBox.Items[i] as string;
+                            if (value == null)
+                            {
+                                continue;
+                            }
+
+                            branded = BrandText(value);
+                            if (!string.Equals(value, branded, StringComparison.Ordinal))
+                            {
+                                listBox.Items[i] = branded;
+                            }
+                        }
+                    }
+
+                    var dataGrid = control as DataGridView;
+                    if (dataGrid != null)
+                    {
+                        foreach (DataGridViewColumn column in dataGrid.Columns)
+                        {
+                            column.HeaderText = BrandText(column.HeaderText);
+                            column.ToolTipText = BrandText(column.ToolTipText);
+                        }
+                    }
+
+                    var toolStrip = control as ToolStrip;
+                    if (toolStrip != null)
+                    {
+                        BrandToolStrip(toolStrip);
+                    }
+
+                    if (control.ContextMenuStrip != null)
+                    {
+                        BrandToolStrip(control.ContextMenuStrip);
+                    }
+
+                    if (control.HasChildren)
+                    {
+                        BrandControls(control.Controls);
+                    }
+                }
+            }
+
+            private static void BrandToolStrip(ToolStrip toolStrip)
+            {
+                if (toolStrip == null)
+                {
+                    return;
+                }
+
+                foreach (ToolStripItem item in toolStrip.Items)
+                {
+                    BrandToolStripItem(item);
+                }
+            }
+
+            private static void BrandToolStripItem(ToolStripItem item)
+            {
+                if (item == null)
+                {
+                    return;
+                }
+
+                item.Text = BrandText(item.Text);
+                item.ToolTipText = BrandText(item.ToolTipText);
+
+                var dropDown = item as ToolStripDropDownItem;
+                if (dropDown == null)
+                {
+                    return;
+                }
+
+                foreach (ToolStripItem subItem in dropDown.DropDownItems)
+                {
+                    BrandToolStripItem(subItem);
+                }
+            }
+        }
+
         private static class DemoMode
         {
             private const string DemoCacheKey = "__ZTOOL_DEMO__";
@@ -1196,6 +1457,7 @@ namespace ZTool.License
                     DemoToken = ComputeDemoToken(machineId, expiresAtUtc)
                 };
 
+                WriteLease(machineId, expiresAtUtc);
                 return cache;
             }
 
@@ -1237,6 +1499,19 @@ namespace ZTool.License
                 return Start(expiresAtUtc.ToUniversalTime() - DateTime.UtcNow, showNotice);
             }
 
+            public static void ActivateLeaseUntil(DateTime expiresAtUtc)
+            {
+                try
+                {
+                    WriteLease(HardwareFingerprint.GetMachineId(), expiresAtUtc.ToUniversalTime());
+                    Log.Write("Demo lease activated without in-process timer. DurationSeconds=" + ((int)(expiresAtUtc.ToUniversalTime() - DateTime.UtcNow).TotalSeconds).ToString(CultureInfo.InvariantCulture));
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Demo lease activation failed: " + ex.Message);
+                }
+            }
+
             public static bool Start(TimeSpan duration)
             {
                 return Start(duration, true);
@@ -1257,6 +1532,14 @@ namespace ZTool.License
 
                 var expiresAtUtc = DateTime.UtcNow.Add(duration);
                 Log.Write("Demo mode started. DurationSeconds=" + ((int)duration.TotalSeconds).ToString(CultureInfo.InvariantCulture));
+                try
+                {
+                    WriteLease(HardwareFingerprint.GetMachineId(), expiresAtUtc);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Demo lease write failed: " + ex.Message);
+                }
 
                 var thread = new Thread(delegate()
                 {
@@ -1264,9 +1547,10 @@ namespace ZTool.License
                     Expire();
                 });
 
-                thread.Name = "ZTool demo mode timer";
+                thread.Name = "SWTool demo mode timer";
                 thread.IsBackground = true;
                 thread.Start();
+                RuntimeBranding.Start();
                 StartCountdownInTitle(expiresAtUtc);
                 if (showNotice)
                 {
@@ -1274,6 +1558,55 @@ namespace ZTool.License
                 }
 
                 return true;
+            }
+
+            public static bool TryGetActiveLease(string machineId, out TimeSpan remaining)
+            {
+                remaining = TimeSpan.Zero;
+                try
+                {
+                    var path = GetLeasePath();
+                    if (!File.Exists(path))
+                    {
+                        return false;
+                    }
+
+                    var parts = File.ReadAllText(path, Encoding.UTF8).Split('|');
+                    if (parts.Length != 3)
+                    {
+                        DeleteLease();
+                        return false;
+                    }
+
+                    long ticks;
+                    if (!long.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out ticks))
+                    {
+                        DeleteLease();
+                        return false;
+                    }
+
+                    var expiresAtUtc = new DateTime(ticks, DateTimeKind.Utc);
+                    remaining = expiresAtUtc - DateTime.UtcNow;
+                    if (remaining <= TimeSpan.Zero)
+                    {
+                        DeleteLease();
+                        return false;
+                    }
+
+                    if (!string.Equals(parts[0], machineId, StringComparison.OrdinalIgnoreCase) ||
+                        !string.Equals(parts[2], ComputeDemoToken(machineId, expiresAtUtc), StringComparison.Ordinal))
+                    {
+                        DeleteLease();
+                        return false;
+                    }
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Demo lease read failed: " + ex.Message);
+                    return false;
+                }
             }
 
             private static string ComputeDemoToken(string machineId, DateTime expiresAtUtc)
@@ -1308,7 +1641,7 @@ namespace ZTool.License
 
             private static void Expire()
             {
-                Log.Write("Demo mode expired. Closing ZTool.");
+                Log.Write("Demo mode expired. Closing SWTool.");
                 DeleteDemoCache();
                 try
                 {
@@ -1332,8 +1665,8 @@ namespace ZTool.License
                 try
                 {
                     MessageBox.Show(
-                        "ZTool запущен в демо-режиме.\r\n\r\nПрограмма закроется автоматически через " + FormatDuration(duration) + ".",
-                        "Демо-режим ZTool",
+                        "SWTool запущен в демо-режиме.\r\n\r\nПрограмма закроется автоматически через " + FormatDuration(duration) + ".",
+                        "Демо-режим SWTool",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
                 }
@@ -1393,7 +1726,8 @@ namespace ZTool.License
                             continue;
                         }
 
-                        if (!form.Text.StartsWith("ZTool", StringComparison.OrdinalIgnoreCase))
+                        if (!form.Text.StartsWith("ZTool", StringComparison.OrdinalIgnoreCase) &&
+                            !form.Text.StartsWith("SWTool", StringComparison.OrdinalIgnoreCase))
                         {
                             continue;
                         }
@@ -1401,7 +1735,7 @@ namespace ZTool.License
                         string originalTitle;
                         if (!originalWindowTitles.TryGetValue(form.Handle, out originalTitle))
                         {
-                            originalTitle = StripDemoCountdown(form.Text);
+                            originalTitle = BrandWindowTitle(StripDemoCountdown(form.Text));
                             originalWindowTitles[form.Handle] = originalTitle;
                         }
 
@@ -1542,6 +1876,7 @@ namespace ZTool.License
 
             private static void DeleteDemoCache()
             {
+                DeleteLease();
                 try
                 {
                     var store = new LicenseStore();
@@ -1553,6 +1888,43 @@ namespace ZTool.License
                 catch (Exception ex)
                 {
                     Log.Write("Demo cache cleanup failed: " + ex);
+                }
+            }
+
+            private static string GetLeasePath()
+            {
+                var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SWTools");
+                Directory.CreateDirectory(dir);
+                return Path.Combine(dir, "ZTool.demo.lease");
+            }
+
+            private static void WriteLease(string machineId, DateTime expiresAtUtc)
+            {
+                if (string.IsNullOrWhiteSpace(machineId))
+                {
+                    return;
+                }
+
+                expiresAtUtc = expiresAtUtc.ToUniversalTime();
+                var value = machineId + "|" +
+                    expiresAtUtc.Ticks.ToString(CultureInfo.InvariantCulture) + "|" +
+                    ComputeDemoToken(machineId, expiresAtUtc);
+                File.WriteAllText(GetLeasePath(), value, Encoding.UTF8);
+            }
+
+            private static void DeleteLease()
+            {
+                try
+                {
+                    var path = GetLeasePath();
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Demo lease cleanup failed: " + ex.Message);
                 }
             }
 
@@ -1669,6 +2041,40 @@ namespace ZTool.License
                     if (field != null)
                     {
                         field.SetValue(config, lang);
+                    }
+                }
+            }
+            catch {}
+
+            try
+            {
+                string asmLocation = typeof(LanguageManager).Assembly.Location;
+                if (!string.IsNullOrEmpty(asmLocation))
+                {
+                    string dir = Path.GetDirectoryName(asmLocation);
+                    if (!string.IsNullOrEmpty(dir))
+                    {
+                        string settingsPath = Path.Combine(dir, "ZTool.settings");
+                        if (File.Exists(settingsPath))
+                        {
+                            var doc = new System.Xml.XmlDocument();
+                            doc.Load(settingsPath);
+                            var node = doc.SelectSingleNode("//Language");
+                            if (node == null)
+                            {
+                                var root = doc.DocumentElement;
+                                if (root != null)
+                                {
+                                    node = doc.CreateElement("Language");
+                                    root.AppendChild(node);
+                                }
+                            }
+                            if (node != null)
+                            {
+                                node.InnerText = lang;
+                                doc.Save(settingsPath);
+                            }
+                        }
                     }
                 }
             }
@@ -1824,18 +2230,32 @@ namespace ZTool.License
         {
             try
             {
-                var tabControlProp = optionsForm.GetType().GetProperty("TabControl1");
-                if (tabControlProp != null)
+                var tabControl = FindOptionsTabControl(optionsForm);
+                if (tabControl != null)
                 {
-                    var tabControl = (TabControl)tabControlProp.GetValue(optionsForm, null);
+                    foreach (TabPage existingPage in tabControl.TabPages)
+                    {
+                        if (string.Equals(existingPage.Name, "ZToolLanguageTab", StringComparison.Ordinal) ||
+                            string.Equals(existingPage.Text, "Language / Язык", StringComparison.Ordinal) ||
+                            string.Equals(existingPage.Text, "Language", StringComparison.Ordinal))
+                        {
+                            return;
+                        }
+                    }
                     
                     var tabPage = new TabPage("Language / Язык");
+                    tabPage.Name = "ZToolLanguageTab";
                     tabPage.Padding = new Padding(10);
                     
                     var label = new Label();
                     label.Text = "Выберите язык / Select language:";
                     label.Location = new Point(20, 20);
                     label.AutoSize = true;
+
+                    var restartLabel = new Label();
+                    restartLabel.Text = "Панель SolidWorks обновится после перезапуска SolidWorks.";
+                    restartLabel.Location = new Point(20, 85);
+                    restartLabel.AutoSize = true;
                     
                     var comboBox = new ComboBox();
                     comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -1868,10 +2288,50 @@ namespace ZTool.License
                     {
                         tabPage.Text = "Language";
                         label.Text = "Select language:";
+                        restartLabel.Text = "The SolidWorks toolbar updates after restarting SolidWorks.";
                     }
+                    tabPage.Controls.Add(restartLabel);
                 }
             }
             catch {}
+        }
+
+        private static TabControl FindOptionsTabControl(Form optionsForm)
+        {
+            if (optionsForm == null) return null;
+
+            try
+            {
+                var flags = System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.Public |
+                    System.Reflection.BindingFlags.NonPublic;
+                var tabControlProp = optionsForm.GetType().GetProperty("TabControl1", flags);
+                if (tabControlProp != null)
+                {
+                    var value = tabControlProp.GetValue(optionsForm, null) as TabControl;
+                    if (value != null) return value;
+                }
+            }
+            catch {}
+
+            return FindTabControl(optionsForm.Controls);
+        }
+
+        private static TabControl FindTabControl(Control.ControlCollection controls)
+        {
+            if (controls == null) return null;
+            foreach (Control ctrl in controls)
+            {
+                var tabControl = ctrl as TabControl;
+                if (tabControl != null) return tabControl;
+                if (ctrl.HasChildren)
+                {
+                    tabControl = FindTabControl(ctrl.Controls);
+                    if (tabControl != null) return tabControl;
+                }
+            }
+
+            return null;
         }
 
         public static DialogResult ShowMessageBox(string text)

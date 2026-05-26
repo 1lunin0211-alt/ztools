@@ -107,8 +107,8 @@ namespace ZTool.LicenseLauncher
             {
                 Log.Write("Fatal launcher error: " + ex);
                 MessageBox.Show(
-                    "Не удалось запустить ZTool.\r\n\r\n" + ex.Message,
-                    "ZTool",
+                    "Не удалось запустить SWTool.\r\n\r\n" + ex.Message,
+                    "SWTool",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -142,7 +142,7 @@ namespace ZTool.LicenseLauncher
                         {
                             MessageBox.Show(
                                 "Сервер вернул лицензию, но локальная проверка не прошла.",
-                                "ZTool",
+                                "SWTool",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
                             continue;
@@ -155,7 +155,7 @@ namespace ZTool.LicenseLauncher
                         Log.Write("Activation failed: " + ex);
                         MessageBox.Show(
                             ex.Message,
-                            "Активация ZTool",
+                            "Активация SWTool",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
                     }
@@ -170,7 +170,7 @@ namespace ZTool.LicenseLauncher
             var cache = store.Load();
             if (cache == null || string.IsNullOrWhiteSpace(cache.Key))
             {
-                MessageBox.Show("На этом пользователе нет сохраненной лицензии ZTool.", "ZTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("На этом пользователе нет сохраненной лицензии SWTool.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -186,12 +186,12 @@ namespace ZTool.LicenseLauncher
                     var client = new LicenseClient(config);
                     client.Deactivate(cache.Key, form.TransferPassword, machineId);
                     store.Delete();
-                    MessageBox.Show("Лицензия деактивирована. Теперь ключ можно активировать на другом ПК.", "ZTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Лицензия деактивирована. Теперь ключ можно активировать на другом ПК.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
                     Log.Write("Deactivation failed: " + ex);
-                    MessageBox.Show(ex.Message, "Деактивация ZTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(ex.Message, "Деактивация SWTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace ZTool.LicenseLauncher
         {
             if (!File.Exists(corePath))
             {
-                throw new FileNotFoundException("Не найден основной исполняемый файл ZTool.", corePath);
+                throw new FileNotFoundException("Не найден основной исполняемый файл SWTool.", corePath);
             }
 
             var psi = new ProcessStartInfo
@@ -246,7 +246,7 @@ namespace ZTool.LicenseLauncher
         public string CoreExecutable = "ZTool.Core.exe";
         public string CorePayload = "ZTool.Core.payload";
         public string PublicKeyXml = EmbeddedLicenseConfig.PublicKeyXml;
-        public string AppVersion = "3.8.4";
+        public string AppVersion = "1.1";
         public int OfflineGraceDays = 7;
 
         public static LauncherConfig Load(string appDir)
@@ -365,7 +365,7 @@ namespace ZTool.LicenseLauncher
         {
             if (encrypted == null || encrypted.Length <= 16)
             {
-                throw new InvalidDataException("ZTool payload is invalid.");
+                throw new InvalidDataException("SWTool payload is invalid.");
             }
 
             var iv = new byte[16];
@@ -925,7 +925,7 @@ namespace ZTool.LicenseLauncher
 
         public ActivationForm()
         {
-            Text = "Активация ZTool";
+            Text = "Активация SWTool";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -935,11 +935,7 @@ namespace ZTool.LicenseLauncher
             AutoScaleMode = AutoScaleMode.Font;
             Font = new Font("Segoe UI", 9F);
             
-            float scale = 1.0f;
-            using (var g = CreateGraphics())
-            {
-                scale = g.DpiX / 96f;
-            }
+            const int scale = 1;
             
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -1014,7 +1010,7 @@ namespace ZTool.LicenseLauncher
 
         public PasswordForm()
         {
-            Text = "Деактивация ZTool";
+            Text = "Деактивация SWTool";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -1024,11 +1020,7 @@ namespace ZTool.LicenseLauncher
             AutoScaleMode = AutoScaleMode.Font;
             Font = new Font("Segoe UI", 9F);
             
-            float scale = 1.0f;
-            using (var g = CreateGraphics())
-            {
-                scale = g.DpiX / 96f;
-            }
+            const int scale = 1;
             
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;

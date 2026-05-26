@@ -42,11 +42,16 @@ if (-not (Test-IsAdministrator)) {
 }
 
 $addInGuid = '{59959DFA-3229-4B86-852E-52ABF2BDB8C0}'
+$localizerAddInGuid = '{9F5F2805-10D2-4A49-AB0A-2F8279B6B6D1}'
 $paths = @(Get-SolidWorksVersionAddInPaths $addInGuid)
+$paths += @(Get-SolidWorksVersionAddInPaths $localizerAddInGuid)
 $paths += @(
     "HKCU:\Software\SolidWorks\AddInsStartup\$addInGuid",
+    "HKCU:\Software\SolidWorks\AddInsStartup\$localizerAddInGuid",
     "Registry::HKEY_CLASSES_ROOT\ZTool.SwAddin",
-    "Registry::HKEY_CLASSES_ROOT\CLSID\$addInGuid"
+    "Registry::HKEY_CLASSES_ROOT\CLSID\$addInGuid",
+    "Registry::HKEY_CLASSES_ROOT\SWTool.CommandLocalizer",
+    "Registry::HKEY_CLASSES_ROOT\CLSID\$localizerAddInGuid"
 )
 
 if ($RemoveLegacy) {

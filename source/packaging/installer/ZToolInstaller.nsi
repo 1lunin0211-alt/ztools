@@ -1,4 +1,4 @@
-﻿Unicode true
+Unicode true
 ManifestDPIAware true
 RequestExecutionLevel admin
 SetCompressor /SOLID lzma
@@ -31,14 +31,15 @@ SetCompressor /SOLID lzma
   !define APP_PUBLISHER "Лунин В.И."
 !endif
 
-!define APP_NAME "ZTool"
-!define APP_UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\ZTool"
-!define START_MENU_DIR "ZTool"
+!define APP_NAME "SWTool"
+!define APP_UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\SWTool"
+!define LEGACY_APP_UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\ZTool"
+!define START_MENU_DIR "SWTool"
 !define ADDIN_GUID "{59959DFA-3229-4B86-852E-52ABF2BDB8C0}"
 
 Name "${APP_NAME}"
-OutFile "${OUTPUT_DIR}\ZTool-Setup-${APP_VERSION}.exe"
-InstallDir "C:\ZTool"
+OutFile "${OUTPUT_DIR}\SWTool-Setup-${APP_VERSION}.exe"
+InstallDir "C:\SWTool"
 BrandingText "${APP_NAME} ${APP_VERSION}"
 ShowInstDetails show
 ShowUninstDetails show
@@ -72,10 +73,10 @@ VIAddVersionKey "LegalCopyright" "Copyright (c) ${APP_PUBLISHER}"
 !insertmacro MUI_LANGUAGE "Russian"
 
 LangString Msg64BitRequired ${LANG_RUSSIAN} "${APP_NAME} предназначен для 64-битной Windows и SolidWorks x64."
-LangString MsgCloseApps ${LANG_RUSSIAN} "Перед установкой или удалением закройте SolidWorks и ZTool.$\r$\n$\r$\nЗапущены процессы:$\r$\n$0"
+LangString MsgCloseApps ${LANG_RUSSIAN} "Перед установкой или удалением закройте SolidWorks и SWTool.$\r$\n$\r$\nЗапущены процессы:$\r$\n$0"
 LangString MsgRegisterFailed ${LANG_RUSSIAN} "Файлы установлены, но регистрация надстройки SolidWorks не прошла. Код ошибки: $0.$\r$\nЗапустите установщик от имени администратора или выполните Register ZTool SolidWorks AddIn.cmd из папки установки."
 LangString MsgUnregisterFailed ${LANG_RUSSIAN} "Удаление регистрации надстройки SolidWorks завершилось с ошибкой. Код ошибки: $0.$\r$\nФайлы всё равно будут удалены."
-LangString MsgLegacyUninstallFailed ${LANG_RUSSIAN} "Не удалось удалить предыдущую установку ZTool из:$\r$\n$1$\r$\n$\r$\nКод ошибки: $0"
+LangString MsgLegacyUninstallFailed ${LANG_RUSSIAN} "Не удалось удалить предыдущую установку ZTool/SWTool из:$\r$\n$1$\r$\n$\r$\nКод ошибки: $0"
 
 Var PowerShellExe
 Var ExitCode
@@ -113,6 +114,9 @@ FunctionEnd
 Function RemovePreviousInstall
   ReadRegStr $1 HKLM "${APP_UNINSTALL_KEY}" "InstallLocation"
   ${If} $1 == ""
+    ReadRegStr $1 HKLM "${LEGACY_APP_UNINSTALL_KEY}" "InstallLocation"
+  ${EndIf}
+  ${If} $1 == ""
     StrCpy $1 "$PROGRAMFILES64\ZTool"
   ${EndIf}
 
@@ -125,6 +129,7 @@ Function RemovePreviousInstall
   ${EndIf}
 
   ${If} $1 == "$PROGRAMFILES64\ZTool"
+  ${OrIf} $1 == "C:\ZTool"
     Call GetPowerShell64
     IfFileExists "$1\Unregister ZTool SolidWorks AddIn.ps1" 0 remove_files
     ExecWait '"$PowerShellExe" -NoProfile -ExecutionPolicy Bypass -File "$1\Unregister ZTool SolidWorks AddIn.ps1" -RemoveLegacy' $ExitCode
@@ -136,10 +141,11 @@ Function RemovePreviousInstall
 remove_files:
     RMDir /r "$1"
     DeleteRegKey HKLM "${APP_UNINSTALL_KEY}"
+    DeleteRegKey HKLM "${LEGACY_APP_UNINSTALL_KEY}"
   ${EndIf}
 FunctionEnd
 
-Section "ZTool" SecMain
+Section "SWTool" SecMain
   SetShellVarContext all
   SetRegView 64
   Call CheckRunningApps
@@ -151,14 +157,16 @@ Section "ZTool" SecMain
 !endif
   File /r "${SOURCE_DIR}\*.*"
 
+  nsExec::Exec '"$SYSDIR\icacls.exe" "$INSTDIR" /grant *S-1-5-32-545:(OI)(CI)M /T'
+
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
   CreateDirectory "$SMPROGRAMS\${START_MENU_DIR}"
-  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\ZTool.lnk" "$INSTDIR\ZTool.exe" "" "$INSTDIR\ZTool.ico" 0
+  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\SWTool.lnk" "$INSTDIR\ZTool.exe" "" "$INSTDIR\ZTool.ico" 0
   CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\Деактивация лицензии.lnk" "$INSTDIR\ZTool License Deactivate.exe" "" "$INSTDIR\ZTool.ico" 0
   CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\Регистрация надстройки SolidWorks.lnk" "$INSTDIR\Register ZTool SolidWorks AddIn.cmd" "" "$INSTDIR\ZTool.ico" 0
-  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\Удалить ZTool.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
-  CreateShortCut "$DESKTOP\ZTool.lnk" "$INSTDIR\ZTool.exe" "" "$INSTDIR\ZTool.ico" 0
+  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\Удалить SWTool.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+  CreateShortCut "$DESKTOP\SWTool.lnk" "$INSTDIR\ZTool.exe" "" "$INSTDIR\ZTool.ico" 0
 
   WriteRegStr HKLM "${APP_UNINSTALL_KEY}" "DisplayName" "${APP_NAME}"
   WriteRegStr HKLM "${APP_UNINSTALL_KEY}" "DisplayVersion" "${APP_VERSION}"
@@ -214,13 +222,17 @@ Section "Uninstall"
   ${EndIf}
 skip_unreg:
 
+  Delete "$DESKTOP\SWTool.lnk"
   Delete "$DESKTOP\ZTool.lnk"
+  Delete "$SMPROGRAMS\${START_MENU_DIR}\SWTool.lnk"
   Delete "$SMPROGRAMS\${START_MENU_DIR}\ZTool.lnk"
   Delete "$SMPROGRAMS\${START_MENU_DIR}\Деактивация лицензии.lnk"
   Delete "$SMPROGRAMS\${START_MENU_DIR}\Регистрация надстройки SolidWorks.lnk"
+  Delete "$SMPROGRAMS\${START_MENU_DIR}\Удалить SWTool.lnk"
   Delete "$SMPROGRAMS\${START_MENU_DIR}\Удалить ZTool.lnk"
   RMDir "$SMPROGRAMS\${START_MENU_DIR}"
 
   DeleteRegKey HKLM "${APP_UNINSTALL_KEY}"
+  DeleteRegKey HKLM "${LEGACY_APP_UNINSTALL_KEY}"
   RMDir /r "$INSTDIR"
 SectionEnd

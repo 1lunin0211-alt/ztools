@@ -3,11 +3,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("ZTool License Deactivate")]
-[assembly: AssemblyDescription("Interactive deactivation utility for ZTool")]
+[assembly: AssemblyTitle("SWTool License Deactivate")]
+[assembly: AssemblyDescription("Interactive deactivation utility for SWTool")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Лунин В.И.")]
-[assembly: AssemblyProduct("ZTool License Deactivate")]
+[assembly: AssemblyProduct("SWTool License Deactivate")]
 [assembly: AssemblyCopyright("Copyright (c) Лунин В.И.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -31,8 +31,8 @@ namespace ZTool.LicenseDeactivate
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Не удалось выполнить деактивацию ZTool.\r\n\r\n" + ex.Message,
-                    "Деактивация ZTool",
+                    "Не удалось выполнить деактивацию SWTool.\r\n\r\n" + ex.Message,
+                    "Деактивация SWTool",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return 2;

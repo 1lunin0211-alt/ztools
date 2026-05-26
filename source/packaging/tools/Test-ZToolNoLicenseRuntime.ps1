@@ -4,6 +4,7 @@ param(
     [int]$ActivationTimeoutSeconds = 25,
     [int]$ExitTimeoutSeconds = 20,
     [int]$DemoSeconds = 0,
+    [int]$DemoReentryTimeoutSeconds = 2,
     [int]$DemoExitGraceSeconds = 25
 )
 
@@ -175,9 +176,9 @@ function ConvertFrom-Utf8Base64([string]$Value) {
     [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($Value))
 }
 
-$activationWindowTitle = ConvertFrom-Utf8Base64 '0JDQutGC0LjQstCw0YbQuNGPIFpUb29s'
+$activationWindowTitle = ConvertFrom-Utf8Base64 '0JDQutGC0LjQstCw0YbQuNGPIFNXVG9vbA=='
 $demoButtonText = ConvertFrom-Utf8Base64 '0JTQtdC80L4='
-$demoNoticeTitle = ConvertFrom-Utf8Base64 '0JTQtdC80L4t0YDQtdC20LjQvCBaVG9vbA=='
+$demoNoticeTitle = ConvertFrom-Utf8Base64 '0JTQtdC80L4t0YDQtdC20LjQvCBTV1Rvb2w='
 $demoTitleMarker = ConvertFrom-Utf8Base64 '0JTQtdC80L46'
 $errorWindowTitle = ConvertFrom-Utf8Base64 '0J7RiNC40LHQutCw'
 $comCastErrorText = ConvertFrom-Utf8Base64 '0J3QtdCy0L7Qt9C80L7QttC90L4g0L/RgNC40LLQtdGB0YLQuCBDT00t0L7QsdGK0LXQutGC'
@@ -275,6 +276,12 @@ function Remove-LicenseCache([string]$LicensePath) {
     }
 }
 
+function Remove-DemoLease([string]$LeasePath) {
+    if (Test-Path -LiteralPath $LeasePath -PathType Leaf) {
+        Remove-Item -LiteralPath $LeasePath -Force
+    }
+}
+
 $packageFull = Resolve-FullPath $PackageRoot
 $exePath = Join-Path $packageFull 'ZTool.exe'
 if (-not (Test-Path -LiteralPath $exePath -PathType Leaf)) {
@@ -283,6 +290,7 @@ if (-not (Test-Path -LiteralPath $exePath -PathType Leaf)) {
 
 $licenseDir = Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)) 'SWTools'
 $licensePath = Join-Path $licenseDir 'ZTool.license.json'
+$demoLeasePath = Join-Path $licenseDir 'ZTool.demo.lease'
 $backupPath = Join-Path ([System.IO.Path]::GetTempPath()) ("ztool-license-cache-backup-" + [guid]::NewGuid().ToString('N') + ".json")
 $hadLicenseCache = Test-Path -LiteralPath $licensePath -PathType Leaf
 $oldDemoOverride = [Environment]::GetEnvironmentVariable('ZTOOL_DEMO_SECONDS')
@@ -295,6 +303,7 @@ try {
 
     New-Item -ItemType Directory -Force -Path $licenseDir | Out-Null
     Remove-LicenseCache $licensePath
+    Remove-DemoLease $demoLeasePath
     [Environment]::SetEnvironmentVariable('ZTOOL_DEMO_SECONDS', $null)
 
     $process = Start-Process -FilePath $exePath -WorkingDirectory $packageFull -PassThru
@@ -347,12 +356,13 @@ try {
 
         $mainTitle = Wait-ForTitleMatch $process {
             param($Title)
-            $Title.StartsWith('ZTool', [System.StringComparison]::OrdinalIgnoreCase) -and
+            ($Title.StartsWith('SWTool', [System.StringComparison]::OrdinalIgnoreCase) -or
+                $Title.StartsWith('ZTool', [System.StringComparison]::OrdinalIgnoreCase)) -and
                 $Title.IndexOf($demoTitleMarker, [System.StringComparison]::OrdinalIgnoreCase) -ge 0
         } $ActivationTimeoutSeconds
         if ([string]::IsNullOrWhiteSpace($mainTitle)) {
             $titles = [ZToolRuntimeSmokeWin32]::VisibleTitles([uint32]$process.Id) -join '; '
-            throw "Demo mode did not reach a ZTool main window with countdown. Visible windows: $titles"
+            throw "Demo mode did not reach a SWTool main window with countdown. Visible windows: $titles"
         }
 
         Start-Sleep -Milliseconds 500
@@ -361,6 +371,22 @@ try {
         })
         if ($extraDemoPanels.Count -gt 0) {
             throw 'Demo mode opened an extra floating countdown panel.'
+        }
+
+        $secondProcess = Start-Process -FilePath $exePath -WorkingDirectory $packageFull -PassThru
+        try {
+            $secondActivation = Wait-ForWindow $secondProcess $activationWindowTitle $DemoReentryTimeoutSeconds
+            if ($secondActivation -ne [IntPtr]::Zero) {
+                throw 'Activation window appeared while the current demo timer was still active.'
+            }
+
+            $checks.Add([pscustomobject]@{
+                Name = 'no-activation-during-active-demo'
+                Status = 'ok'
+                Detail = 'second-launch-did-not-show-activation'
+            })
+        } finally {
+            Stop-TestProcess $secondProcess
         }
 
         $timeoutMs = if ($DemoSeconds -gt 0) {
@@ -390,6 +416,10 @@ try {
         }
     }
 
+    if (Test-Path -LiteralPath $demoLeasePath -PathType Leaf) {
+        throw 'Demo lease was not removed after demo expiry.'
+    }
+
     [pscustomobject]@{
         Status = 'ok'
         PackageRoot = $packageFull
@@ -399,6 +429,7 @@ try {
 } finally {
     [Environment]::SetEnvironmentVariable('ZTOOL_DEMO_SECONDS', $oldDemoOverride)
     Remove-LicenseCache $licensePath
+    Remove-DemoLease $demoLeasePath
     if ($hadLicenseCache -and (Test-Path -LiteralPath $backupPath -PathType Leaf)) {
         New-Item -ItemType Directory -Force -Path $licenseDir | Out-Null
         Copy-Item -LiteralPath $backupPath -Destination $licensePath -Force

@@ -325,7 +325,7 @@ $config = @"
 <ZToolLicenseLauncher>
   <CoreExecutable>ZTool.Core.exe</CoreExecutable>
   <CorePayload>ZTool.Core.payload</CorePayload>
-  <AppVersion>3.8.4</AppVersion>
+  <AppVersion>1.1</AppVersion>
   <OfflineGraceDays>$OfflineGraceDays</OfflineGraceDays>
 </ZToolLicenseLauncher>
 "@

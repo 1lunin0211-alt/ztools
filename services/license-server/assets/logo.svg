@@ -16,6 +16,6 @@
     <path d="M 11,13 L 29,13 L 11,31 L 29,31" fill="none" stroke="url(#emblemGrad)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
   </g>
   
-  <!-- Text Content: ZTool -->
-  <text x="56" y="32" font-family="'Inter', 'Segoe UI', -apple-system, sans-serif" font-weight="800" font-size="24" fill="#ffffff" letter-spacing="0.5">Z<tspan fill="url(#emblemGrad)" font-weight="400">Tool</tspan></text>
+  <!-- Text Content: SWTool -->
+  <text x="56" y="32" font-family="'Inter', 'Segoe UI', -apple-system, sans-serif" font-weight="800" font-size="24" fill="#ffffff" letter-spacing="0.5">SW<tspan fill="url(#emblemGrad)" font-weight="400">Tool</tspan></text>
 </svg>

@@ -1,5 +1,5 @@
 /**
- * ZTool Landing Page - Interactive Behaviors
+ * SWTool Landing Page - Interactive Behaviors
  */
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Mobile Menu Toggle
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 5. Scroll Reveal (Fade in sections/cards as they enter view)
-  const revealElements = document.querySelectorAll('.feature-card, .price-card, .step-item, .hero-content, .hero-mockup');
+  const revealElements = document.querySelectorAll('.feature-card, .price-card, .step-item, .hero-content, .hero-mockup, .faq-item');
   
   if ('IntersectionObserver' in window) {
     const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }, {
-      threshold: 0.15,
+      threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
     });
 
@@ -145,6 +145,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // 7. FAQ Accordion Toggle
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    if (question) {
+      question.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        // Close all items
+        faqItems.forEach(i => i.classList.remove('active'));
+        // Toggle current item
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    }
+  });
 });
 
 // Global Lightbox Functions
