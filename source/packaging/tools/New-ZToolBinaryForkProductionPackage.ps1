@@ -9,6 +9,8 @@
     [string]$PublicKeyXml = '',
     [string]$SnkPath = '',
     [int]$OfflineGraceDays = 7,
+    [ValidateSet('Russian','English')]
+    [string]$Language = 'Russian',
     [switch]$Force,
     [switch]$SkipGate
 )
@@ -47,7 +49,7 @@ function Get-FileSha256([string]$Path) {
     (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash.ToUpperInvariant()
 }
 
-function Set-ZToolSettingsSolidWorksDefaults([string]$PackageRoot) {
+function Set-ZToolSettingsSolidWorksDefaults([string]$PackageRoot, [string]$Language) {
     $settingsPath = Join-Path $PackageRoot 'ZTool.settings'
     if (-not (Test-Path -LiteralPath $settingsPath -PathType Leaf)) {
         throw "ZTool.settings not found: $settingsPath"
@@ -62,6 +64,13 @@ function Set-ZToolSettingsSolidWorksDefaults([string]$PackageRoot) {
     if ($null -ne $document.CConfigDO.GetDataOption) {
         $document.CConfigDO.GetDataOption = '0'
     }
+
+    $languageNode = $document.CConfigDO.SelectSingleNode('Language')
+    if ($null -eq $languageNode) {
+        $languageNode = $document.CreateElement('Language')
+        [void]$document.CConfigDO.AppendChild($languageNode)
+    }
+    $languageNode.InnerText = $Language
 
     $settings = [System.Xml.XmlWriterSettings]::new()
     $settings.Encoding = [System.Text.UTF8Encoding]::new($false)
@@ -114,6 +123,7 @@ $runtimeArgs = @{
     OutputRoot = $runtimeRoot
     LicenseBaseUrl = $LicenseBaseUrl
     OfflineGraceDays = $OfflineGraceDays
+    Language = $Language
 }
 if (-not [string]::IsNullOrWhiteSpace($ActivationHelpUrl)) {
     $runtimeArgs.ActivationHelpUrl = $ActivationHelpUrl
@@ -135,11 +145,17 @@ $runtimeJson = & $buildRuntime @runtimeArgs
 $runtime = ($runtimeJson | ForEach-Object { [string]$_ }) -join "`n" | ConvertFrom-Json
 
 Copy-DirectoryContents -Source $sourceRootFull -Destination $outputRootFull
-& (Join-Path $PSScriptRoot 'Patch-SWToolNativePayloadResources.ps1') -PackageRoot $outputRootFull -Language 'Russian' | Out-Null
-Set-ZToolSettingsSolidWorksDefaults $outputRootFull
+& (Join-Path $PSScriptRoot 'Patch-SWToolNativePayloadResources.ps1') -PackageRoot $outputRootFull -Language $Language | Out-Null
+Set-ZToolSettingsSolidWorksDefaults $outputRootFull $Language
 
-$buildRussianHelp = Join-Path $PSScriptRoot 'Build-ZToolRussianHelp.ps1'
-$russianHelpResult = (& $buildRussianHelp -Root $rootFull -OutputPath (Join-Path $outputRootFull 'help.CHM') | ForEach-Object { [string]$_ }) -join "`n" | ConvertFrom-Json
+$helpResult = $null
+if ($Language -eq 'Russian') {
+    $buildRussianHelp = Join-Path $PSScriptRoot 'Build-ZToolRussianHelp.ps1'
+    $helpResult = (& $buildRussianHelp -Root $rootFull -OutputPath (Join-Path $outputRootFull 'help.CHM') | ForEach-Object { [string]$_ }) -join "`n" | ConvertFrom-Json
+} else {
+    Write-Host "Skipping help.CHM build for Language=$Language (English help is built separately; see help-en/)."
+}
+$russianHelpResult = $helpResult
 
 Copy-Item -LiteralPath $runtime.LicenseDll -Destination (Join-Path $outputRootFull 'ZTool.License.dll') -Force
 Copy-Item -LiteralPath $runtime.UpdateDisabledExe -Destination (Join-Path $outputRootFull 'ZTool Updater.exe') -Force
@@ -150,6 +166,7 @@ Copy-Item -LiteralPath "$($runtime.LicenseDll).provenance.json" -Destination (Jo
 $disableUpdates = Join-Path $PSScriptRoot 'Disable-ZToolEmbeddedUpdates.ps1'
 $disableUpdateArgs = @{
     PackageRoot = $outputRootFull
+    Language = $Language
 }
 if (-not [string]::IsNullOrWhiteSpace($SnkPath)) {
     $disableUpdateArgs.SnkPath = $SnkPath

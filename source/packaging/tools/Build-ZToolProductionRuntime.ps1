@@ -8,6 +8,8 @@
     [string]$PublicKeyXml = '',
     [string]$SnkPath = '',
     [int]$OfflineGraceDays = 7,
+    [ValidateSet('Russian','English')]
+    [string]$Language = 'Russian',
     [switch]$AllowDevelopmentEmptyPublicKey
 )
 
@@ -321,6 +323,7 @@ namespace ZTool.License
         public const string ActivationHelpUrl = $(ConvertTo-CSharpLiteral $activationHelpUrlResolved);
         public const string PublicKeyXml = $(ConvertTo-CSharpLiteral $PublicKeyXml);
         public const int OfflineGraceDays = $($OfflineGraceDays);
+        public const string DefaultLanguage = $(ConvertTo-CSharpLiteral $Language);
     }
 }
 "@ | Set-Content -LiteralPath $generatedConfig -Encoding UTF8

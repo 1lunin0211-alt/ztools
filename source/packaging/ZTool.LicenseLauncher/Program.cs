@@ -107,7 +107,7 @@ namespace ZTool.LicenseLauncher
             {
                 Log.Write("Fatal launcher error: " + ex);
                 MessageBox.Show(
-                    "Не удалось запустить SWTool.\r\n\r\n" + ex.Message,
+                    LauncherLanguage.T("Не удалось запустить SWTool.", "Failed to launch SWTool.") + "\r\n\r\n" + ex.Message,
                     "SWTool",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -141,7 +141,7 @@ namespace ZTool.LicenseLauncher
                         if (!LicenseValidator.IsUsable(cache, config, machineId))
                         {
                             MessageBox.Show(
-                                "Сервер вернул лицензию, но локальная проверка не прошла.",
+                                LauncherLanguage.T("Сервер вернул лицензию, но локальная проверка не прошла.", "The server returned a license, but local verification failed."),
                                 "SWTool",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
@@ -155,7 +155,7 @@ namespace ZTool.LicenseLauncher
                         Log.Write("Activation failed: " + ex);
                         MessageBox.Show(
                             ex.Message,
-                            "Активация SWTool",
+                            LauncherLanguage.T("Активация SWTool", "SWTool Activation"),
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
                     }
@@ -170,7 +170,7 @@ namespace ZTool.LicenseLauncher
             var cache = store.Load();
             if (cache == null || string.IsNullOrWhiteSpace(cache.Key))
             {
-                MessageBox.Show("На этом пользователе нет сохраненной лицензии SWTool.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(LauncherLanguage.T("На этом пользователе нет сохраненной лицензии SWTool.", "No saved SWTool license for this user."), "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -186,12 +186,12 @@ namespace ZTool.LicenseLauncher
                     var client = new LicenseClient(config);
                     client.Deactivate(cache.Key, form.TransferPassword, machineId);
                     store.Delete();
-                    MessageBox.Show("Лицензия деактивирована. Теперь ключ можно активировать на другом ПК.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LauncherLanguage.T("Лицензия деактивирована. Теперь ключ можно активировать на другом ПК.", "License deactivated. The key can now be activated on another PC."), "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
                     Log.Write("Deactivation failed: " + ex);
-                    MessageBox.Show(ex.Message, "Деактивация SWTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(ex.Message, LauncherLanguage.T("Деактивация SWTool", "SWTool Deactivation"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace ZTool.LicenseLauncher
         {
             if (!File.Exists(corePath))
             {
-                throw new FileNotFoundException("Не найден основной исполняемый файл SWTool.", corePath);
+                throw new FileNotFoundException(LauncherLanguage.T("Не найден основной исполняемый файл SWTool.", "SWTool main executable not found."), corePath);
             }
 
             var psi = new ProcessStartInfo
@@ -393,7 +393,7 @@ namespace ZTool.LicenseLauncher
         {
             if (string.IsNullOrEmpty(payloadKey))
             {
-                throw new InvalidOperationException("Ключ расшифровки payload отсутствует.");
+                throw new InvalidOperationException(LauncherLanguage.T("Ключ расшифровки payload отсутствует.", "Payload decryption key is missing."));
             }
             using (var sha = SHA256.Create())
             {
@@ -439,7 +439,7 @@ namespace ZTool.LicenseLauncher
             var signature = GetString(response, "signature");
             if (string.IsNullOrWhiteSpace(signedPayload) || string.IsNullOrWhiteSpace(signature))
             {
-                throw new InvalidOperationException("Сервер лицензирования не вернул подписанную лицензию.");
+                throw new InvalidOperationException(LauncherLanguage.T("Сервер лицензирования не вернул подписанную лицензию.", "The license server did not return a signed license."));
             }
 
             return new LicenseCache
@@ -505,7 +505,7 @@ namespace ZTool.LicenseLauncher
                     }
                 }
 
-                throw new InvalidOperationException(string.IsNullOrWhiteSpace(message) ? "Сервер лицензирования недоступен." : message, ex);
+                throw new InvalidOperationException(string.IsNullOrWhiteSpace(message) ? LauncherLanguage.T("Сервер лицензирования недоступен.", "The license server is unavailable.") : message, ex);
             }
         }
 
@@ -526,7 +526,7 @@ namespace ZTool.LicenseLauncher
             var parsed = serializer.DeserializeObject(json) as Dictionary<string, object>;
             if (parsed == null)
             {
-                throw new InvalidOperationException("Некорректный ответ сервера лицензирования.");
+                throw new InvalidOperationException(LauncherLanguage.T("Некорректный ответ сервера лицензирования.", "Invalid response from the license server."));
             }
 
             object success;
@@ -538,7 +538,7 @@ namespace ZTool.LicenseLauncher
                     message = GetString(parsed, "error");
                 }
 
-                throw new InvalidOperationException(string.IsNullOrWhiteSpace(message) ? "Лицензия не принята сервером." : message);
+                throw new InvalidOperationException(string.IsNullOrWhiteSpace(message) ? LauncherLanguage.T("Лицензия не принята сервером.", "License not accepted by the server.") : message);
             }
 
             return parsed;
@@ -925,7 +925,7 @@ namespace ZTool.LicenseLauncher
 
         public ActivationForm()
         {
-            Text = "Активация SWTool";
+            Text = LauncherLanguage.T("Активация SWTool", "SWTool Activation");
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -955,13 +955,13 @@ namespace ZTool.LicenseLauncher
                 mainLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             }
 
-            var keyLabel = new Label { Text = "Ключ лицензии:", AutoSize = true, Margin = new Padding(0, 0, 0, (int)(3 * scale)) };
+            var keyLabel = new Label { Text = LauncherLanguage.T("Ключ лицензии:", "License key:"), AutoSize = true, Margin = new Padding(0, 0, 0, (int)(3 * scale)) };
             keyBox = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(0, 0, 0, (int)(10 * scale)) };
 
-            var passwordLabel = new Label { Text = "Пароль переноса (8-64 символа, буквы и цифры):", AutoSize = true, Margin = new Padding(0, 0, 0, (int)(3 * scale)) };
+            var passwordLabel = new Label { Text = LauncherLanguage.T("Пароль переноса (8-64 символа, буквы и цифры):", "Transfer password (8-64 characters, letters and digits):"), AutoSize = true, Margin = new Padding(0, 0, 0, (int)(3 * scale)) };
             passwordBox = new TextBox { Dock = DockStyle.Fill, UseSystemPasswordChar = false, Margin = new Padding(0, 0, 0, (int)(5 * scale)) };
 
-            var showPassword = new CheckBox { Text = "Показать пароль", AutoSize = true, Checked = true, Margin = new Padding(0, 0, 0, (int)(10 * scale)) };
+            var showPassword = new CheckBox { Text = LauncherLanguage.T("Показать пароль", "Show password"), AutoSize = true, Checked = true, Margin = new Padding(0, 0, 0, (int)(10 * scale)) };
             showPassword.CheckedChanged += delegate { passwordBox.UseSystemPasswordChar = !showPassword.Checked; };
 
             var buttonsPanel = new TableLayoutPanel();
@@ -974,8 +974,8 @@ namespace ZTool.LicenseLauncher
             buttonsPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             buttonsPanel.Margin = new Padding(0, (int)(5 * scale), 0, 0);
 
-            var activateButton = new Button { Text = "Активировать", Height = (int)(28 * scale), Dock = DockStyle.Fill, DialogResult = DialogResult.OK, Margin = new Padding((int)(3 * scale)) };
-            var cancelButton = new Button { Text = "Отмена", Height = (int)(28 * scale), Dock = DockStyle.Fill, DialogResult = DialogResult.Cancel, Margin = new Padding((int)(3 * scale)) };
+            var activateButton = new Button { Text = LauncherLanguage.T("Активировать", "Activate"), Height = (int)(28 * scale), Dock = DockStyle.Fill, DialogResult = DialogResult.OK, Margin = new Padding((int)(3 * scale)) };
+            var cancelButton = new Button { Text = LauncherLanguage.T("Отмена", "Cancel"), Height = (int)(28 * scale), Dock = DockStyle.Fill, DialogResult = DialogResult.Cancel, Margin = new Padding((int)(3 * scale)) };
 
             buttonsPanel.Controls.Add(new Control(), 0, 0); // Spacer
             buttonsPanel.Controls.Add(activateButton, 1, 0);
@@ -1010,7 +1010,7 @@ namespace ZTool.LicenseLauncher
 
         public PasswordForm()
         {
-            Text = "Деактивация SWTool";
+            Text = LauncherLanguage.T("Деактивация SWTool", "SWTool Deactivation");
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -1040,10 +1040,10 @@ namespace ZTool.LicenseLauncher
                 mainLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             }
 
-            var passwordLabel = new Label { Text = "Пароль переноса:", AutoSize = true, Margin = new Padding(0, 0, 0, (int)(3 * scale)) };
+            var passwordLabel = new Label { Text = LauncherLanguage.T("Пароль переноса:", "Transfer password:"), AutoSize = true, Margin = new Padding(0, 0, 0, (int)(3 * scale)) };
             passwordBox = new TextBox { Dock = DockStyle.Fill, UseSystemPasswordChar = false, Margin = new Padding(0, 0, 0, (int)(5 * scale)) };
 
-            var showPassword = new CheckBox { Text = "Показать пароль", AutoSize = true, Checked = true, Margin = new Padding(0, 0, 0, (int)(10 * scale)) };
+            var showPassword = new CheckBox { Text = LauncherLanguage.T("Показать пароль", "Show password"), AutoSize = true, Checked = true, Margin = new Padding(0, 0, 0, (int)(10 * scale)) };
             showPassword.CheckedChanged += delegate { passwordBox.UseSystemPasswordChar = !showPassword.Checked; };
 
             var buttonsPanel = new TableLayoutPanel();
@@ -1056,8 +1056,8 @@ namespace ZTool.LicenseLauncher
             buttonsPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             buttonsPanel.Margin = new Padding(0, (int)(5 * scale), 0, 0);
 
-            var okButton = new Button { Text = "ОК", Height = (int)(28 * scale), Dock = DockStyle.Fill, DialogResult = DialogResult.OK, Margin = new Padding((int)(3 * scale)) };
-            var cancelButton = new Button { Text = "Отмена", Height = (int)(28 * scale), Dock = DockStyle.Fill, DialogResult = DialogResult.Cancel, Margin = new Padding((int)(3 * scale)) };
+            var okButton = new Button { Text = LauncherLanguage.T("ОК", "OK"), Height = (int)(28 * scale), Dock = DockStyle.Fill, DialogResult = DialogResult.OK, Margin = new Padding((int)(3 * scale)) };
+            var cancelButton = new Button { Text = LauncherLanguage.T("Отмена", "Cancel"), Height = (int)(28 * scale), Dock = DockStyle.Fill, DialogResult = DialogResult.Cancel, Margin = new Padding((int)(3 * scale)) };
 
             buttonsPanel.Controls.Add(new Control(), 0, 0); // Spacer
             buttonsPanel.Controls.Add(okButton, 1, 0);
@@ -1101,6 +1101,64 @@ namespace ZTool.LicenseLauncher
         public const string LicenseBaseUrl = "https://license.vizbuka.ru/ztool";
         public const string PublicKeyXml = "";
         public const string PayloadKey = "development-payload-key";
+        public const string DefaultLanguage = "Russian";
     }
 #endif
+
+    internal static class LauncherLanguage
+    {
+        private static string cached;
+
+        public static string Current
+        {
+            get
+            {
+                if (cached != null) return cached;
+
+                try
+                {
+                    var asmDir = Path.GetDirectoryName(typeof(LauncherLanguage).Assembly.Location);
+                    if (!string.IsNullOrEmpty(asmDir))
+                    {
+                        var settingsPath = Path.Combine(asmDir, "ZTool.settings");
+                        if (File.Exists(settingsPath))
+                        {
+                            var doc = new XmlDocument();
+                            doc.Load(settingsPath);
+                            var node = doc.SelectSingleNode("//Language");
+                            if (node != null && !string.IsNullOrWhiteSpace(node.InnerText))
+                            {
+                                cached = node.InnerText.Trim();
+                                return cached;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                cached = string.IsNullOrEmpty(EmbeddedLicenseConfig.DefaultLanguage)
+                    ? "Russian"
+                    : EmbeddedLicenseConfig.DefaultLanguage;
+                return cached;
+            }
+        }
+
+        public static bool IsEnglish
+        {
+            get { return Current == "English"; }
+        }
+
+        public static string T(string ru, string en)
+        {
+            return IsEnglish ? en : ru;
+        }
+
+        public static string TFormat(string ruTemplate, string enTemplate, params object[] args)
+        {
+            var template = IsEnglish ? enTemplate : ruTemplate;
+            return string.Format(CultureInfo.CurrentCulture, template, args);
+        }
+    }
 }
