@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path,
     [string]$BinaryRoot,
     [string]$AssetsRoot,
@@ -64,7 +64,7 @@ function Invoke-CompileExe(
     $csc = Get-CscPath
     New-Item -ItemType Directory -Force -Path ([System.IO.Path]::GetDirectoryName($OutputPath)) | Out-Null
 
-    $args = @('/nologo', '/target:winexe', '/optimize+', "/out:$OutputPath")
+    $args = @('/nologo', '/codepage:65001', '/target:winexe', '/optimize+', "/out:$OutputPath")
     if ($Defines.Count -gt 0) {
         $args += "/define:$($Defines -join ';')"
     }

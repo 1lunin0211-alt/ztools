@@ -328,6 +328,7 @@ namespace ZTool.License
 $licenseDll = Join-Path $outputRootFull 'ZTool.License.dll'
 $licenseArgs = @(
     '/nologo',
+    '/codepage:65001',
     '/target:library',
     '/optimize+',
     '/debug:pdbonly',
@@ -352,6 +353,7 @@ Assert-StrongNameOk $licenseDll
 $deactivateExe = Join-Path $outputRootFull 'ZTool License Deactivate.exe'
 $deactivateArgs = @(
     '/nologo',
+    '/codepage:65001',
     '/target:winexe',
     '/optimize+',
     '/debug:pdbonly',
@@ -368,6 +370,7 @@ Assert-StrongNameOk $deactivateExe
 $updateStub = Join-Path $outputRootFull 'ZTool.UpdateDisabled.exe'
 $updateArgs = @(
     '/nologo',
+    '/codepage:65001',
     '/target:winexe',
     '/optimize+',
     '/debug:pdbonly',
@@ -470,6 +473,7 @@ if ((Test-Path -LiteralPath $swInterop -PathType Leaf) -and (Test-Path -LiteralP
 
     $solidWorksAddInArgs = @(
         '/nologo',
+        '/codepage:65001',
         '/target:library',
         '/optimize+',
         '/debug:pdbonly',

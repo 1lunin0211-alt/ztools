@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path,
     [string]$SourceRoot = '',
     [string]$OutputRoot = '',
@@ -53,7 +53,7 @@ function Set-ZToolSettingsSolidWorksDefaults([string]$PackageRoot) {
         throw "ZTool.settings not found: $settingsPath"
     }
 
-    $document = [xml](Get-Content -LiteralPath $settingsPath -Raw)
+    $document = [xml](Get-Content -LiteralPath $settingsPath -Raw -Encoding UTF8)
     if ($null -eq $document.CConfigDO -or $null -eq $document.CConfigDO.SWver) {
         throw "ZTool.settings does not contain CConfigDO/SWver: $settingsPath"
     }

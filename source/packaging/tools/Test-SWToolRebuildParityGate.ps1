@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$OriginalRoot = '',
 
     [Parameter(Mandatory = $true)]

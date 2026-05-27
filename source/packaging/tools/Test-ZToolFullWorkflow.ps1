@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$InstallerPath = '',
     [string]$InstallDir = 'C:\SWToolFullWorkflowSmoke',
     [string]$SolidWorksExe = '',

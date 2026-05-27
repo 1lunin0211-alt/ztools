@@ -948,27 +948,44 @@ function Patch-OptionsFormLanguageSelector([dnlib.DotNet.ModuleDef]$Module, [dnl
         throw 'Type ZTool.FrmOptions not found.'
     }
     
-    $loadMethod = $optionsFormType.FindMethod('FrmOptions_Load')
-    if ($null -eq $loadMethod) {
-        throw 'Method FrmOptions_Load not found.'
+    $ctors = @($optionsFormType.Methods | Where-Object { $_.IsConstructor -and -not $_.IsStatic })
+    if ($ctors.Count -eq 0) {
+        throw 'Non-static constructor for FrmOptions not found.'
     }
     
     $langMngType = $LicenseModule.Find('ZTool.License.LanguageManager', $true)
     $addSelectorMethod = $langMngType.FindMethod('AddLanguageSelector')
     $importedMethod = $Module.Import($addSelectorMethod)
     
-    foreach ($inst in $loadMethod.Body.Instructions) {
-        $op = $inst.Operand -as [dnlib.DotNet.IMethod]
-        if ($null -ne $op -and $op.Name -eq 'AddLanguageSelector') {
-            return 'AddLanguageSelector already injected in FrmOptions_Load'
+    $patched = 0
+    foreach ($ctor in $ctors) {
+        if (-not $ctor.HasBody) { continue }
+        
+        $alreadyInjected = $false
+        foreach ($inst in $ctor.Body.Instructions) {
+            $op = $inst.Operand -as [dnlib.DotNet.IMethod]
+            if ($null -ne $op -and $op.Name -eq 'AddLanguageSelector') {
+                $alreadyInjected = $true
+                break
+            }
         }
+        if ($alreadyInjected) { continue }
+        
+        $instructions = $ctor.Body.Instructions
+        $i = 0
+        while ($i -lt $instructions.Count) {
+            if ($instructions[$i].OpCode -eq [dnlib.DotNet.Emit.OpCodes]::Ret) {
+                $instructions.Insert($i, [dnlib.DotNet.Emit.OpCodes]::Ldarg_0.ToInstruction())
+                $instructions.Insert($i + 1, [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($importedMethod))
+                $i += 2
+            }
+            $i++
+        }
+        $ctor.Body.MaxStack = [Math]::Max($ctor.Body.MaxStack, 1)
+        $patched++
     }
     
-    $loadMethod.Body.Instructions.Insert(0, [dnlib.DotNet.Emit.OpCodes]::Ldarg_0.ToInstruction())
-    $loadMethod.Body.Instructions.Insert(1, [dnlib.DotNet.Emit.OpCodes]::Call.ToInstruction($importedMethod))
-    $loadMethod.Body.MaxStack = [Math]::Max($loadMethod.Body.MaxStack, 1)
-    
-    return 'AddLanguageSelector injected in FrmOptions_Load'
+    return "AddLanguageSelector injected into $patched constructor(s) of FrmOptions"
 }
 
 function Patch-FormConstructorsTranslation([dnlib.DotNet.ModuleDef]$Module, [dnlib.DotNet.ModuleDef]$LicenseModule) {
@@ -1074,6 +1091,261 @@ function Patch-MessageBoxCalls([dnlib.DotNet.ModuleDef]$Module, [dnlib.DotNet.Mo
         }
     }
     return $patched
+}
+
+function Patch-ChineseLdstrTranslations([dnlib.DotNet.ModuleDef]$Module) {
+    # Load translation map dynamically
+    $map = $null
+    $patchScript = Join-Path $PSScriptRoot 'Patch-SWToolNativePayloadResources.ps1'
+    if (Test-Path -LiteralPath $patchScript -PathType Leaf) {
+        $scriptContent = Get-Content -LiteralPath $patchScript -Raw -Encoding UTF8
+        $startIndex = $scriptContent.IndexOf("function Get-StringMap")
+        $endIndex = $scriptContent.IndexOf("function Test-NativeRuntimeStarts")
+        if ($startIndex -ge 0 -and $endIndex -gt $startIndex) {
+            $functionCode = $scriptContent.Substring($startIndex, $endIndex - $startIndex)
+            Invoke-Expression $functionCode
+            $map = Get-StringMap "Russian"
+        }
+    }
+    
+    if ($null -eq $map) {
+        throw "Failed to load translation map for Chinese strings."
+    }
+
+    # Pre-build a trimmed-key mapping to handle cases where space layout in translation map keys differs from IL strings
+    $trimmedMap = [ordered]@{}
+    foreach ($key in $map.Keys) {
+        $trimmedKey = $key.Trim()
+        if (-not $trimmedMap.Contains($trimmedKey)) {
+            $trimmedMap[$trimmedKey] = $map[$key]
+        }
+    }
+
+    $patched = 0
+    foreach ($type in $Module.GetTypes()) {
+        foreach ($method in $type.Methods) {
+            if (-not $method.HasBody) { continue }
+            
+            $instructions = $method.Body.Instructions
+            for ($i = 0; $i -lt $instructions.Count; $i++) {
+                $inst = $instructions[$i]
+                if ($inst.OpCode -eq [dnlib.DotNet.Emit.OpCodes]::Ldstr) {
+                    $val = $inst.Operand -as [string]
+                    if ($null -ne $val) {
+                        $trimmedVal = $val.Trim()
+                        
+                        # Find translation using exact match, trimmed key, or trimmed dictionary
+                        $translated = $null
+                        if ($map.Contains($val)) {
+                            $translated = $map[$val]
+                        } elseif ($trimmedMap.Contains($val)) {
+                            $translated = $trimmedMap[$val]
+                        } elseif ($map.Contains($trimmedVal)) {
+                            $translated = $map[$trimmedVal]
+                        } elseif ($trimmedMap.Contains($trimmedVal)) {
+                            $translated = $trimmedMap[$trimmedVal]
+                        }
+                        
+                        if ($null -ne $translated) {
+                            # Extract leading and trailing whitespaces of the original string
+                            $leadingSpaces = ""
+                            $idx = 0
+                            while ($idx -lt $val.Length -and [char]::IsWhiteSpace($val[$idx])) {
+                                $leadingSpaces += $val[$idx]
+                                $idx++
+                            }
+                            $trailingSpaces = ""
+                            $idx = $val.Length - 1
+                            while ($idx -ge 0 -and [char]::IsWhiteSpace($val[$idx])) {
+                                $trailingSpaces = $val[$idx] + $trailingSpaces
+                                $idx--
+                            }
+                            
+                            # Merge leading/trailing spaces cleanly to avoid duplicate/missing spaces
+                            $result = $translated
+                            if ($leadingSpaces -and -not $result.StartsWith($leadingSpaces)) {
+                                $result = $leadingSpaces + $result
+                            }
+                            if ($trailingSpaces -and -not $result.EndsWith($trailingSpaces)) {
+                                $result = $result + $trailingSpaces
+                            }
+                            
+                            $inst.Operand = $result
+                            $patched++
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return $patched
+}
+
+function Get-CscPath {
+    $candidate = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+    if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+        return $candidate
+    }
+
+    throw "csc.exe not found: $candidate"
+}
+
+function Get-ResourcePatchHelper {
+    $helperDir = Join-Path ([System.IO.Path]::GetTempPath()) 'swtool-native-resource-patcher'
+    New-Item -ItemType Directory -Force -Path $helperDir | Out-Null
+    $helperSource = Join-Path $helperDir 'SwToolResourcePatchHelper.cs'
+    $helperExe = Join-Path $helperDir 'SwToolResourcePatchHelper.exe'
+
+    if (Test-Path -LiteralPath $helperExe -PathType Leaf) {
+        return $helperExe
+    }
+
+    @'
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Resources;
+using System.Text;
+
+public static class SwToolResourcePatchHelper
+{
+    public static int Main(string[] args)
+    {
+        if (args.Length != 3)
+        {
+            Console.Error.WriteLine("usage: <input.resources> <output.resources> <map.tsv>");
+            return 2;
+        }
+
+        var map = new Dictionary<string, string>();
+        foreach (string line in File.ReadAllLines(args[2], Encoding.UTF8))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            int tab = line.IndexOf('\t');
+            if (tab <= 0) continue;
+            map[line.Substring(0, tab)] = line.Substring(tab + 1);
+        }
+
+        var entries = new List<DictionaryEntry>();
+        int changed = 0;
+        using (ResourceReader reader = new ResourceReader(args[0]))
+        {
+            foreach (DictionaryEntry entry in reader)
+            {
+                object value = entry.Value;
+                string text = value as string;
+                if (text != null && map.ContainsKey(text))
+                {
+                    value = map[text];
+                    changed++;
+                }
+
+                entries.Add(new DictionaryEntry(entry.Key, value));
+            }
+        }
+
+        using (ResourceWriter writer = new ResourceWriter(args[1]))
+        {
+            foreach (DictionaryEntry entry in entries)
+            {
+                writer.AddResource((string)entry.Key, entry.Value);
+            }
+            writer.Generate();
+        }
+
+        Console.WriteLine(changed.ToString());
+        return 0;
+    }
+}
+'@ | Set-Content -LiteralPath $helperSource -Encoding UTF8
+
+    & (Get-CscPath) /nologo /codepage:65001 /r:System.Drawing.dll /r:System.Windows.Forms.dll /out:$helperExe $helperSource | Out-Null
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $helperExe -PathType Leaf)) {
+        throw 'Failed to compile resource patch helper.'
+    }
+
+    return $helperExe
+}
+
+function Patch-PayloadResources([dnlib.DotNet.ModuleDef]$Module, [string]$Language) {
+    $map = $null
+    $patchScript = Join-Path $PSScriptRoot 'Patch-SWToolNativePayloadResources.ps1'
+    if (Test-Path -LiteralPath $patchScript -PathType Leaf) {
+        $scriptContent = Get-Content -LiteralPath $patchScript -Raw -Encoding UTF8
+        $startIndex = $scriptContent.IndexOf("function Get-StringMap")
+        $endIndex = $scriptContent.IndexOf("function Test-NativeRuntimeStarts")
+        if ($startIndex -ge 0 -and $endIndex -gt $startIndex) {
+            $functionCode = $scriptContent.Substring($startIndex, $endIndex - $startIndex)
+            Invoke-Expression $functionCode
+            $map = Get-StringMap $Language
+        }
+    }
+    
+    if ($null -eq $map) {
+        throw "Failed to load translation map for resources."
+    }
+
+    $mapPath = Join-Path ([System.IO.Path]::GetTempPath()) ("swtool-resource-map-" + [guid]::NewGuid().ToString('N') + '.tsv')
+    ($map.GetEnumerator() | ForEach-Object { "$($_.Key)`t$($_.Value)" }) |
+        Set-Content -LiteralPath $mapPath -Encoding UTF8
+
+    $helper = Get-ResourcePatchHelper
+    
+    $resourcesToPatch = @(
+        'ZTool.Frmmain.resources',
+        'ZTool.FrmOptions.resources'
+    )
+    
+    $patchedCount = 0
+    
+    try {
+        foreach ($resourceName in $resourcesToPatch) {
+            $idx = -1
+            for ($i = 0; $i -lt $Module.Resources.Count; $i++) {
+                if ($Module.Resources[$i].Name -eq $resourceName) {
+                    $idx = $i
+                    break
+                }
+            }
+            if ($idx -lt 0) {
+                continue
+            }
+            
+            $oldResource = $Module.Resources[$idx] -as [dnlib.DotNet.EmbeddedResource]
+            $reader = $oldResource.CreateReader()
+            $oldResourceBytes = $reader.ReadBytes([int]$reader.Length)
+            
+            $oldResourcePath = Join-Path ([System.IO.Path]::GetTempPath()) ("swtool-old-" + [guid]::NewGuid().ToString('N') + '.resources')
+            $newResourcePath = Join-Path ([System.IO.Path]::GetTempPath()) ("swtool-new-" + [guid]::NewGuid().ToString('N') + '.resources')
+            
+            [System.IO.File]::WriteAllBytes($oldResourcePath, $oldResourceBytes)
+            try {
+                $changedText = (& $helper $oldResourcePath $newResourcePath $mapPath | ForEach-Object { [string]$_ }) -join "`n"
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Resource helper failed for $resourceName"
+                }
+                
+                if (Test-Path -LiteralPath $newResourcePath -PathType Leaf) {
+                    $newResourceBytes = [System.IO.File]::ReadAllBytes($newResourcePath)
+                    
+                    $newResource = [dnlib.DotNet.EmbeddedResource]::new(
+                        [dnlib.DotNet.UTF8String]$resourceName,
+                        $newResourceBytes,
+                        $oldResource.Attributes
+                    )
+                    $Module.Resources[$idx] = $newResource
+                    $patchedCount++
+                }
+            } finally {
+                Remove-Item -LiteralPath $oldResourcePath, $newResourcePath -Force -ErrorAction SilentlyContinue
+            }
+        }
+    } finally {
+        Remove-Item -LiteralPath $mapPath -Force -ErrorAction SilentlyContinue
+    }
+    
+    return $patchedCount
 }
 
 function Patch-CyrillicLdstr([dnlib.DotNet.ModuleDef]$Module, [dnlib.DotNet.IMethod]$TranslateMethod) {
@@ -1205,6 +1477,8 @@ try {
 
             $formCtorsPatched = Patch-FormConstructorsTranslation $payloadModule $licenseModule
             $messageBoxesPatched = Patch-MessageBoxCalls $payloadModule $licenseModule
+            $payloadChineseTranslated = Patch-ChineseLdstrTranslations $payloadModule
+            $payloadResourcesPatched = Patch-PayloadResources $payloadModule "Russian"
             $payloadCyrillicPatched = Patch-CyrillicLdstr $payloadModule $importedTranslateMethod
 
             $hasShellPatched = Patch-HasShell $payloadModule
@@ -1272,6 +1546,8 @@ try {
             $langFieldInjected,
             $langSelectorInjected,
             $formCtorsPatched,
+            "$payloadChineseTranslated payload Chinese ldstr strings patched",
+            "$payloadResourcesPatched payload resources patched using dnlib",
             "$messageBoxesPatched payload MessageBox calls patched",
             "$payloadCyrillicPatched payload Cyrillic strings patched",
             "$addinFormCtorsPatched addin form constructors patched",

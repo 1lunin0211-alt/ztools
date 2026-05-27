@@ -308,6 +308,14 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map['刷新'] = 'Обновить'
         $map['导入'] = 'Импорт'
         $map['导出'] = 'Экспорт'
+        $map[' 秒'] = ' с'
+        $map['秒'] = 'с'
+        $map['共 '] = 'всего '
+        $map['共'] = 'всего'
+        $map[' 秒， 共 '] = ' с, всего '
+        $map[' 秒，共 '] = ' с, всего '
+        $map['项'] = ' элем.'
+        $map[' 项'] = ' элем.'
         $map['打印'] = 'Печать'
         $map['替换'] = 'Заменить'
         $map['查找'] = 'Найти'
@@ -426,6 +434,12 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map['刷新'] = 'Refresh'
         $map['导入'] = 'Import'
         $map['导出'] = 'Export'
+        $map[' 秒'] = ' s'
+        $map['共 '] = 'total '
+        $map[' 秒， 共 '] = ' s, total '
+        $map[' 秒，共 '] = ' s, total '
+        $map['项'] = 'items'
+        $map[' 项'] = ' items'
         $map['打印'] = 'Print'
         $map['替换'] = 'Replace'
         $map['查找'] = 'Find'
@@ -670,10 +684,7 @@ $payloadBytes = ConvertFrom-ZToolPayloadResource $encryptedPayload
 $payloadTemp = Join-Path ([System.IO.Path]::GetTempPath()) ("swtool-native-payload-" + [guid]::NewGuid().ToString('N') + '.dll')
 [System.IO.File]::WriteAllBytes($payloadTemp, $payloadBytes)
 
-$resourcesToPatch = @(
-    'ZTool.Frmmain.resources',
-    'ZTool.FrmOptions.resources'
-)
+$resourcesToPatch = @()
 
 $map = Get-StringMap $Language
 $mapPath = Join-Path ([System.IO.Path]::GetTempPath()) ("swtool-resource-map-" + [guid]::NewGuid().ToString('N') + '.tsv')
@@ -729,20 +740,21 @@ try {
 }
 
 $managedStringPatches = New-Object System.Collections.Generic.List[object]
-foreach ($entry in (Get-ManagedStringMap $Language).GetEnumerator()) {
-    $oldValue = [string]$entry.Key
-    $newValue = [string]$entry.Value
-    $oldBytes = [System.Text.Encoding]::Unicode.GetBytes($oldValue)
-    $newBytes = ConvertTo-FixedUtf16Bytes $oldValue $newValue
-    $count = Set-BytesEverywhere $payloadBytes $oldBytes $newBytes
-    if ($count -gt 0) {
-        $managedStringPatches.Add([pscustomobject]@{
-            Old = $oldValue
-            New = $newValue
-            Count = $count
-        })
-    }
-}
+# Commented out to prevent shortened binary translations since we do full IL translations instead.
+# foreach ($entry in (Get-ManagedStringMap $Language).GetEnumerator()) {
+#     $oldValue = [string]$entry.Key
+#     $newValue = [string]$entry.Value
+#     $oldBytes = [System.Text.Encoding]::Unicode.GetBytes($oldValue)
+#     $newBytes = ConvertTo-FixedUtf16Bytes $oldValue $newValue
+#     $count = Set-BytesEverywhere $payloadBytes $oldBytes $newBytes
+#     if ($count -gt 0) {
+#         $managedStringPatches.Add([pscustomobject]@{
+#             Old = $oldValue
+#             New = $newValue
+#             Count = $count
+#         })
+#     }
+# }
 
 $newEncryptedPayload = ConvertTo-ZToolPayloadResource $payloadBytes
 if ($newEncryptedPayload.Length -ne $encryptedPayload.Length) {

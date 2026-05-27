@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$LicenseBaseUrl = 'https://license.vizbuka.ru/ztool',
     [string]$TestLicenseKey = $env:ZTOOL_TEST_KEY,
     [string]$TransferPassword = $env:ZTOOL_TRANSFER_PASSWORD

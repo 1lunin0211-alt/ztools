@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path,
     [string]$EnvPath = '',
     [string]$RemoteHost = '',

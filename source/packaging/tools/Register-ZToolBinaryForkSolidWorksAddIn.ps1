@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$PackageRoot = '',
     [switch]$NoLoadAtStartup,
     [switch]$RemoveLegacy

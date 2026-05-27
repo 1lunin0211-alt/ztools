@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path,
     [string]$PackageRoot = '',
     [string]$LicenseBaseUrl = 'https://license.vizbuka.ru/ztool',

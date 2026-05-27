@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $true)]
     [string]$PackageRoot
 )
@@ -795,7 +795,7 @@ try {
 
 try {
     $settingsPath = Join-Path $root 'ZTool.settings'
-    $settingsXml = [xml](Get-Content -LiteralPath $settingsPath -Raw)
+    $settingsXml = [xml](Get-Content -LiteralPath $settingsPath -Raw -Encoding UTF8)
     $swVersion = [int]$settingsXml.CConfigDO.SWver
     if ($swVersion -ne 0) {
         $errors.Add("ZTool.settings must use SolidWorks auto/current-version mode (<SWver>0</SWver>), actual SWver=$swVersion. Version-pinned values can target an unregistered SldWorks.Application.N ProgID and block standalone connection.")

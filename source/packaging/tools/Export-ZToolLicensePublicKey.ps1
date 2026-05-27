@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$LicenseBaseUrl = 'https://license.vizbuka.ru/ztool',
     [string]$OutputPath = (Join-Path (Get-Location) 'license_public.xml'),
     [string]$EnvPath = '',

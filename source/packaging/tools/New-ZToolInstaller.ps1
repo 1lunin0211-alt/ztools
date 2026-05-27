@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$PackageRoot = '',
     [string]$OutputDir = '',
     [string]$AppVersion = '1.1',
