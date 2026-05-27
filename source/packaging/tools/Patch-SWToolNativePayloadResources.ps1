@@ -1316,6 +1316,10 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["只显示该节点的顶层子项"] = "Показывать только верхний уровень потомков этого узла"
         $map["隐藏该节点 （支持多选）"] = "Скрыть этот узел (поддерживается множественный выбор)"
         $map["隐藏该节点的子项（支持多选）"] = "Скрыть потомков этого узла (поддерживается множественный выбор)"
+        # ZTool.Init.exe (initialization helper) strings
+        $map["ZTool初始化"] = "Инициализация ZTool"
+        $map["加载成功"] = "Загружено успешно"
+        $map["卸载成功"] = "Выгружено успешно"
     } else {
         $map["`t统计数量"] = "`tQuantity"
         $map[" (属性值)"] = " (Property Value)"
@@ -2396,6 +2400,10 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["只显示该节点的顶层子项"] = "Show only top-level children of this node"
         $map["隐藏该节点 （支持多选）"] = "Hide this node (multi-select supported)"
         $map["隐藏该节点的子项（支持多选）"] = "Hide this node's children (multi-select supported)"
+        # ZTool.Init.exe (initialization helper) strings
+        $map["ZTool初始化"] = "ZTool Initialization"
+        $map["加载成功"] = "Loaded successfully"
+        $map["卸载成功"] = "Unloaded successfully"
     }
 
     return $map

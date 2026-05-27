@@ -180,6 +180,7 @@ if ($runtime.SolidWorksAddInDll -and (Test-Path -LiteralPath $runtime.SolidWorks
 $resignInit = Join-Path $PSScriptRoot 'Resign-ZToolInitExe.ps1'
 $resignInitArgs = @{
     PackageRoot = $outputRootFull
+    Language    = $Language
 }
 if (-not [string]::IsNullOrWhiteSpace($SnkPath)) {
     $resignInitArgs.SnkPath = $SnkPath

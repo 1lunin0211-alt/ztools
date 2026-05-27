@@ -2,7 +2,9 @@
     [Parameter(Mandatory = $true)]
     [string]$PackageRoot,
     [string]$SnkPath = '',
-    [string]$ZToolPublicKeyToken = ''
+    [string]$ZToolPublicKeyToken = '',
+    [ValidateSet('Russian', 'English')]
+    [string]$Language = 'Russian'
 )
 
 Set-StrictMode -Version Latest
@@ -100,9 +102,30 @@ if (-not (Test-Path -LiteralPath $initExe -PathType Leaf)) {
 $strongNameKey = [dnlib.DotNet.StrongNameKey]::new($snkFull)
 $initPatched = Join-Path ([System.IO.Path]::GetTempPath()) ("ztool-init-resigned-" + [guid]::NewGuid().ToString('N') + ".exe")
 
+# Load Get-StringMap for ldstr translation (same dictionary used by
+# Disable-ZToolEmbeddedUpdates.ps1::Patch-ChineseLdstrTranslations for the
+# decrypted payload).
+function Get-InitStringMap([string]$SelectedLanguage) {
+    $patchScript = Join-Path $PSScriptRoot 'Patch-SWToolNativePayloadResources.ps1'
+    if (-not (Test-Path -LiteralPath $patchScript -PathType Leaf)) {
+        throw "Patch-SWToolNativePayloadResources.ps1 not found next to this script."
+    }
+    $scriptContent = Get-Content -LiteralPath $patchScript -Raw -Encoding UTF8
+    $startIndex = $scriptContent.IndexOf("function Get-StringMap")
+    $endIndex = $scriptContent.IndexOf("function Test-NativeRuntimeStarts")
+    if ($startIndex -lt 0 -or $endIndex -le $startIndex) {
+        throw "Could not extract Get-StringMap from Patch-SWToolNativePayloadResources.ps1."
+    }
+    Invoke-Expression $scriptContent.Substring($startIndex, $endIndex - $startIndex)
+    return Get-StringMap $SelectedLanguage
+}
+
+$initStringMap = Get-InitStringMap $Language
+
 try {
     $module = [dnlib.DotNet.ModuleDefMD]::Load($initExe)
     $repointed = New-Object System.Collections.Generic.List[string]
+    $translatedStrings = 0
     try {
         $expectedTokenBytes = New-Object byte[] 8
         for ($i = 0; $i -lt 8; $i++) {
@@ -132,6 +155,22 @@ try {
             $repointed.Add(($current + ' -> ' + $expectedTokenLower))
         }
 
+        foreach ($type in $module.GetTypes()) {
+            foreach ($method in $type.Methods) {
+                if (-not $method.HasBody) { continue }
+                $instructions = $method.Body.Instructions
+                for ($i = 0; $i -lt $instructions.Count; $i++) {
+                    $inst = $instructions[$i]
+                    if ($inst.OpCode -ne [dnlib.DotNet.Emit.OpCodes]::Ldstr) { continue }
+                    $val = $inst.Operand -as [string]
+                    if ($null -eq $val) { continue }
+                    if (-not $initStringMap.Contains($val)) { continue }
+                    $inst.Operand = [string]$initStringMap[$val]
+                    $translatedStrings++
+                }
+            }
+        }
+
         $options = [dnlib.DotNet.Writer.ModuleWriterOptions]::new($module)
         $options.Logger = [dnlib.DotNet.DummyLogger]::NoThrowInstance
         $options.MetadataOptions.Flags = $options.MetadataOptions.Flags -bor [dnlib.DotNet.Writer.MetadataFlags]::PreserveAll
@@ -149,6 +188,8 @@ try {
         Sha256 = Get-FileSha256 $initExe
         Repointed = $repointed
         ExpectedPublicKeyToken = $ZToolPublicKeyToken
+        Language = $Language
+        TranslatedLdstrCount = $translatedStrings
     } | ConvertTo-Json -Depth 4
 } finally {
     Remove-Item -LiteralPath $initPatched -Force -ErrorAction SilentlyContinue
