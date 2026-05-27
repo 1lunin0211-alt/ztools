@@ -1645,7 +1645,7 @@ namespace ZTool.License
 
             private static void Expire()
             {
-                Log.Write("Demo mode expired. Closing SWTool.");
+                Log.Write("Demo mode expired.");
                 DeleteDemoCache();
                 try
                 {
@@ -1661,7 +1661,127 @@ namespace ZTool.License
                     Log.Write("Demo countdown timer cleanup failed: " + ex);
                 }
 
+                if (PromptForActivation())
+                {
+                    Log.Write("Demo expired and user activated a license; SWTool continues.");
+                    return;
+                }
+
+                Log.Write("Demo expired and no activation provided. Closing SWTool.");
                 Environment.Exit(0);
+            }
+
+            private static bool PromptForActivation()
+            {
+                Form host = null;
+                try
+                {
+                    foreach (Form form in Application.OpenForms)
+                    {
+                        if (form != null && !form.IsDisposed && form.IsHandleCreated)
+                        {
+                            host = form;
+                            break;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Demo activation prompt: OpenForms scan failed: " + ex);
+                }
+
+                if (host == null)
+                {
+                    return false;
+                }
+
+                bool activated = false;
+                try
+                {
+                    host.Invoke((MethodInvoker)delegate
+                    {
+                        try
+                        {
+                            var title = LanguageManager.T("Демо-режим SWTool", "SWTool demo");
+                            var message = LanguageManager.T(
+                                "Демо-период SWTool истёк.\r\n\r\nЧтобы продолжить работу, введите лицензионный ключ.",
+                                "Your SWTool demo period has expired.\r\n\r\nEnter a license key to continue working.");
+
+                            var result = MessageBox.Show(host, message, title,
+                                MessageBoxButtons.OKCancel, MessageBoxIcon.Information,
+                                MessageBoxDefaultButton.Button1);
+                            if (result != DialogResult.OK)
+                            {
+                                return;
+                            }
+
+                            var machineId = HardwareFingerprint.GetMachineId();
+                            bool demoRequested;
+                            var cache = ShowActivation(machineId, out demoRequested);
+                            if (demoRequested)
+                            {
+                                return;
+                            }
+
+                            if (cache == null || !LicenseValidator.IsUsable(cache, machineId))
+                            {
+                                return;
+                            }
+
+                            new LicenseStore().Save(cache);
+                            Interlocked.Exchange(ref started, 0);
+                            RestoreFormTitlesAfterActivation();
+                            RuntimeBranding.Start();
+                            activated = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Write("Demo activation prompt failed (UI thread): " + ex);
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Demo activation prompt marshal failed: " + ex);
+                }
+
+                return activated;
+            }
+
+            private static void RestoreFormTitlesAfterActivation()
+            {
+                try
+                {
+                    foreach (Form form in Application.OpenForms)
+                    {
+                        if (form == null || form.IsDisposed || !form.IsHandleCreated) continue;
+                        if (!string.IsNullOrEmpty(form.Text))
+                        {
+                            form.Text = StripDemoCountdown(form.Text);
+                        }
+
+                        foreach (Control control in form.Controls.Find(CountdownLabelName, false))
+                        {
+                            try { control.Visible = false; } catch { }
+                        }
+
+                        var status = FindStatusStrip(form);
+                        if (status != null)
+                        {
+                            foreach (ToolStripItem item in status.Items)
+                            {
+                                if (string.Equals(item.Name, CountdownStatusLabelName, StringComparison.Ordinal))
+                                {
+                                    try { item.Visible = false; } catch { }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Demo title restoration after activation failed: " + ex);
+                }
             }
 
             private static void ShowDemoNotice(TimeSpan duration)
