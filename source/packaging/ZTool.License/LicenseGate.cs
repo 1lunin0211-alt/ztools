@@ -151,7 +151,7 @@ namespace ZTool.License
             catch (Exception ex)
             {
                 Log.Write("License gate failed: " + ex);
-                MessageBox.Show("Не удалось проверить лицензию SWTool.\r\n\r\n" + ex.Message, "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LanguageManager.ShowMessageBox(LanguageManager.T("Не удалось проверить лицензию SWTool.", "Failed to verify the SWTool license.") + "\r\n\r\n" + ex.Message, "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -244,7 +244,7 @@ namespace ZTool.License
                 var cache = store.Load();
                 if (cache == null || string.IsNullOrWhiteSpace(cache.Key) || DemoMode.IsDemoCache(cache))
                 {
-                    MessageBox.Show("На этом пользователе нет сохраненной лицензии SWTool.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LanguageManager.ShowMessageBox("На этом пользователе нет сохраненной лицензии SWTool.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return false;
                 }
 
@@ -269,13 +269,13 @@ namespace ZTool.License
 
                 new LicenseClient().Deactivate(cache.Key, transferPassword, deactivationMachineId);
                 store.Delete();
-                MessageBox.Show("Лицензия деактивирована. Теперь ключ можно активировать на другом ПК.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LanguageManager.ShowMessageBox("Лицензия деактивирована. Теперь ключ можно активировать на другом ПК.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return true;
             }
             catch (Exception ex)
             {
                 Log.Write("Deactivation failed: " + ex);
-                MessageBox.Show(ex.Message, "Деактивация SWTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LanguageManager.ShowMessageBox(ex.Message, "Деактивация SWTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
         }
@@ -304,7 +304,7 @@ namespace ZTool.License
                         var cache = new LicenseClient().Activate(form.LicenseKey, form.TransferPassword, machineId);
                         if (!LicenseValidator.IsUsable(cache, machineId))
                         {
-                            MessageBox.Show("Сервер вернул лицензию, но локальная проверка не прошла.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            LanguageManager.ShowMessageBox("Сервер вернул лицензию, но локальная проверка не прошла.", "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             continue;
                         }
 
@@ -313,7 +313,7 @@ namespace ZTool.License
                     catch (Exception ex)
                     {
                         Log.Write("Activation failed: " + ex);
-                        MessageBox.Show(ex.Message, "Активация SWTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        LanguageManager.ShowMessageBox(ex.Message, "Активация SWTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }
@@ -988,6 +988,8 @@ namespace ZTool.License
                 Controls.Add(mainLayout);
                 AcceptButton = activateButton;
                 CancelButton = cancelButton;
+
+                LanguageManager.TranslateForm(this);
             }
 
             public string LicenseKey { get { return keyBox.Text.Trim(); } }
@@ -1013,7 +1015,7 @@ namespace ZTool.License
                 catch (Exception ex)
                 {
                     Log.Write("Activation help open failed: " + ex);
-                    MessageBox.Show("Не удалось открыть локальную справку или инструкцию автоматически.\r\n\r\n" + url, "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LanguageManager.ShowMessageBox(LanguageManager.T("Не удалось открыть локальную справку или инструкцию автоматически.", "Failed to open local help or instructions automatically.") + "\r\n\r\n" + url, "SWTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
 
@@ -1230,6 +1232,8 @@ namespace ZTool.License
                 Controls.Add(mainLayout);
                 AcceptButton = okButton;
                 CancelButton = cancelButton;
+
+                LanguageManager.TranslateForm(this);
             }
 
             public string TransferPassword { get { return passwordBox.Text; } }
@@ -1664,8 +1668,11 @@ namespace ZTool.License
             {
                 try
                 {
-                    MessageBox.Show(
-                        "SWTool запущен в демо-режиме.\r\n\r\nПрограмма закроется автоматически через " + FormatDuration(duration) + ".",
+                    LanguageManager.ShowMessageBox(
+                        LanguageManager.TFormat(
+                            "SWTool запущен в демо-режиме.\r\n\r\nПрограмма закроется автоматически через {0}.",
+                            "SWTool started in demo mode.\r\n\r\nThe program will close automatically in {0}.",
+                            FormatDuration(duration)),
                         "Демо-режим SWTool",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -1680,10 +1687,12 @@ namespace ZTool.License
             {
                 if (duration.TotalMinutes >= 1)
                 {
-                    return ((int)Math.Ceiling(duration.TotalMinutes)).ToString(CultureInfo.InvariantCulture) + " мин.";
+                    return ((int)Math.Ceiling(duration.TotalMinutes)).ToString(CultureInfo.InvariantCulture)
+                        + LanguageManager.T(" мин.", " min.");
                 }
 
-                return Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds)).ToString(CultureInfo.InvariantCulture) + " сек.";
+                return Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds)).ToString(CultureInfo.InvariantCulture)
+                    + LanguageManager.T(" сек.", " sec.");
             }
 
             private static void StartCountdownInTitle(DateTime expiresAtUtc)
@@ -1739,7 +1748,7 @@ namespace ZTool.License
                             originalWindowTitles[form.Handle] = originalTitle;
                         }
 
-                        form.Text = originalTitle + "  Демо: " + FormatRemaining(remaining);
+                        form.Text = originalTitle + LanguageManager.T("  Демо: ", "  Demo: ") + FormatRemaining(remaining);
                         UpdateCountdownPanel(form, remaining);
                     }
                 }
@@ -1753,7 +1762,7 @@ namespace ZTool.License
             {
                 try
                 {
-                    var text = "Демо: " + FormatRemaining(remaining);
+                    var text = LanguageManager.T("Демо: ", "Demo: ") + FormatRemaining(remaining);
                     Label label = null;
                     foreach (Control control in form.Controls.Find(CountdownLabelName, false))
                     {
@@ -1859,9 +1868,13 @@ namespace ZTool.License
 
             private static string StripDemoCountdown(string title)
             {
-                var marker = "  Демо: ";
-                var index = title.IndexOf(marker, StringComparison.Ordinal);
-                return index < 0 ? title : title.Substring(0, index);
+                if (string.IsNullOrEmpty(title)) return title;
+                foreach (var marker in new[] { "  Демо: ", "  Demo: " })
+                {
+                    var index = title.IndexOf(marker, StringComparison.Ordinal);
+                    if (index >= 0) return title.Substring(0, index);
+                }
+                return title;
             }
 
             private static string FormatRemaining(TimeSpan remaining)
@@ -1954,6 +1967,7 @@ namespace ZTool.License
         public const string ActivationHelpUrl = "https://license.vizbuka.ru/ztool";
         public const string PublicKeyXml = "";
         public const int OfflineGraceDays = 7;
+        public const string DefaultLanguage = "Russian";
     }
 #endif
 
@@ -2027,7 +2041,9 @@ namespace ZTool.License
                 }
             }
             catch {}
-            return "Russian";
+            return string.IsNullOrEmpty(EmbeddedLicenseConfig.DefaultLanguage)
+                ? "Russian"
+                : EmbeddedLicenseConfig.DefaultLanguage;
         }
 
         public static void SetConfigLanguage(string lang)
@@ -2081,10 +2097,26 @@ namespace ZTool.License
             catch {}
         }
 
+        public static bool IsEnglish()
+        {
+            return GetConfigLanguage() == "English";
+        }
+
+        public static string T(string ru, string en)
+        {
+            return IsEnglish() ? en : ru;
+        }
+
+        public static string TFormat(string ruTemplate, string enTemplate, params object[] args)
+        {
+            var template = IsEnglish() ? enTemplate : ruTemplate;
+            return string.Format(CultureInfo.CurrentCulture, template, args);
+        }
+
         public static string Translate(string s)
         {
             if (string.IsNullOrEmpty(s)) return s;
-            if (GetConfigLanguage() != "English") return s;
+            if (!IsEnglish()) return s;
             
             string key = s.Trim();
             string translated;
@@ -2253,7 +2285,7 @@ namespace ZTool.License
                     label.AutoSize = true;
 
                     var restartLabel = new Label();
-                    restartLabel.Text = "Панель SolidWorks обновится после перезапуска SolidWorks.";
+                    restartLabel.Text = T("Панель SolidWorks обновится после перезапуска SolidWorks.", "The SolidWorks toolbar will update after restarting SolidWorks.");
                     restartLabel.Location = new Point(20, 85);
                     restartLabel.AutoSize = true;
                     

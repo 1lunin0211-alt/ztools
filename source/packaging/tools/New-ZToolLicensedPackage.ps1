@@ -8,6 +8,8 @@
     [string]$PublicKeyXml = '',
     [string]$PayloadKey = 'change-me-in-config-php',
     [int]$OfflineGraceDays = 7,
+    [ValidateSet('Russian','English')]
+    [string]$Language = 'Russian',
     [switch]$Package,
     [switch]$Production,
     [switch]$Force
@@ -240,6 +242,7 @@ namespace ZTool.LicenseLauncher
         public const string LicenseBaseUrl = $(ConvertTo-CSharpLiteral $LicenseBaseUrl.TrimEnd('/'));
         public const string PublicKeyXml = $(ConvertTo-CSharpLiteral $PublicKeyXml);
         public const string PayloadKey = $(ConvertTo-CSharpLiteral $payloadKey);
+        public const string DefaultLanguage = $(ConvertTo-CSharpLiteral $Language);
     }
 }
 "@ | Set-Content -LiteralPath $generatedConfig -Encoding UTF8

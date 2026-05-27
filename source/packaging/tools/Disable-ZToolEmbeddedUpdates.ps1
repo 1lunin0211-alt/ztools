@@ -3,6 +3,8 @@
     [string]$PackageRoot,
     [string]$SnkPath = '',
     [string]$OriginalAddInPath = '',
+    [ValidateSet('Russian','English')]
+    [string]$Language = 'Russian',
     [switch]$SkipLicenseGatePatch,
     [switch]$SkipLanguageSelectorPatch
 )
@@ -1093,7 +1095,7 @@ function Patch-MessageBoxCalls([dnlib.DotNet.ModuleDef]$Module, [dnlib.DotNet.Mo
     return $patched
 }
 
-function Patch-ChineseLdstrTranslations([dnlib.DotNet.ModuleDef]$Module) {
+function Patch-ChineseLdstrTranslations([dnlib.DotNet.ModuleDef]$Module, [string]$Language = 'Russian') {
     # Load translation map dynamically
     $map = $null
     $patchScript = Join-Path $PSScriptRoot 'Patch-SWToolNativePayloadResources.ps1'
@@ -1104,7 +1106,7 @@ function Patch-ChineseLdstrTranslations([dnlib.DotNet.ModuleDef]$Module) {
         if ($startIndex -ge 0 -and $endIndex -gt $startIndex) {
             $functionCode = $scriptContent.Substring($startIndex, $endIndex - $startIndex)
             Invoke-Expression $functionCode
-            $map = Get-StringMap "Russian"
+            $map = Get-StringMap $Language
         }
     }
     
@@ -1477,8 +1479,8 @@ try {
 
             $formCtorsPatched = Patch-FormConstructorsTranslation $payloadModule $licenseModule
             $messageBoxesPatched = Patch-MessageBoxCalls $payloadModule $licenseModule
-            $payloadChineseTranslated = Patch-ChineseLdstrTranslations $payloadModule
-            $payloadResourcesPatched = Patch-PayloadResources $payloadModule "Russian"
+            $payloadChineseTranslated = Patch-ChineseLdstrTranslations $payloadModule $Language
+            $payloadResourcesPatched = Patch-PayloadResources $payloadModule $Language
             $payloadCyrillicPatched = Patch-CyrillicLdstr $payloadModule $importedTranslateMethod
 
             $hasShellPatched = Patch-HasShell $payloadModule
