@@ -203,6 +203,9 @@ namespace ZTool.License
                 .Replace("www.z-tool.cn", "license.vizbuka.ru/ztool")
                 .Replace("mail@z-tool.cn", "sales@z-tool.ru")
                 .Replace("823539419", "license.vizbuka.ru/ztool")
+                .Replace("QQ群：", "Поддержка: ")
+                .Replace("QQ群:", "Поддержка:")
+                .Replace("QQ群", "Поддержка")
                 .Replace("Solidworks", "SolidWorks")
                 .Replace("高效辅助", "инструменты")
                 .Replace("高效辅助...", "инструменты")
@@ -210,9 +213,7 @@ namespace ZTool.License
                 .Replace("О программеSWTool-SolidWorksинструменты", "О программе SWTool - инструменты для SolidWorks")
                 .Replace("SWTool-SolidWorksинструменты", "SWTool - инструменты для SolidWorks")
                 .Replace("适用于SolidWorks2012及以上版本", "Поддерживается SolidWorks 2012 и новее")
-                .Replace("适用于Solidworks2012及以上版本", "Поддерживается SolidWorks 2012 и новее")
-                .Replace("QQ-группа: license.vizbuka.ru/ztool", "Поддержка: license.vizbuka.ru/ztool")
-                .Replace("QQ group: license.vizbuka.ru/ztool", "Поддержка: license.vizbuka.ru/ztool");
+                .Replace("适用于Solidworks2012及以上版本", "Поддерживается SolidWorks 2012 и новее");
 
             if (result.StartsWith("Email:", StringComparison.OrdinalIgnoreCase))
             {
