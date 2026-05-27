@@ -1,0 +1,17 @@
+SWTool 1.1 (2026)
+
+Localized build based on the original Chinese ZTool v3.84 package
+(full version history of ZTool 1.0 – 3.84, 2017 – 2026, is archived
+by the vendor).
+
+Changes relative to ZTool 3.84:
+1. Complete UI translation into Russian and English.
+2. The built-in auto-updater has been replaced by the new licensing
+   server https://license.vizbuka.ru/ztool.
+3. Per-licence-key binding (online activation, 7-day offline grace,
+   licence transfer between devices).
+4. Demo mode: 3 minutes of work without activation. When it expires
+   the ribbon operations are locked and a notice is shown, after which
+   the application closes after 10 seconds (matches the original).
+5. Built-in links to obsolete third-party services have been removed
+   (z-tool.cn, the QQ support group).

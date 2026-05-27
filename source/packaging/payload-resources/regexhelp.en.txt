@@ -1,0 +1,47 @@
+
+	\\		Marks the next character as a special character, a literal, a back-reference, or an octal escape. For example, "n" matches "n", and "\n" matches a newline. "\\" matches "\", and "\(" matches "(".
+	^		Matches the beginning of the input string. If the RegExp object's Multiline property is set, ^ also matches the position after '\n' or '\r'.
+	$		Matches the end of the input string. If the RegExp object's Multiline property is set, $ also matches the position before '\n' or '\r'.
+	*		Matches the preceding sub-expression zero or more times. For example, "zo*" matches "z" and "zoo". * is equivalent to {0,}.
+	+		Matches the preceding sub-expression one or more times. For example, "zo+" matches "zo" and "zoo" but not "z". + is equivalent to {1,}.
+	?		Matches the preceding sub-expression zero or one time. For example, "do(es)?" matches "does" or "do" in "does". ? is equivalent to {0,1}.
+	{n}		n is a non-negative integer. Matches exactly n times. For example, "o{2}" does not match the "o" in "Bob" but matches both o's in "food".
+	{n,}		n is a non-negative integer. Matches at least n times. For example, "o{2,}" does not match the "o" in "Bob" but matches every "o" in "foooood". "o{1,}" is equivalent to "o+", "o{0,}" to "o*".
+	{n,m}		m and n are non-negative integers with n<=m. Matches at least n and at most m times. For example, "o{1,3}" matches the first three o's in "fooooood". "o{0,1}" is equivalent to "o?". Do not place spaces between the comma and the numbers.
+	?		When this character immediately follows another quantifier (*, +, ?, {n}, {n,}, {n,m}), the match becomes non-greedy. The non-greedy mode matches as few characters as possible; the default greedy mode matches as many as possible.
+				For example, for the string "oooo", "o+?" matches a single "o" while "o+" matches all four.
+	.		Matches any single character except "\n". To match any character including "\n", use a pattern such as "(.|\n)".
+	(pattern)		Matches pattern and captures it. Captures are available via the resulting Matches collection; VBScript uses SubMatches, JScript uses $0…$9 properties. To match a literal parenthesis, write "\(" or "\)".
+	(?:pattern)	Matches pattern but does not capture it. Useful when grouping with alternation "(|)". For example, "industr(?:y|ies)" is a shorter form of "industry|industries".
+				See also the abbreviated form above.
+	(?=pattern)	Positive look-ahead: matches a position followed by pattern, without consuming it. For example, "Windows(?=95|98|NT|2000)" matches "Windows" in "Windows2000",
+				but not in "Windows3.1". Look-ahead does not consume characters; the next match starts at the same position, not after the look-ahead group.
+	(?!pattern)	Negative look-ahead: matches a position not followed by pattern. For example, "Windows(?!95|98|NT|2000)" matches "Windows" in "Windows3.1",
+				but not in "Windows2000". As with positive look-ahead, no characters are consumed.
+	(?<=pattern)	Positive look-behind: similar to look-ahead, but in the opposite direction. For example, "(?<=95|98|NT|2000)Windows" matches "Windows" in "2000Windows" but not in "3.1Windows".
+	(?<!pattern)	Negative look-behind: the mirror image of negative look-ahead. For example, "(?<!95|98|NT|2000)Windows" matches "Windows" in "3.1Windows" but not in "2000Windows".
+	x|y		Matches x or y. For example, "z|food" matches "z" or "food", and "(z|f)ood" matches "zood" or "food".
+	[xyz]		Character set. Matches any one of the enclosed characters. For example, "[abc]" matches the "a" in "plain".
+	[^xyz]		Negative character set. Matches any character not in the enclosed set. For example, "[^abc]" matches the "p" in "plain".
+	[a-z]		Character range. Matches any character within the specified range. For example, "[a-z]" matches any lowercase Latin letter from "a" to "z".
+	[^a-z]		Negative character range. Matches any character outside the specified range. For example, "[^a-z]" matches any character not within "a" to "z".
+	\b		Matches a word boundary, i.e. a position between a word character and a non-word character. For example, "er\b" matches "er" in "never" but not in "verb".
+	\B		Matches a non-word boundary. "er\B" matches "er" in "verb" but not in "never".
+	\cx		Matches the control character indicated by x. For example, "\cM" is Ctrl+M (carriage return). x must be in the range A–Z or a–z; otherwise c is treated as a literal "c".
+	\d		Matches a digit character. Equivalent to [0-9].
+	\D		Matches a non-digit character. Equivalent to [^0-9].
+	\f		Matches a form-feed character. Equivalent to \x0c and \cL.
+	\n		Matches a newline (LF) character. Equivalent to \x0a and \cJ.
+	\r		Matches a carriage-return (CR) character. Equivalent to \x0d and \cM.
+	\s		Matches any whitespace character including space, tab, form-feed, etc. Equivalent to [ \f\n\r\t\v].
+	\S		Matches any non-whitespace character. Equivalent to [^ \f\n\r\t\v].
+	\t		Matches a tab character. Equivalent to \x09 and \cI.
+	\v		Matches a vertical-tab character. Equivalent to \x0b and \cK.
+	\w		Matches any word character (letter, digit, underscore). Equivalent to "[A-Za-z0-9_]".
+	\W		Matches any non-word character. Equivalent to "[^A-Za-z0-9_]".
+	\xn		Matches the character whose two-digit hex code is n (for example, "\x41" matches "A"). ASCII codes can be used directly inside regular expressions.
+	\num		Matches num, where num is a positive integer; a back-reference to a captured group. For example, "(.)\1" matches two identical characters in a row.
+	\n		Matches n, where n is an octal escape value or a back-reference. If \n is preceded by at least n captured sub-expressions, it is a back-reference; otherwise n is interpreted as an octal escape value when composed of digits 0–7.
+	\nm		Matches nm, where n and m are octal escape values or back-references. If \nm is preceded by at least nm captured sub-expressions, it is a back-reference to group nm.
+	\nml		Matches the octal escape value nml, where n is an octal digit (0–3) and m and l are octal digits (0–7).
+	\un		Matches the Unicode character whose four-digit hex code is n. For example, "\u00A9" matches the "©" sign.

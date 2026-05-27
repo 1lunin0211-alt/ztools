@@ -174,6 +174,11 @@ using System.Text;
 
 public static class SwToolResourcePatchHelper
 {
+    // Format of args[2] (the map file):
+    //   record sep = 0x08 (BS), key/value sep = 0x07 (BEL)
+    // Both bytes are absent from the production string set (Chinese ldstr,
+    // RU/EN translations, multi-line Update_log/regexhelp blocks), so keys
+    // and values may contain CR, LF, TAB, and other control chars safely.
     public static int Main(string[] args)
     {
         if (args.Length != 3)
@@ -183,12 +188,13 @@ public static class SwToolResourcePatchHelper
         }
 
         var map = new Dictionary<string, string>();
-        foreach (string line in File.ReadAllLines(args[2], Encoding.UTF8))
+        string raw = File.ReadAllText(args[2], Encoding.UTF8);
+        foreach (string record in raw.Split('\u0008'))
         {
-            if (string.IsNullOrWhiteSpace(line)) continue;
-            int tab = line.IndexOf('\t');
-            if (tab <= 0) continue;
-            map[line.Substring(0, tab)] = line.Substring(tab + 1);
+            if (string.IsNullOrEmpty(record)) continue;
+            int sep = record.IndexOf('\u0007');
+            if (sep <= 0) continue;
+            map[record.Substring(0, sep)] = record.Substring(sep + 1);
         }
 
         var entries = new List<DictionaryEntry>();
@@ -1316,6 +1322,45 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["只显示该节点的顶层子项"] = "Показывать только верхний уровень потомков этого узла"
         $map["隐藏该节点 （支持多选）"] = "Скрыть этот узел (поддерживается множественный выбор)"
         $map["隐藏该节点的子项（支持多选）"] = "Скрыть потомков этого узла (поддерживается множественный выбор)"
+        # Additional payload ldstr strings discovered in re-audit (uncovered after PR #4)
+        $map["试用版最多支持10个文件"] = "Демо-версия поддерживает не более 10 файлов"
+        $map["PDF文件(*.pdf)|*.pdf"] = "PDF-файл (*.pdf)|*.pdf"
+        $map["3D模型排除以下配置"] = "Исключить следующие конфигурации из 3D-модели"
+        $map["3D转换文件名自定义："] = "Имя файла при конвертации 3D:"
+        $map["2D转换文件名自定义："] = "Имя файла при конвертации 2D:"
+        $map["工程图转换PDF后为其添加图片水印"] = "Добавить графический водяной знак после конвертации чертежа в PDF"
+        $map["工程图转换PDF后为其添加文本水印"] = "Добавить текстовый водяной знак после конвертации чертежа в PDF"
+        $map["工程图(*.SLDDRW)|*.SLDDRW"] = "Чертёж (*.SLDDRW)|*.SLDDRW"
+        $map["工程图(*.SLDDRW)|*.SLDDRW|零件(*.SLDPRT)|*.SLDPRT|装配体(*.SLDASM)|*.SLDASM|SOLIDWORKS文件(*.SLDPRT;*.SLDASM;*.SLDDRW)|*.SLDPRT;*.SLDASM;*.SLDDRW"] = "Чертёж (*.SLDDRW)|*.SLDDRW|Деталь (*.SLDPRT)|*.SLDPRT|Сборка (*.SLDASM)|*.SLDASM|Файлы SOLIDWORKS (*.SLDPRT;*.SLDASM;*.SLDDRW)|*.SLDPRT;*.SLDASM;*.SLDDRW"
+        $map["装配体(*.SLDASM)|*.SLDASM"] = "Сборка (*.SLDASM)|*.SLDASM"
+        $map["零件(*.SLDPRT)|*.SLDPRT|装配体(*.SLDASM)|*.SLDASM"] = "Деталь (*.SLDPRT)|*.SLDPRT|Сборка (*.SLDASM)|*.SLDASM"
+        $map["零件(*.SLDPRT)|*.SLDPRT|装配体(*.SLDASM)|*.SLDASM|SOLIDWORKS文件(*.SLDPRT;*.SLDASM)|*.SLDPRT;*.SLDASM"] = "Деталь (*.SLDPRT)|*.SLDPRT|Сборка (*.SLDASM)|*.SLDASM|Файлы SOLIDWORKS (*.SLDPRT;*.SLDASM)|*.SLDPRT;*.SLDASM"
+        $map["SOLIDWORKS文件(*.SLDPRT;*.SLDASM)|*.SLDPRT;*.SLDASM|SOLIDWORKS零件(*.SLDPRT)|*.SLDPRT|SOLIDWORKS装配体(*.SLDASM)|*.SLDASM"] = "Файлы SOLIDWORKS (*.SLDPRT;*.SLDASM)|*.SLDPRT;*.SLDASM|Деталь SOLIDWORKS (*.SLDPRT)|*.SLDPRT|Сборка SOLIDWORKS (*.SLDASM)|*.SLDASM"
+        $map["配置文件(*.settings)|*.settings"] = "Файл настроек (*.settings)|*.settings"
+        $map["属性模板(*.prtprp;*.asmprp)|*.prtprp;*.asmprp"] = "Шаблон свойств (*.prtprp;*.asmprp)|*.prtprp;*.asmprp"
+        $map["修改ToolStripMenuItem"] = "Изменить пункт меню"
+        $map["替换后的零部件移动到"] = "Переместить заменённый компонент в"
+        $map["请设置替换后原文件移动路径"] = "Укажите путь для перемещения исходного файла после замены"
+        $map["替换图纸格式和绘图标准"] = "Заменить формат чертежа и стандарт"
+        $map["`"已存在，请换一个名称"] = "`" уже существует, выберите другое имя"
+        $map["选中行表头，按del键可以删除整行；`r`n多个值之间可以用英文分号分隔；"] = "Выделите заголовок строки и нажмите Del, чтобы удалить всю строку;`r`nнесколько значений можно разделять английской точкой с запятой;"
+        $map["压缩零部件（&S）"] = "Свернуть компонент (&S)"
+        $map["适用于缩略图不显示或其它需要保存的零部件"] = "Применимо к компонентам с неотображаемой миниатюрой или требующим сохранения"
+        $map["没找到工程图模板！"] = "Шаблон чертежа не найден!"
+        $map[") (在明细表中解散)"] = ") (разобрать в спецификации)"
+        $map[") (在明细表中隐藏子项)"] = ") (скрыть потомков в спецификации)"
+        $map[") (不包含在明细表中)"] = ") (исключить из спецификации)"
+        $map["正在生成缩略图...."] = "Создаются миниатюры...."
+        $map["正在导出缩进式明细表...."] = "Экспорт ступенчатой спецификации...."
+        $map["/进阶操作/缩略图显示及操作.htm"] = "/Расширенные операции/Отображение и работа с миниатюрами.htm"
+        $map["授权保护密码(在激活时可设置密码，转出授权后密码自动清除):"] = "Пароль защиты лицензии (задаётся при активации, очищается автоматически после переноса):"
+        $map["修改属性后自动保存"] = "Автосохранение после изменения свойств"
+        $map["/基本操作/保存数据到SolidWorks.htm"] = "/Базовые операции/Сохранение данных в SolidWorks.htm"
+        $map["MKS(米、千克、秒)"] = "MKS (метр, килограмм, секунда)"
+        $map["双击行自动填写到主界面，按del键可以删除选中行。"] = "Двойной щелчок по строке переносит её в главное окно; Del удаляет выделенную строку."
+        $map["未找到SolidWorks"] = "SolidWorks не найден"
+        $map["授权电脑数量已达上限"] = "Достигнут лимит количества компьютеров для лицензии"
+        $map["注：更新保存以及3D模型转jpg、png、3D PDF、igs、step和stl格式`r`n时无效"] = "Примечание: не применяется при сохранении обновлений и при конвертации 3D-модели в jpg, png, 3D PDF, igs, step или stl."
         # ZTool.Init.exe (initialization helper) strings
         $map["ZTool初始化"] = "Инициализация ZTool"
         $map["加载成功"] = "Загружено успешно"
@@ -2400,10 +2445,96 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["只显示该节点的顶层子项"] = "Show only top-level children of this node"
         $map["隐藏该节点 （支持多选）"] = "Hide this node (multi-select supported)"
         $map["隐藏该节点的子项（支持多选）"] = "Hide this node's children (multi-select supported)"
+        # Additional payload ldstr strings discovered in re-audit (uncovered after PR #4)
+        $map["试用版最多支持10个文件"] = "Trial version supports up to 10 files"
+        $map["PDF文件(*.pdf)|*.pdf"] = "PDF file (*.pdf)|*.pdf"
+        $map["3D模型排除以下配置"] = "Exclude these configs from 3D model"
+        $map["3D转换文件名自定义："] = "Custom file name for 3D conversion:"
+        $map["2D转换文件名自定义："] = "Custom file name for 2D conversion:"
+        $map["工程图转换PDF后为其添加图片水印"] = "Add image watermark after drawing-to-PDF conversion"
+        $map["工程图转换PDF后为其添加文本水印"] = "Add text watermark after drawing-to-PDF conversion"
+        $map["工程图(*.SLDDRW)|*.SLDDRW"] = "Drawing (*.SLDDRW)|*.SLDDRW"
+        $map["工程图(*.SLDDRW)|*.SLDDRW|零件(*.SLDPRT)|*.SLDPRT|装配体(*.SLDASM)|*.SLDASM|SOLIDWORKS文件(*.SLDPRT;*.SLDASM;*.SLDDRW)|*.SLDPRT;*.SLDASM;*.SLDDRW"] = "Drawing (*.SLDDRW)|*.SLDDRW|Part (*.SLDPRT)|*.SLDPRT|Assembly (*.SLDASM)|*.SLDASM|SOLIDWORKS files (*.SLDPRT;*.SLDASM;*.SLDDRW)|*.SLDPRT;*.SLDASM;*.SLDDRW"
+        $map["装配体(*.SLDASM)|*.SLDASM"] = "Assembly (*.SLDASM)|*.SLDASM"
+        $map["零件(*.SLDPRT)|*.SLDPRT|装配体(*.SLDASM)|*.SLDASM"] = "Part (*.SLDPRT)|*.SLDPRT|Assembly (*.SLDASM)|*.SLDASM"
+        $map["零件(*.SLDPRT)|*.SLDPRT|装配体(*.SLDASM)|*.SLDASM|SOLIDWORKS文件(*.SLDPRT;*.SLDASM)|*.SLDPRT;*.SLDASM"] = "Part (*.SLDPRT)|*.SLDPRT|Assembly (*.SLDASM)|*.SLDASM|SOLIDWORKS files (*.SLDPRT;*.SLDASM)|*.SLDPRT;*.SLDASM"
+        $map["SOLIDWORKS文件(*.SLDPRT;*.SLDASM)|*.SLDPRT;*.SLDASM|SOLIDWORKS零件(*.SLDPRT)|*.SLDPRT|SOLIDWORKS装配体(*.SLDASM)|*.SLDASM"] = "SOLIDWORKS files (*.SLDPRT;*.SLDASM)|*.SLDPRT;*.SLDASM|SOLIDWORKS part (*.SLDPRT)|*.SLDPRT|SOLIDWORKS assembly (*.SLDASM)|*.SLDASM"
+        $map["配置文件(*.settings)|*.settings"] = "Settings file (*.settings)|*.settings"
+        $map["属性模板(*.prtprp;*.asmprp)|*.prtprp;*.asmprp"] = "Property template (*.prtprp;*.asmprp)|*.prtprp;*.asmprp"
+        $map["修改ToolStripMenuItem"] = "Edit menu item"
+        $map["替换后的零部件移动到"] = "Move replaced component to"
+        $map["请设置替换后原文件移动路径"] = "Set the path to move the original file after replacement"
+        $map["替换图纸格式和绘图标准"] = "Replace drawing format and drafting standard"
+        $map["`"已存在，请换一个名称"] = "`" already exists, please choose another name"
+        $map["选中行表头，按del键可以删除整行；`r`n多个值之间可以用英文分号分隔；"] = "Select a row header and press Del to delete the entire row;`r`nmultiple values may be separated by an English semicolon;"
+        $map["压缩零部件（&S）"] = "Suppress component (&S)"
+        $map["适用于缩略图不显示或其它需要保存的零部件"] = "Applies to components whose thumbnail is missing or that need to be saved"
+        $map["没找到工程图模板！"] = "Drawing template not found!"
+        $map[") (在明细表中解散)"] = ") (dissolved in BOM)"
+        $map[") (在明细表中隐藏子项)"] = ") (hide children in BOM)"
+        $map[") (不包含在明细表中)"] = ") (excluded from BOM)"
+        $map["正在生成缩略图...."] = "Generating thumbnails...."
+        $map["正在导出缩进式明细表...."] = "Exporting indented BOM...."
+        $map["/进阶操作/缩略图显示及操作.htm"] = "/Advanced operations/Thumbnail display and operations.htm"
+        $map["授权保护密码(在激活时可设置密码，转出授权后密码自动清除):"] = "Licence protection password (set on activation, cleared automatically after transfer):"
+        $map["修改属性后自动保存"] = "Auto-save after editing properties"
+        $map["/基本操作/保存数据到SolidWorks.htm"] = "/Basic operations/Save data to SolidWorks.htm"
+        $map["MKS(米、千克、秒)"] = "MKS (metre, kilogram, second)"
+        $map["双击行自动填写到主界面，按del键可以删除选中行。"] = "Double-click a row to copy it to the main window; press Del to remove the selected row."
+        $map["未找到SolidWorks"] = "SolidWorks not found"
+        $map["授权电脑数量已达上限"] = "Maximum number of licensed computers reached"
+        $map["注：更新保存以及3D模型转jpg、png、3D PDF、igs、step和stl格式`r`n时无效"] = "Note: not applied when saving updates or when converting 3D models to jpg, png, 3D PDF, igs, step or stl."
         # ZTool.Init.exe (initialization helper) strings
         $map["ZTool初始化"] = "ZTool Initialization"
         $map["加载成功"] = "Loaded successfully"
         $map["卸载成功"] = "Unloaded successfully"
+    }
+
+    # Long multi-line payload .resources strings (Update_log, regexhelp) live in
+    # companion files under source/packaging/payload-resources/ so PowerShell
+    # quoting doesn't have to handle 6+ KB of Chinese text. The companion files
+    # preserve CRLF line endings, which the original .resources blob also uses.
+    # $PSScriptRoot is not populated when this function is loaded via
+    # Invoke-Expression (Patch-ChineseLdstrTranslations / Patch-PayloadResources
+    # in Disable-ZToolEmbeddedUpdates.ps1, Get-InitStringMap in
+    # Resign-ZToolInitExe.ps1), so we fall back to discovering this script's
+    # location through MyInvocation when needed.
+    $thisScriptPath = $PSScriptRoot
+    if ([string]::IsNullOrWhiteSpace($thisScriptPath)) {
+        $thisScriptPath = $PSCommandPath
+        if (-not [string]::IsNullOrWhiteSpace($thisScriptPath)) {
+            $thisScriptPath = Split-Path -Parent $thisScriptPath
+        }
+    }
+    if ([string]::IsNullOrWhiteSpace($thisScriptPath)) {
+        # Look for Patch-SWToolNativePayloadResources.ps1 in a known sibling location
+        $thisScriptPath = Join-Path (Get-Location) 'source\packaging\tools'
+        if (-not (Test-Path -LiteralPath $thisScriptPath -PathType Container)) {
+            $thisScriptPath = ''
+        }
+    }
+    if ([string]::IsNullOrWhiteSpace($thisScriptPath)) {
+        $payloadResourceTextRoot = ''
+    } else {
+        $payloadResourceTextRoot = Join-Path $thisScriptPath '..\payload-resources'
+    }
+    if (-not [string]::IsNullOrWhiteSpace($payloadResourceTextRoot) -and (Test-Path -LiteralPath $payloadResourceTextRoot -PathType Container)) {
+        $langSuffix = if ($SelectedLanguage -eq 'Russian') { 'ru' } else { 'en' }
+        $pairs = @(
+            @{ Cn = 'Update_log.cn.txt'; Tr = "Update_log.$langSuffix.txt" },
+            @{ Cn = 'regexhelp.cn.txt';  Tr = "regexhelp.$langSuffix.txt"  }
+        )
+        foreach ($pair in $pairs) {
+            $cnPath = Join-Path $payloadResourceTextRoot $pair.Cn
+            $trPath = Join-Path $payloadResourceTextRoot $pair.Tr
+            if ((Test-Path -LiteralPath $cnPath -PathType Leaf) -and (Test-Path -LiteralPath $trPath -PathType Leaf)) {
+                $cnText = [System.IO.File]::ReadAllText($cnPath, [System.Text.Encoding]::UTF8)
+                $trText = [System.IO.File]::ReadAllText($trPath, [System.Text.Encoding]::UTF8)
+                if (-not [string]::IsNullOrEmpty($cnText)) {
+                    $map[$cnText] = $trText
+                }
+            }
+        }
     }
 
     return $map

@@ -1289,14 +1289,26 @@ function Patch-PayloadResources([dnlib.DotNet.ModuleDef]$Module, [string]$Langua
     }
 
     $mapPath = Join-Path ([System.IO.Path]::GetTempPath()) ("swtool-resource-map-" + [guid]::NewGuid().ToString('N') + '.tsv')
-    ($map.GetEnumerator() | ForEach-Object { "$($_.Key)`t$($_.Value)" }) |
-        Set-Content -LiteralPath $mapPath -Encoding UTF8
+    # Use 0x07 (BEL) and 0x08 (BS) as field/record separators so multi-line
+    # keys (Update_log, regexhelp) survive the round-trip. The C# helper
+    # (SwToolResourcePatchHelper) reads the file with the same separators.
+    $kvSep = [char]0x07
+    $recSep = [char]0x08
+    $sb = New-Object System.Text.StringBuilder
+    foreach ($entry in $map.GetEnumerator()) {
+        [void]$sb.Append([string]$entry.Key)
+        [void]$sb.Append($kvSep)
+        [void]$sb.Append([string]$entry.Value)
+        [void]$sb.Append($recSep)
+    }
+    [System.IO.File]::WriteAllText($mapPath, $sb.ToString(), [System.Text.Encoding]::UTF8)
 
     $helper = Get-ResourcePatchHelper
     
     $resourcesToPatch = @(
         'ZTool.Frmmain.resources',
-        'ZTool.FrmOptions.resources'
+        'ZTool.FrmOptions.resources',
+        'ZTool.Resources.resources'
     )
     
     $patchedCount = 0
