@@ -926,6 +926,413 @@ function Write-StrongNamedModule([dnlib.DotNet.ModuleDefMD]$Module, [string]$Out
     $Module.Write($OutputPath, $options)
 }
 
+# .NET Reactor-obfuscated ZTool.dll cannot be round-trip-written by dnlib (the obfuscator
+# emits malformed IL with null-target short branches that dnlib refuses to re-serialize).
+# Therefore CJK byte-sequences inside ZTool.dll's metadata heaps (Constant.Value blobs +
+# CustomAttribute blobs) must be replaced via length-preserving in-place byte patches.
+#
+# Each entry: original UTF-16LE / UTF-8 byte sequence (and language-specific replacement
+# of identical length). For UTF-16LE template tokens the same string is *also* present in
+# the payload IL as ldstr operands (handled by Get-StringMap), so EN/RU values here must
+# match Get-StringMap so the payload's runtime string comparisons (template.Replace(...))
+# stay in sync with ZTool.dll's local field constants.
+function Get-ZToolDllCjkPatches([string]$Language) {
+    if ($Language -eq 'English') {
+        # 4-char and 6-char UTF-16LE replacements -- must align with Get-StringMap EN values
+        $tplDN     = '$DN$'    # was $图号$
+        $tplName   = '$NAME$'  # was $零件名称$
+        $tplRev    = '$Rev'    # was $版本$
+        $tokFile   = '<file_>' # was <磁盘文件名>
+        $tokConf   = '<conf>'  # was <配置名称>
+        # UTF-8 custom attribute values (lengths shown as bytes)
+        $titleSuf  = 'SolidWorks Helper '                            # 18B -> was 高效辅助工具 (18B)
+        $descAttr  = 'Provides a Vista-style file selection dialog   ' # 47B -> was 提供一个Vista样式的选择文件对话框 (47B)
+        # VERSIONINFO UTF-16LE strings (each char = 2 bytes UTF-16LE)
+        $vinfoSuff = 'later'  # 5 chars; was 及以上版本
+        $vinfoTitle = 'Helper' # 6 chars; was 高效辅助工具
+    } else {
+        # Russian. Cyrillic chars are 2 bytes UTF-16LE, same width as ASCII or CJK.
+        $tplDN     = '$НЧ$'    # was $图号$ (4 chars)
+        $tplName   = '$ИмяД$'  # was $零件名称$ (6 chars)
+        $tplRev    = '$Рев'    # was $版本$ (4 chars)
+        $tokFile   = '<файл_>' # was <磁盘文件名> (7 chars)
+        $tokConf   = '<конф>'  # was <配置名称> (6 chars)
+        # UTF-8: Cyrillic = 2 bytes/char, ASCII = 1 byte/char
+        # "Помощник  " = 8*2 + 2*1 = 18 bytes (matches 高效辅助工具 18B)
+        $titleSuf  = 'Помощник  '
+        # 47 bytes: 'Диалог выбора файла Vista     ' (each Cyrillic letter = 2B, ASCII = 1B)
+        # Диалог(12)+space(1)+выбора(12)+space(1)+файла(10)+space(1)+Vista(5)+5spaces(5) = 47
+        $descAttr  = 'Диалог выбора файла Vista     '
+        # VERSIONINFO UTF-16LE strings
+        $vinfoSuff = 'позже'   # 5 chars Cyrillic; was 及以上版本
+        $vinfoTitle = 'Помощь' # 6 chars Cyrillic; was 高效辅助工具
+    }
+
+    $patches = New-Object 'System.Collections.Generic.List[hashtable]'
+    $utf16le = [System.Text.Encoding]::Unicode
+    $utf8    = [System.Text.UTF8Encoding]::new($false, $false)
+
+    # NOTE: The first occurrence cluster of these template-token strings (offsets
+    # 0x566c2, 0x566cc, 0x566da, 0x56c9b, 0x56cab) lies INSIDE the .NET #US heap and
+    # is handled by Invoke-ZToolDllUsHeapCjkPatches (via the JSON translation table).
+    # Likewise the two 0x5705b / 0x57739 strings are #US-heap entries, not VERSIONINFO.
+    # Here we only patch the DUPLICATE copies that live in the #Blob heap (used by
+    # Constant table entries for the const-field default values that are loaded by
+    # the payload IL via ldsfld semantics through reflection).
+    $patches.Add(@{ Offset = 0x00058465; Encoding = 'UTF16LE'; From = '$图号$';     To = $tplDN   })
+    $patches.Add(@{ Offset = 0x0005846e; Encoding = 'UTF16LE'; From = '$零件名称$'; To = $tplName })
+    $patches.Add(@{ Offset = 0x0005847b; Encoding = 'UTF16LE'; From = '$版本$';     To = $tplRev  })
+    $patches.Add(@{ Offset = 0x00058560; Encoding = 'UTF16LE'; From = '<磁盘文件名>';To = $tokFile })
+    $patches.Add(@{ Offset = 0x0005856f; Encoding = 'UTF16LE'; From = '<配置名称>'; To = $tokConf })
+
+    # UTF-8 custom attribute blobs (AssemblyDescription, AssemblyTitle):
+    $patches.Add(@{ Offset = 0x00058ad4; Encoding = 'UTF8'; From = '提供一个Vista样式的选择文件对话框'; To = $descAttr })
+    $patches.Add(@{ Offset = 0x000590af; Encoding = 'UTF8'; From = '高效辅助工具';                  To = $titleSuf })
+
+    return ,$patches
+}
+
+function Get-ZToolExeCjkPatches([string]$Language) {
+    # ZTool.exe contains CJK in two regions:
+    # 1) Assembly attribute custom-attribute blobs (AssemblyDescription "...Solidworks2012...",
+    #    AssemblyTitle "SolidWorks高效辅助工具") - need readable EN/RU replacement (same byte length)
+    # 2) UAC application manifest XML in .rsrc (Chinese XML comments in trustInfo/compatibility) -
+    #    these are pure decoration; replace each CJK run with same-length spaces (blanks)
+    if ($Language -eq 'English') {
+        # 38 bytes; original = '适用于Solidworks2012及以上版本'
+        $descFull = 'Used for SolidWorks 2012 and later    '
+        # 28 bytes; original = 'SolidWorks高效辅助工具'
+        $titleFull = 'SolidWorks Helper           '
+        # VERSIONINFO UTF-16LE fragment replacements (each char = 2 bytes UTF-16LE)
+        $vinfoPre = 'Use'    # 3 chars; was 适用于
+        $vinfoSuff = 'later' # 5 chars; was 及以上版本
+        $vinfoTitle = 'Helper' # 6 chars; was 高效辅助工具
+        # .NET Reactor runtime error strings (in .text section, UTF-16LE)
+        $rxCompileErr = 'CmpEr'  # 5 chars; was '编译错误！'
+        $rxErr        = 'Er'      # 2 chars; was '错误'
+    } else {
+        # 38 bytes; 'Для SolidWorks 2012 и выше    ' (mix of Cyrillic and ASCII)
+        $descFull = 'Для SolidWorks 2012 и выше    '
+        # 28 bytes; 'SolidWorks Помощник ' (ascii + cyrillic + trailing space)
+        $titleFull = 'SolidWorks Помощник '
+        # VERSIONINFO UTF-16LE fragment replacements
+        $vinfoPre = 'Для'    # 3 chars Cyrillic; was 适用于
+        $vinfoSuff = 'позже' # 5 chars Cyrillic; was 及以上版本
+        $vinfoTitle = 'Помощь' # 6 chars Cyrillic; was 高效辅助工具
+        # .NET Reactor runtime error strings (in .text section, UTF-16LE)
+        $rxCompileErr = 'Комп!'  # 5 chars; was '编译错误！'
+        $rxErr        = 'Ош'     # 2 chars; was '错误'
+    }
+
+    $utf8 = [System.Text.UTF8Encoding]::new($false, $false)
+    $utf16 = [System.Text.Encoding]::Unicode
+    $entries = New-Object 'System.Collections.Generic.List[hashtable]'
+
+    # Assembly attribute strings (length-preserving, UTF-8)
+    $entries.Add(@{
+        Kind = 'Attr'
+        FromBytes = $utf8.GetBytes('适用于Solidworks2012及以上版本')
+        ToBytes   = $utf8.GetBytes($descFull)
+    })
+    $entries.Add(@{
+        Kind = 'Attr'
+        FromBytes = $utf8.GetBytes('SolidWorks高效辅助工具')
+        ToBytes   = $utf8.GetBytes($titleFull)
+    })
+
+    # VERSIONINFO Win32 resource strings (UTF-16LE in .rsrc) - file properties dialog
+    $entries.Add(@{
+        Kind = 'VInfo'
+        FromBytes = $utf16.GetBytes('适用于')
+        ToBytes   = $utf16.GetBytes($vinfoPre)
+        Original  = '适用于 (utf-16le)'
+    })
+    $entries.Add(@{
+        Kind = 'VInfo'
+        FromBytes = $utf16.GetBytes('及以上版本')
+        ToBytes   = $utf16.GetBytes($vinfoSuff)
+        Original  = '及以上版本 (utf-16le)'
+    })
+    $entries.Add(@{
+        Kind = 'VInfo'
+        FromBytes = $utf16.GetBytes('高效辅助工具')
+        ToBytes   = $utf16.GetBytes($vinfoTitle)
+        Original  = '高效辅助工具 (utf-16le)'
+    })
+
+    # .NET Reactor runtime error strings embedded in the .text section (loader stub)
+    $entries.Add(@{
+        Kind = 'RuntimeErr'
+        FromBytes = $utf16.GetBytes('编译错误！')
+        ToBytes   = $utf16.GetBytes($rxCompileErr)
+        Original  = '编译错误！ (utf-16le)'
+    })
+    $entries.Add(@{
+        Kind = 'RuntimeErr'
+        FromBytes = $utf16.GetBytes('错误')
+        ToBytes   = $utf16.GetBytes($rxErr)
+        Original  = '错误 (utf-16le)'
+    })
+
+    # UAC manifest XML comments - blank out each CJK run with spaces of equal byte length
+    $manifestCjkRuns = @(
+        '清单选项',
+        '如果要更改',
+        '用户帐户控制级别',
+        '请用以下节点之一替换',
+        '节点。',
+        '指定',
+        '节点将会禁用文件和注册表虚拟化。',
+        '如果要利用文件和注册表虚拟化实现向后',
+        '兼容性',
+        '则删除',
+        '此应用程序设计使用的所有',
+        '版本的列表。',
+        '将会自动选择最兼容的环境。',
+        '如果应用程序设计使用',
+        '请取消注释以下',
+        '节点',
+        '启用',
+        '公共控件和对话框的主题',
+        '和更高版本'
+    )
+    foreach ($run in $manifestCjkRuns) {
+        $fromBytes = $utf8.GetBytes($run)
+        $toBytes = New-Object byte[] $fromBytes.Length
+        for ($i = 0; $i -lt $toBytes.Length; $i++) { $toBytes[$i] = 0x20 }  # ASCII space
+        $entries.Add(@{ Kind = 'Manifest'; FromBytes = $fromBytes; ToBytes = $toBytes; Original = $run })
+    }
+
+    return ,$entries
+}
+
+function Invoke-ZToolExeBinaryStringPatches([string]$ExePath, [string]$Language) {
+    if (-not (Test-Path -LiteralPath $ExePath -PathType Leaf)) {
+        throw "ZTool.exe not found for binary CJK patching: $ExePath"
+    }
+
+    $bytes = [System.IO.File]::ReadAllBytes($ExePath)
+    $entries = Get-ZToolExeCjkPatches -Language $Language
+
+    $totalReplacements = 0
+    $report = New-Object 'System.Collections.Generic.List[string]'
+    foreach ($e in $entries) {
+        $from = [byte[]]$e.FromBytes
+        $to   = [byte[]]$e.ToBytes
+        if ($from.Length -ne $to.Length) {
+            throw "ZTool.exe patch length mismatch: from=$($from.Length)B to=$($to.Length)B"
+        }
+        # Search the whole file (offsets shift after dnlib rewrite) and replace all matches.
+        $occurrences = 0
+        $i = 0
+        while ($i -le ($bytes.Length - $from.Length)) {
+            $match = $true
+            for ($k = 0; $k -lt $from.Length; $k++) {
+                if ($bytes[$i + $k] -ne $from[$k]) { $match = $false; break }
+            }
+            if ($match) {
+                for ($k = 0; $k -lt $to.Length; $k++) {
+                    $bytes[$i + $k] = $to[$k]
+                }
+                $occurrences++
+                $totalReplacements++
+                $i += $from.Length
+            } else {
+                $i++
+            }
+        }
+        if ($occurrences -gt 0) {
+            $orig = if ($e.ContainsKey('Original')) { [string]$e.Original } else { [System.Text.UTF8Encoding]::new($false, $false).GetString($from) }
+            $report.Add(("{0} x{1}: '{2}'" -f $e.Kind, $occurrences, $orig))
+        }
+    }
+
+    # Residual UTF-8 CJK scan
+    $residualCjk = 0
+    $i = 0
+    while ($i -lt $bytes.Length - 2) {
+        $b0 = $bytes[$i]
+        if ($b0 -ge 0xE4 -and $b0 -le 0xE9 -and $bytes[$i+1] -ge 0x80 -and $bytes[$i+1] -le 0xBF -and $bytes[$i+2] -ge 0x80 -and $bytes[$i+2] -le 0xBF) {
+            $residualCjk++
+            $i += 3
+        } else {
+            $i++
+        }
+    }
+
+    [System.IO.File]::WriteAllBytes($ExePath, $bytes)
+
+    return @{
+        TotalReplacements = $totalReplacements
+        PatchDetails = $report
+        ResidualUtf8CjkSequences = $residualCjk
+    }
+}
+
+function Invoke-ZToolDllBinaryStringPatches([string]$DllPath, [string]$Language) {
+    if (-not (Test-Path -LiteralPath $DllPath -PathType Leaf)) {
+        throw "ZTool.dll not found for binary CJK patching: $DllPath"
+    }
+
+    $bytes = [System.IO.File]::ReadAllBytes($DllPath)
+    $patches = Get-ZToolDllCjkPatches -Language $Language
+
+    $applied = 0
+    $report = New-Object 'System.Collections.Generic.List[string]'
+    foreach ($p in $patches) {
+        $offset = [int]$p.Offset
+        $encName = [string]$p.Encoding
+        $fromStr = [string]$p.From
+        $toStr   = [string]$p.To
+        if ($encName -eq 'UTF16LE') {
+            $fromBytes = [System.Text.Encoding]::Unicode.GetBytes($fromStr)
+            $toBytes   = [System.Text.Encoding]::Unicode.GetBytes($toStr)
+        } elseif ($encName -eq 'UTF8') {
+            $utf8 = [System.Text.UTF8Encoding]::new($false, $false)
+            $fromBytes = $utf8.GetBytes($fromStr)
+            $toBytes   = $utf8.GetBytes($toStr)
+        } else {
+            throw "Unknown encoding for ZTool.dll patch: $encName"
+        }
+        if ($toBytes.Length -ne $fromBytes.Length) {
+            throw ("ZTool.dll patch length mismatch at offset 0x{0:X}: from={1}B to={2}B (string '{3}' -> '{4}')" -f $offset, $fromBytes.Length, $toBytes.Length, $fromStr, $toStr)
+        }
+        if (($offset + $fromBytes.Length) -gt $bytes.Length) {
+            throw ("ZTool.dll patch offset 0x{0:X} + len {1} exceeds file size {2}" -f $offset, $fromBytes.Length, $bytes.Length)
+        }
+        # Verify the source bytes match
+        $matches = $true
+        for ($k = 0; $k -lt $fromBytes.Length; $k++) {
+            if ($bytes[$offset + $k] -ne $fromBytes[$k]) { $matches = $false; break }
+        }
+        if (-not $matches) {
+            $actualHex = [BitConverter]::ToString($bytes[$offset..($offset + $fromBytes.Length - 1)]).Replace('-','').ToLowerInvariant()
+            $expHex    = [BitConverter]::ToString($fromBytes).Replace('-','').ToLowerInvariant()
+            throw ("ZTool.dll byte mismatch at offset 0x{0:X}: expected {1} got {2}" -f $offset, $expHex, $actualHex)
+        }
+        # Apply
+        for ($k = 0; $k -lt $toBytes.Length; $k++) {
+            $bytes[$offset + $k] = $toBytes[$k]
+        }
+        $applied++
+        $report.Add(("0x{0:X8} {1} '{2}' -> '{3}'" -f $offset, $encName, $fromStr, $toStr))
+    }
+
+    # Detect any RESIDUAL UTF-8 CJK in the patched file (Vista=>excluded ASCII bytes, only CJK ranges)
+    $residualCjk = 0
+    $i = 0
+    while ($i -lt $bytes.Length - 2) {
+        $b0 = $bytes[$i]
+        if ($b0 -ge 0xE4 -and $b0 -le 0xE9 -and $bytes[$i+1] -ge 0x80 -and $bytes[$i+1] -le 0xBF -and $bytes[$i+2] -ge 0x80 -and $bytes[$i+2] -le 0xBF) {
+            $residualCjk++
+            $i += 3
+        } else {
+            $i++
+        }
+    }
+
+    [System.IO.File]::WriteAllBytes($DllPath, $bytes)
+
+    return @{
+        AppliedPatches = $applied
+        PatchDetails   = $report
+        ResidualUtf8CjkSequences = $residualCjk
+    }
+}
+
+# ZTool.dll's .NET #US (user-strings) heap contains 191 Chinese strings referenced by
+# obfuscated IL ldstr operands. The obfuscator (NecroBit) encrypts method bodies, so
+# we cannot patch ldstr operands directly. Instead, we replace strings *in place* in
+# the #US heap using length-preserving UTF-16LE byte substitution (each Chinese char
+# = 2 bytes UTF-16LE; each Cyrillic/ASCII char = 2 bytes UTF-16LE; replacement must
+# preserve total char count). Translation table is shipped as JSON data file.
+function Invoke-ZToolDllUsHeapCjkPatches([string]$DllPath, [string]$Language, [string]$TranslationsJsonPath) {
+    if (-not (Test-Path -LiteralPath $DllPath -PathType Leaf)) {
+        throw "ZTool.dll not found for #US heap CJK patching: $DllPath"
+    }
+    if (-not (Test-Path -LiteralPath $TranslationsJsonPath -PathType Leaf)) {
+        throw "Translation table JSON not found: $TranslationsJsonPath"
+    }
+    $jsonText = [System.IO.File]::ReadAllText($TranslationsJsonPath, [System.Text.UTF8Encoding]::new($false))
+    $translations = $jsonText | ConvertFrom-Json
+    if ($null -eq $translations) {
+        throw "Failed to parse translation table JSON: $TranslationsJsonPath"
+    }
+    $langField = if ($Language -eq 'English') { 'en' } else { 'ru' }
+
+    $bytes = [System.IO.File]::ReadAllBytes($DllPath)
+    $applied = 0
+    $verifyFails = 0
+    $report = New-Object 'System.Collections.Generic.List[string]'
+    $utf16 = [System.Text.Encoding]::Unicode
+
+    foreach ($t in $translations) {
+        $offset = [int]$t.offset
+        $cn = [string]$t.text
+        $repl = [string]($t.$langField)
+        $cnBytes = $utf16.GetBytes($cn)
+        $reBytes = $utf16.GetBytes($repl)
+        if ($cnBytes.Length -ne $reBytes.Length) {
+            throw ("#US patch length mismatch at offset 0x{0:X}: cn={1}B repl={2}B (cn='{3}' repl='{4}')" -f $offset, $cnBytes.Length, $reBytes.Length, $cn, $repl)
+        }
+        if (($offset + $cnBytes.Length) -gt $bytes.Length) {
+            throw ("#US patch offset 0x{0:X} + len {1} exceeds file size {2}" -f $offset, $cnBytes.Length, $bytes.Length)
+        }
+        # Verify source bytes match (skip if mismatch -- string may have been already patched
+        # by upstream Constant.Value patches; record but do not throw).
+        $ok = $true
+        for ($k = 0; $k -lt $cnBytes.Length; $k++) {
+            if ($bytes[$offset + $k] -ne $cnBytes[$k]) { $ok = $false; break }
+        }
+        if (-not $ok) {
+            $verifyFails++
+            $report.Add(("SKIP 0x{0:X8} '{1}' (already patched or moved)" -f $offset, $cn))
+            continue
+        }
+        for ($k = 0; $k -lt $reBytes.Length; $k++) {
+            $bytes[$offset + $k] = $reBytes[$k]
+        }
+        $applied++
+    }
+
+    # Residual CJK scan: walk the #US heap structurally (parse each string by length-prefix
+    # and count CJK chars only within valid string bodies). Naive even-offset scanning
+    # produces false positives from compressed-length prefix bytes that happen to form
+    # CJK-range UTF-16LE pairs.
+    $us_off = 0x546b4
+    $us_size = 0x3408
+    $residualCjkInStrings = 0
+    $i = 1
+    while ($i -lt $us_size) {
+        $b0 = $bytes[$us_off + $i]
+        if (($b0 -band 0x80) -eq 0) { $bl = $b0; $sz = 1 }
+        elseif (($b0 -band 0xC0) -eq 0x80) { $bl = (($b0 -band 0x3F) -shl 8) -bor $bytes[$us_off + $i + 1]; $sz = 2 }
+        else { $bl = (($b0 -band 0x1F) -shl 24) -bor ($bytes[$us_off + $i + 1] -shl 16) -bor ($bytes[$us_off + $i + 2] -shl 8) -bor $bytes[$us_off + $i + 3]; $sz = 4 }
+        if ($bl -eq 0) { $i += $sz; continue }
+        $sbc = $bl - 1
+        $sds = $i + $sz
+        if (($sbc % 2) -ne 0 -or $sbc -eq 0 -or ($sds + $sbc) -gt $us_size) {
+            $i = $sds + $sbc + 1; continue
+        }
+        # Count CJK chars in this string
+        for ($k = 0; $k -lt $sbc; $k += 2) {
+            $code = [int]$bytes[$us_off + $sds + $k] -bor ([int]$bytes[$us_off + $sds + $k + 1] -shl 8)
+            if ($code -ge 0x4E00 -and $code -le 0x9FFF) {
+                $residualCjkInStrings++
+            }
+        }
+        $i = $sds + $sbc + 1
+    }
+
+    [System.IO.File]::WriteAllBytes($DllPath, $bytes)
+    return @{
+        AppliedPatches = $applied
+        VerifyFailures = $verifyFails
+        ResidualUtf16CjkChars = $residualCjkInStrings
+        PatchDetails = $report
+    }
+}
+
 function Inject-LanguageField([dnlib.DotNet.ModuleDef]$Module) {
     $configType = $Module.Find('ZTool.CConfigDO', $true)
     if ($null -eq $configType) {
@@ -1106,7 +1513,16 @@ function Patch-ChineseLdstrTranslations([dnlib.DotNet.ModuleDef]$Module, [string
         if ($startIndex -ge 0 -and $endIndex -gt $startIndex) {
             $functionCode = $scriptContent.Substring($startIndex, $endIndex - $startIndex)
             Invoke-Expression $functionCode
-            $map = Get-StringMap $Language
+            # Hint Get-StringMap to the payload-resources companion-file dir
+            # so the Update_log / regexhelp blocks are merged into the ldstr
+            # map (the helper ALSO uses this map, but ldstr coverage of these
+            # multi-line blocks is harmless and keeps both code paths in sync).
+            $Global:SwToolPayloadResourceTextRoot = Join-Path $PSScriptRoot '..\payload-resources'
+            try {
+                $map = Get-StringMap $Language
+            } finally {
+                Remove-Variable -Scope Global -Name SwToolPayloadResourceTextRoot -ErrorAction SilentlyContinue
+            }
         }
     }
     
@@ -1220,13 +1636,17 @@ public static class SwToolResourcePatchHelper
             return 2;
         }
 
+        // The PowerShell side writes records using 0x07 as key/value separator
+        // and 0x08 as record separator so multi-line keys (Update_log, regexhelp)
+        // survive the round-trip. Parse the whole file as a single string.
         var map = new Dictionary<string, string>();
-        foreach (string line in File.ReadAllLines(args[2], Encoding.UTF8))
+        string raw = File.ReadAllText(args[2], Encoding.UTF8);
+        foreach (string record in raw.Split('\u0008'))
         {
-            if (string.IsNullOrWhiteSpace(line)) continue;
-            int tab = line.IndexOf('\t');
-            if (tab <= 0) continue;
-            map[line.Substring(0, tab)] = line.Substring(tab + 1);
+            if (string.IsNullOrEmpty(record)) continue;
+            int sep = record.IndexOf('\u0007');
+            if (sep <= 0) continue;
+            map[record.Substring(0, sep)] = record.Substring(sep + 1);
         }
 
         var entries = new List<DictionaryEntry>();
@@ -1280,7 +1700,17 @@ function Patch-PayloadResources([dnlib.DotNet.ModuleDef]$Module, [string]$Langua
         if ($startIndex -ge 0 -and $endIndex -gt $startIndex) {
             $functionCode = $scriptContent.Substring($startIndex, $endIndex - $startIndex)
             Invoke-Expression $functionCode
-            $map = Get-StringMap $Language
+            # Hint Get-StringMap to the payload-resources companion-file dir.
+            # When invoked via Invoke-Expression neither $PSScriptRoot nor
+            # $PSCommandPath is populated, so without the explicit hint the
+            # Update_log / regexhelp file pairs (6+ KB multi-line CJK blocks)
+            # are silently dropped from the translation map.
+            $Global:SwToolPayloadResourceTextRoot = Join-Path $PSScriptRoot '..\payload-resources'
+            try {
+                $map = Get-StringMap $Language
+            } finally {
+                Remove-Variable -Scope Global -Name SwToolPayloadResourceTextRoot -ErrorAction SilentlyContinue
+            }
         }
     }
     
@@ -1289,14 +1719,26 @@ function Patch-PayloadResources([dnlib.DotNet.ModuleDef]$Module, [string]$Langua
     }
 
     $mapPath = Join-Path ([System.IO.Path]::GetTempPath()) ("swtool-resource-map-" + [guid]::NewGuid().ToString('N') + '.tsv')
-    ($map.GetEnumerator() | ForEach-Object { "$($_.Key)`t$($_.Value)" }) |
-        Set-Content -LiteralPath $mapPath -Encoding UTF8
+    # Use 0x07 (BEL) and 0x08 (BS) as field/record separators so multi-line
+    # keys (Update_log, regexhelp) survive the round-trip. The C# helper
+    # (SwToolResourcePatchHelper) reads the file with the same separators.
+    $kvSep = [char]0x07
+    $recSep = [char]0x08
+    $sb = New-Object System.Text.StringBuilder
+    foreach ($entry in $map.GetEnumerator()) {
+        [void]$sb.Append([string]$entry.Key)
+        [void]$sb.Append($kvSep)
+        [void]$sb.Append([string]$entry.Value)
+        [void]$sb.Append($recSep)
+    }
+    [System.IO.File]::WriteAllText($mapPath, $sb.ToString(), [System.Text.Encoding]::UTF8)
 
     $helper = Get-ResourcePatchHelper
     
     $resourcesToPatch = @(
         'ZTool.Frmmain.resources',
-        'ZTool.FrmOptions.resources'
+        'ZTool.FrmOptions.resources',
+        'ZTool.Resources.resources'
     )
     
     $patchedCount = 0
@@ -1509,6 +1951,14 @@ try {
 
         Copy-Item -LiteralPath $exePatched -Destination $exePath -Force
 
+        # ZTool.exe still carries CJK in two regions even after dnlib rewrite:
+        #  1) AssemblyDescription/AssemblyTitle custom-attribute string blobs
+        #     (UTF-8 length-prefixed strings inside the #Blob heap, preserved by PreserveAll)
+        #  2) UAC application manifest XML in .rsrc Win32 resource (Chinese comments)
+        # Both are patched in-place via length-preserving UTF-8 byte search-and-replace.
+        $outerExeBinaryPatchResult = Invoke-ZToolExeBinaryStringPatches -ExePath $exePath -Language $Language
+        $outerExeBinaryPatchCount = $outerExeBinaryPatchResult.TotalReplacements
+        $outerExeBinaryPatchResidual = $outerExeBinaryPatchResult.ResidualUtf8CjkSequences
 
         $addinPath = Join-Path $packageRootFull 'ZTool.dll'
         if (-not (Test-Path -LiteralPath $addinPath -PathType Leaf)) {
@@ -1525,7 +1975,35 @@ try {
         }
 
         Copy-Item -LiteralPath $originalAddInFull -Destination $addinPath -Force
-        $solidWorksAddInAudited = @('ZTool.dll preserved byte-for-byte from reference original; obfuscated SolidWorks IPC/add-in flow is not rewritten')
+
+        # ZTool.dll is .NET Reactor-obfuscated and cannot be round-trip rewritten by dnlib
+        # (malformed IL with null-target short branches). We apply length-preserving
+        # in-place byte patches to remove residual CJK from Constant.Value blobs (template
+        # tokens like $图号$, $零件名称$, $版本$, <磁盘文件名>, <配置名称>) and from
+        # CustomAttribute blobs (AssemblyDescription, AssemblyTitle). Strong-name
+        # signature becomes invalid after byte patching; the installer registers a
+        # skip-verification entry (sn -Vr ZTool,*) to allow the modified DLL to load.
+        # #US heap CJK patches FIRST: 191 user-strings referenced by obfuscated IL.
+        # The translation table is shipped as a JSON file in payload-resources/. Each
+        # translation is length-equal (UTF-16LE char count) so the heap structure is
+        # preserved and ldstr tokens remain valid. Must run BEFORE Get-ZToolDllCjkPatches
+        # so that the in-heap occurrences of $图号$ etc. get translated by the JSON table,
+        # leaving Get-ZToolDllCjkPatches to handle only the #Blob duplicates.
+        $usTranslationsPath = Join-Path -Path (Join-Path $PSScriptRoot '..\payload-resources') -ChildPath 'ztool-dll-us-cjk-patches.json'
+        $usPatchResult = Invoke-ZToolDllUsHeapCjkPatches -DllPath $addinPath -Language $Language -TranslationsJsonPath $usTranslationsPath
+        $usPatchCount = $usPatchResult.AppliedPatches
+        $usPatchVerifyFails = $usPatchResult.VerifyFailures
+        $usPatchResidualCjk = $usPatchResult.ResidualUtf16CjkChars
+
+        $addinBinaryPatchResult = Invoke-ZToolDllBinaryStringPatches -DllPath $addinPath -Language $Language
+        $addinBinaryPatchCount = $addinBinaryPatchResult.AppliedPatches
+        $addinBinaryPatchResidualCjk = $addinBinaryPatchResult.ResidualUtf8CjkSequences
+
+        $solidWorksAddInAudited = @(
+            "ZTool.dll #US heap CJK patches applied=$usPatchCount verify-fails=$usPatchVerifyFails residual-utf16-cjk-chars=$usPatchResidualCjk",
+            "ZTool.dll #Blob/attribute CJK byte patches applied=$addinBinaryPatchCount residual-utf8-cjk-runs=$addinBinaryPatchResidualCjk",
+            'ZTool.dll IL preserved byte-for-byte (obfuscated SolidWorks IPC/add-in flow is not rewritten)'
+        )
         $solidWorksImageResourcesPatched = @('original linked SolidWorks toolbar resources preserved')
         $addinFormCtorsPatched = 'addin form constructor localization skipped; original IPC flow preserved'
         $addinMessageBoxesPatched = 'addin MessageBox localization skipped; original IPC flow preserved'
@@ -1554,7 +2032,8 @@ try {
             "$payloadCyrillicPatched payload Cyrillic strings patched",
             "$addinFormCtorsPatched addin form constructors patched",
             "$addinMessageBoxesPatched addin MessageBox calls patched",
-            "$addinCyrillicPatched addin Cyrillic strings patched"
+            "$addinCyrillicPatched addin Cyrillic strings patched",
+            "ZTool.exe CJK byte patches: total-replacements=$outerExeBinaryPatchCount residual-utf8-cjk-runs=$outerExeBinaryPatchResidual"
         ) + @($legacyChecklicPatched) +
             @($frmmainSolidWorksLaunchAutoConnectPatched) +
             @($solidWorksImageResourcesPatched | ForEach-Object { "$_ embedded" }) +

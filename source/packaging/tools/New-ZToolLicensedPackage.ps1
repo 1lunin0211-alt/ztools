@@ -323,6 +323,17 @@ if (($null -ne $originalInit) -and -not (Test-Path -LiteralPath $asciiInit -Path
     Assert-StrongNameOk $asciiInit
 }
 
+# Remove the CJK-named copy of the init helper (初始化.exe) so the shipping
+# folder contains only the ASCII-named ZTool.Init.exe. Resign-ZToolInitExe.ps1
+# operates on ZTool.Init.exe later in the pipeline.
+if ($null -ne $originalInit -and (Test-Path -LiteralPath $originalInit.FullName -PathType Leaf)) {
+    $originalInitPath = $originalInit.FullName
+    $asciiInitFull = [System.IO.Path]::GetFullPath($asciiInit)
+    if ([string]::Compare($originalInitPath, $asciiInitFull, $true) -ne 0) {
+        Remove-Item -LiteralPath $originalInitPath -Force
+    }
+}
+
 $config = @"
 <?xml version="1.0" encoding="utf-8"?>
 <ZToolLicenseLauncher>

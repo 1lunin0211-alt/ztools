@@ -4,6 +4,8 @@
     [string]$AppVersion = '1.1',
     [string]$Publisher = ([char[]] @(0x041B, 0x0443, 0x043D, 0x0438, 0x043D, 0x0020, 0x0412, 0x002E, 0x0418, 0x002E) -join ''),
     [string]$NsisPath = '',
+    [ValidateSet('Russian','English')]
+    [string]$Language = 'Russian',
     [switch]$SkipPackageGate
 )
 
@@ -184,7 +186,8 @@ New-Item -ItemType Directory -Force -Path $outputDirFull | Out-Null
 
 $nsis = Get-NsisPath $NsisPath
 $versionQuad = Get-AppVersionQuad $AppVersion
-$installerPath = Join-Path $outputDirFull "SWTool-Setup-$AppVersion.exe"
+$languageSuffix = if ($Language -eq 'English') { 'en' } else { 'ru' }
+$installerPath = Join-Path $outputDirFull "SWTool-Setup-$AppVersion-$languageSuffix.exe"
 $installerIcon = Join-Path $sourceRoot 'packaging\obj\installer\ZTool.ico'
 $installerConfig = Join-Path $sourceRoot 'packaging\obj\installer\ZToolInstaller.config.nsh'
 New-IcoFromBitmap -BitmapPath (Join-Path $packageRootFull 'ZTool.bmp') -IconPath $installerIcon
@@ -201,6 +204,7 @@ $arguments = @(
     "/DINSTALLER_CONFIG=$installerConfig",
     "/DAPP_VERSION=$AppVersion",
     "/DAPP_VERSION_QUAD=$versionQuad",
+    "/DINSTALLER_LANGUAGE=$Language",
     $installerScript
 )
 
@@ -216,6 +220,7 @@ $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($installerPa
 [pscustomobject]@{
     Status = 'ok'
     Installer = $installerPath
+    Language = $Language
     PackageRoot = $packageRootFull
     AppVersion = $AppVersion
     AppVersionQuad = $versionQuad

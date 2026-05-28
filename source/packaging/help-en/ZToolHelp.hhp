@@ -1,0 +1,19 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=help.CHM
+Contents file=contents.hhc
+Index file=index.hhk
+Default topic=index.htm
+Display compile progress=No
+Full-text search=Yes
+Language=0x409 English (United States)
+Title=SWTool help
+
+[FILES]
+index.htm
+install.htm
+activation.htm
+basics.htm
+solidworks.htm
+bom.htm
+advanced.htm

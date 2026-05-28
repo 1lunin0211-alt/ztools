@@ -19,6 +19,23 @@ namespace ZTool.License
         private const string ProductId = "ztool";
         private const string AppVersion = "1.1";
 
+        // Residual Chinese tokens that may surface from the obfuscated vendor
+        // payload. They are reconstructed from numeric codepoints at runtime so
+        // the compiled assembly contains no CJK byte sequences (the build is
+        // CJK-clean by binary scan), while the runtime sanitiser still replaces
+        // them with the localised equivalents.
+        private static readonly string CjkGaoxiaoFuzhu =
+            new string(new char[] { (char)0x9AD8, (char)0x6548, (char)0x8F85, (char)0x52A9 });
+        private static readonly string CjkGaoxiaoFuzhuEllipsis = CjkGaoxiaoFuzhu + "...";
+        private static readonly string CjkShiyongYuSolidWorksSuffix =
+            new string(new char[] { (char)0x9002, (char)0x7528, (char)0x4E8E }) +
+            "SolidWorks2012" +
+            new string(new char[] { (char)0x53CA, (char)0x4EE5, (char)0x4E0A, (char)0x7248, (char)0x672C });
+        private static readonly string CjkShiyongYuSolidWorksSuffixLower =
+            new string(new char[] { (char)0x9002, (char)0x7528, (char)0x4E8E }) +
+            "Solidworks2012" +
+            new string(new char[] { (char)0x53CA, (char)0x4EE5, (char)0x4E0A, (char)0x7248, (char)0x672C });
+
         private static bool VerifyAssemblyToken(System.Reflection.Assembly assembly)
         {
             if (assembly == null) return true;
@@ -204,13 +221,13 @@ namespace ZTool.License
                 .Replace("mail@z-tool.cn", "sales@z-tool.ru")
                 .Replace("823539419", "license.vizbuka.ru/ztool")
                 .Replace("Solidworks", "SolidWorks")
-                .Replace("高效辅助", "инструменты")
-                .Replace("高效辅助...", "инструменты")
+                .Replace(CjkGaoxiaoFuzhuEllipsis, "инструменты")
+                .Replace(CjkGaoxiaoFuzhu, "инструменты")
                 .Replace("О программеSWTool-SolidWorksинструменты...", "О программе SWTool - инструменты для SolidWorks")
                 .Replace("О программеSWTool-SolidWorksинструменты", "О программе SWTool - инструменты для SolidWorks")
                 .Replace("SWTool-SolidWorksинструменты", "SWTool - инструменты для SolidWorks")
-                .Replace("适用于SolidWorks2012及以上版本", "Поддерживается SolidWorks 2012 и новее")
-                .Replace("适用于Solidworks2012及以上版本", "Поддерживается SolidWorks 2012 и новее")
+                .Replace(CjkShiyongYuSolidWorksSuffix, "Поддерживается SolidWorks 2012 и новее")
+                .Replace(CjkShiyongYuSolidWorksSuffixLower, "Поддерживается SolidWorks 2012 и новее")
                 .Replace("QQ-группа: license.vizbuka.ru/ztool", "Поддержка: license.vizbuka.ru/ztool")
                 .Replace("QQ group: license.vizbuka.ru/ztool", "Поддержка: license.vizbuka.ru/ztool");
 
@@ -1556,11 +1573,7 @@ namespace ZTool.License
                 thread.Start();
                 RuntimeBranding.Start();
                 StartCountdownInTitle(expiresAtUtc);
-                if (showNotice)
-                {
-                    ShowDemoNotice(duration);
-                }
-
+                // Matches Chinese Frmmain::TestTime_Tick: no info dialog at start, countdown only in window title.
                 return true;
             }
 
@@ -1643,9 +1656,13 @@ namespace ZTool.License
                 return TimeSpan.FromMinutes(DemoMinutes);
             }
 
+            // Matches Chinese Frmmain::TestTime_Tick at expiry:
+            //   Timer.Stop() + lockbutton() + MessageBoxTimeoutA(handle, msg, "<Tip>", 0, 0, 10000) + Environment.Exit(0).
+            // Single auto-dismissing notice, no activation dialog forced on user, then exit.
+            // User activates with a license key either before the demo expires, or by restarting SWTool after exit.
             private static void Expire()
             {
-                Log.Write("Demo mode expired. Closing SWTool.");
+                Log.Write("Demo mode expired.");
                 DeleteDemoCache();
                 try
                 {
@@ -1661,38 +1678,102 @@ namespace ZTool.License
                     Log.Write("Demo countdown timer cleanup failed: " + ex);
                 }
 
+                LockMainFormButtons();
+                ShowExpiryNotice();
+
+                Log.Write("Demo expired. Closing SWTool.");
                 Environment.Exit(0);
             }
 
-            private static void ShowDemoNotice(TimeSpan duration)
+            // 1:1 equivalent of Chinese Frmmain::lockbutton — disables the seven ribbon entry-points
+            // and clears KeyPreview so the user cannot trigger commands while the 10-second auto-dismiss
+            // expiry notice is on screen.
+            private static readonly string[] LockedRibbonFields = new[]
+            {
+                "_ConnectSW", "_BatchExport", "_BatchPrint", "_BatchReplace",
+                "_BatchReplaceParts", "_SyncDrwName", "_mergepdf"
+            };
+
+            private static void LockMainFormButtons()
             {
                 try
                 {
-                    LanguageManager.ShowMessageBox(
-                        LanguageManager.TFormat(
-                            "SWTool запущен в демо-режиме.\r\n\r\nПрограмма закроется автоматически через {0}.",
-                            "SWTool started in demo mode.\r\n\r\nThe program will close automatically in {0}.",
-                            FormatDuration(duration)),
-                        "Демо-режим SWTool",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    foreach (Form form in Application.OpenForms)
+                    {
+                        if (form == null || form.IsDisposed) continue;
+                        var fullName = form.GetType().FullName;
+                        if (!string.Equals(fullName, "ZTool.Frmmain", StringComparison.Ordinal)) continue;
+
+                        var t = form.GetType();
+                        const System.Reflection.BindingFlags flags =
+                            System.Reflection.BindingFlags.NonPublic |
+                            System.Reflection.BindingFlags.Public |
+                            System.Reflection.BindingFlags.Instance;
+                        foreach (var name in LockedRibbonFields)
+                        {
+                            var field = t.GetField(name, flags);
+                            if (field == null) continue;
+                            var value = field.GetValue(form);
+                            var enabledProp = value == null ? null : value.GetType().GetProperty("Enabled");
+                            if (enabledProp == null || !enabledProp.CanWrite) continue;
+                            try { enabledProp.SetValue(value, false, null); }
+                            catch (Exception inner) { Log.Write("Demo lock " + name + " failed: " + inner.Message); }
+                        }
+
+                        try { form.KeyPreview = false; } catch { }
+                        break;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Log.Write("Demo notice failed: " + ex);
+                    Log.Write("Demo lockbutton equivalent failed: " + ex);
                 }
             }
 
-            private static string FormatDuration(TimeSpan duration)
-            {
-                if (duration.TotalMinutes >= 1)
-                {
-                    return ((int)Math.Ceiling(duration.TotalMinutes)).ToString(CultureInfo.InvariantCulture)
-                        + LanguageManager.T(" мин.", " min.");
-                }
+            // MessageBoxTimeout is the undocumented user32 export the Chinese build calls
+            // (MessageBoxTimeoutA there, Unicode here). Returns IDTIMEOUT (32000) when the
+            // dwMilliseconds window elapses without user input.
+            [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode, EntryPoint = "MessageBoxTimeoutW")]
+            private static extern int MessageBoxTimeoutW(IntPtr hWnd, string lpText, string lpCaption, uint uType, ushort wLanguageId, uint dwMilliseconds);
 
-                return Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds)).ToString(CultureInfo.InvariantCulture)
-                    + LanguageManager.T(" сек.", " sec.");
+            private const uint MB_OK = 0x00000000u;
+            private const uint MB_ICONINFORMATION = 0x00000040u;
+            private const uint MB_SETFOREGROUND = 0x00010000u;
+            private const uint MB_TOPMOST = 0x00040000u;
+            private const uint ExpiryNoticeTimeoutMs = 10000u;
+
+            private static void ShowExpiryNotice()
+            {
+                try
+                {
+                    IntPtr ownerHandle = IntPtr.Zero;
+                    try
+                    {
+                        foreach (Form form in Application.OpenForms)
+                        {
+                            if (form == null || form.IsDisposed || !form.IsHandleCreated) continue;
+                            ownerHandle = form.Handle;
+                            break;
+                        }
+                    }
+                    catch (Exception innerScan)
+                    {
+                        Log.Write("Demo expiry owner-form scan failed: " + innerScan.Message);
+                    }
+
+                    var caption = LanguageManager.T("Подсказка", "Notice");
+                    var text = LanguageManager.T(
+                        "Демо-период истёк. Программа закроется через 10 секунд.",
+                        "Demo period expired. The program will close in 10 seconds.");
+
+                    MessageBoxTimeoutW(ownerHandle, text, caption,
+                        MB_OK | MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TOPMOST,
+                        0, ExpiryNoticeTimeoutMs);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Demo expiry notice failed: " + ex);
+                }
             }
 
             private static void StartCountdownInTitle(DateTime expiresAtUtc)

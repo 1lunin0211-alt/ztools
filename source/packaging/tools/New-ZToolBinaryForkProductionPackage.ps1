@@ -153,9 +153,15 @@ if ($Language -eq 'Russian') {
     $buildRussianHelp = Join-Path $PSScriptRoot 'Build-ZToolRussianHelp.ps1'
     $helpResult = (& $buildRussianHelp -Root $rootFull -OutputPath (Join-Path $outputRootFull 'help.CHM') | ForEach-Object { [string]$_ }) -join "`n" | ConvertFrom-Json
 } else {
-    Write-Host "Skipping help.CHM build for Language=$Language (English help is built separately; see help-en/)."
+    $buildEnglishHelp = Join-Path $PSScriptRoot 'Build-ZToolEnglishHelp.ps1'
+    try {
+        $helpResult = (& $buildEnglishHelp -Root $rootFull -OutputPath (Join-Path $outputRootFull 'help.CHM') | ForEach-Object { [string]$_ }) -join "`n" | ConvertFrom-Json
+    } catch {
+        Write-Warning "English help build failed: $_. Package will ship without help.CHM."
+        $helpResult = $null
+    }
 }
-$russianHelpResult = $helpResult
+$helpManifest = $helpResult
 
 Copy-Item -LiteralPath $runtime.LicenseDll -Destination (Join-Path $outputRootFull 'ZTool.License.dll') -Force
 Copy-Item -LiteralPath $runtime.UpdateDisabledExe -Destination (Join-Path $outputRootFull 'ZTool Updater.exe') -Force
@@ -180,6 +186,7 @@ if ($runtime.SolidWorksAddInDll -and (Test-Path -LiteralPath $runtime.SolidWorks
 $resignInit = Join-Path $PSScriptRoot 'Resign-ZToolInitExe.ps1'
 $resignInitArgs = @{
     PackageRoot = $outputRootFull
+    Language    = $Language
 }
 if (-not [string]::IsNullOrWhiteSpace($SnkPath)) {
     $resignInitArgs.SnkPath = $SnkPath
@@ -250,7 +257,8 @@ $manifest = [pscustomobject]@{
     OutputRoot = $outputRootFull
     LicenseBaseUrl = $LicenseBaseUrl.TrimEnd('/')
     ActivationHelpUrl = if ([string]::IsNullOrWhiteSpace($ActivationHelpUrl)) { $LicenseBaseUrl.TrimEnd('/') } else { $ActivationHelpUrl }
-    RussianHelp = $russianHelpResult
+    Help = $helpManifest
+    Language = $Language
     RuntimeManifest = 'ZTool.ProductionRuntime.provenance.json'
     UpdatePatch = $disableUpdateResult
     Files = $manifestFiles
