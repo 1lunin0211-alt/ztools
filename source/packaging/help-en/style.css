@@ -1,0 +1,23 @@
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #202020;
+  margin: 24px 32px;
+}
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 18px;
+}
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 22px 0 10px;
+}
+li {
+  margin: 6px 0;
+}
+a {
+  color: #005a9e;
+}

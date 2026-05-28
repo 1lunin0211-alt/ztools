@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta charset="utf-8">
+</HEAD>
+<BODY>
+<UL>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Activation"><param name="Local" value="activation.htm"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Installation"><param name="Local" value="install.htm"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="SolidWorks"><param name="Local" value="solidworks.htm"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="BOM"><param name="Local" value="bom.htm"></OBJECT>
+</UL>
+</BODY>
+</HTML>

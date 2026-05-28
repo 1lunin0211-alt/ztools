@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta charset="utf-8">
+</HEAD>
+<BODY>
+<OBJECT type="text/site properties">
+  <param name="Window Styles" value="0x800025">
+  <param name="Font" value="MS Sans Serif,9,0">
+</OBJECT>
+<UL>
+  <LI><OBJECT type="text/sitemap">
+    <param name="Name" value="Feature overview">
+    <param name="Local" value="index.htm">
+  </OBJECT>
+  <LI><OBJECT type="text/sitemap">
+    <param name="Name" value="Installation">
+    <param name="Local" value="install.htm">
+  </OBJECT>
+  <LI><OBJECT type="text/sitemap">
+    <param name="Name" value="Activation and licence transfer">
+    <param name="Local" value="activation.htm">
+  </OBJECT>
+  <LI><OBJECT type="text/sitemap">
+    <param name="Name" value="Basic operations">
+    <param name="Local" value="basics.htm">
+  </OBJECT>
+  <UL>
+    <LI><OBJECT type="text/sitemap">
+      <param name="Name" value="SolidWorks integration">
+      <param name="Local" value="solidworks.htm">
+    </OBJECT>
+    <LI><OBJECT type="text/sitemap">
+      <param name="Name" value="Working with BOM">
+      <param name="Local" value="bom.htm">
+    </OBJECT>
+  </UL>
+  <LI><OBJECT type="text/sitemap">
+    <param name="Name" value="Advanced operations">
+    <param name="Local" value="advanced.htm">
+  </OBJECT>
+</UL>
+</BODY>
+</HTML>

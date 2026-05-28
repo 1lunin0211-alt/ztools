@@ -31,6 +31,18 @@ SetCompressor /SOLID lzma
   !define APP_PUBLISHER "Лунин В.И."
 !endif
 
+!ifndef INSTALLER_LANGUAGE
+  !define INSTALLER_LANGUAGE "Russian"
+!endif
+
+!ifndef OUTPUT_NAME
+  !if "${INSTALLER_LANGUAGE}" == "English"
+    !define OUTPUT_NAME "SWTool-Setup-${APP_VERSION}-en.exe"
+  !else
+    !define OUTPUT_NAME "SWTool-Setup-${APP_VERSION}-ru.exe"
+  !endif
+!endif
+
 !define APP_NAME "SWTool"
 !define APP_UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\SWTool"
 !define LEGACY_APP_UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\ZTool"
@@ -38,7 +50,7 @@ SetCompressor /SOLID lzma
 !define ADDIN_GUID "{59959DFA-3229-4B86-852E-52ABF2BDB8C0}"
 
 Name "${APP_NAME}"
-OutFile "${OUTPUT_DIR}\SWTool-Setup-${APP_VERSION}.exe"
+OutFile "${OUTPUT_DIR}\${OUTPUT_NAME}"
 InstallDir "C:\SWTool"
 BrandingText "${APP_NAME} ${APP_VERSION}"
 ShowInstDetails show
@@ -57,10 +69,18 @@ VIAddVersionKey "LegalCopyright" "Copyright (c) ${APP_PUBLISHER}"
   !define MUI_ICON "${INSTALLER_ICON}"
   !define MUI_UNICON "${INSTALLER_ICON}"
 !endif
-!define MUI_WELCOMEPAGE_TITLE "Установка ${APP_NAME} ${APP_VERSION}"
-!define MUI_WELCOMEPAGE_TEXT "Этот мастер установит ${APP_NAME}, зарегистрирует надстройку SolidWorks и создаст ярлыки."
-!define MUI_FINISHPAGE_TITLE "${APP_NAME} установлен"
-!define MUI_FINISHPAGE_TEXT "${APP_NAME} ${APP_VERSION} установлен. Надстройка SolidWorks зарегистрирована и будет загружаться при запуске SolidWorks."
+
+!if "${INSTALLER_LANGUAGE}" == "English"
+  !define MUI_WELCOMEPAGE_TITLE "${APP_NAME} ${APP_VERSION} setup"
+  !define MUI_WELCOMEPAGE_TEXT "This wizard will install ${APP_NAME}, register the SolidWorks add-in and create shortcuts."
+  !define MUI_FINISHPAGE_TITLE "${APP_NAME} installed"
+  !define MUI_FINISHPAGE_TEXT "${APP_NAME} ${APP_VERSION} has been installed. The SolidWorks add-in is registered and will load when SolidWorks starts."
+!else
+  !define MUI_WELCOMEPAGE_TITLE "Установка ${APP_NAME} ${APP_VERSION}"
+  !define MUI_WELCOMEPAGE_TEXT "Этот мастер установит ${APP_NAME}, зарегистрирует надстройку SolidWorks и создаст ярлыки."
+  !define MUI_FINISHPAGE_TITLE "${APP_NAME} установлен"
+  !define MUI_FINISHPAGE_TEXT "${APP_NAME} ${APP_VERSION} установлен. Надстройка SolidWorks зарегистрирована и будет загружаться при запуске SolidWorks."
+!endif
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_DIRECTORY
@@ -70,13 +90,33 @@ VIAddVersionKey "LegalCopyright" "Copyright (c) ${APP_PUBLISHER}"
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
-!insertmacro MUI_LANGUAGE "Russian"
+!if "${INSTALLER_LANGUAGE}" == "English"
+  !insertmacro MUI_LANGUAGE "English"
 
-LangString Msg64BitRequired ${LANG_RUSSIAN} "${APP_NAME} предназначен для 64-битной Windows и SolidWorks x64."
-LangString MsgCloseApps ${LANG_RUSSIAN} "Перед установкой или удалением закройте SolidWorks и SWTool.$\r$\n$\r$\nЗапущены процессы:$\r$\n$0"
-LangString MsgRegisterFailed ${LANG_RUSSIAN} "Файлы установлены, но регистрация надстройки SolidWorks не прошла. Код ошибки: $0.$\r$\nЗапустите установщик от имени администратора или выполните Register ZTool SolidWorks AddIn.cmd из папки установки."
-LangString MsgUnregisterFailed ${LANG_RUSSIAN} "Удаление регистрации надстройки SolidWorks завершилось с ошибкой. Код ошибки: $0.$\r$\nФайлы всё равно будут удалены."
-LangString MsgLegacyUninstallFailed ${LANG_RUSSIAN} "Не удалось удалить предыдущую установку ZTool/SWTool из:$\r$\n$1$\r$\n$\r$\nКод ошибки: $0"
+  LangString Msg64BitRequired ${LANG_ENGLISH} "${APP_NAME} requires 64-bit Windows and SolidWorks x64."
+  LangString MsgCloseApps ${LANG_ENGLISH} "Close SolidWorks and SWTool before installing or uninstalling.$\r$\n$\r$\nRunning processes:$\r$\n$0"
+  LangString MsgRegisterFailed ${LANG_ENGLISH} "Files were installed, but registering the SolidWorks add-in failed. Error code: $0.$\r$\nRun the installer as administrator, or run Register ZTool SolidWorks AddIn.cmd from the install folder."
+  LangString MsgUnregisterFailed ${LANG_ENGLISH} "Unregistering the SolidWorks add-in failed with error code: $0.$\r$\nFiles will be removed anyway."
+  LangString MsgLegacyUninstallFailed ${LANG_ENGLISH} "Failed to remove previous ZTool/SWTool install at:$\r$\n$1$\r$\n$\r$\nError code: $0"
+
+  !define LBL_SHORTCUT_DEACTIVATE "Deactivate licence.lnk"
+  !define LBL_SHORTCUT_REGISTER "Register SolidWorks add-in.lnk"
+  !define LBL_SHORTCUT_UNINSTALL "Uninstall SWTool.lnk"
+  !define LBL_SHORTCUT_UNINSTALL_LEGACY_RU "Удалить SWTool.lnk"
+!else
+  !insertmacro MUI_LANGUAGE "Russian"
+
+  LangString Msg64BitRequired ${LANG_RUSSIAN} "${APP_NAME} предназначен для 64-битной Windows и SolidWorks x64."
+  LangString MsgCloseApps ${LANG_RUSSIAN} "Перед установкой или удалением закройте SolidWorks и SWTool.$\r$\n$\r$\nЗапущены процессы:$\r$\n$0"
+  LangString MsgRegisterFailed ${LANG_RUSSIAN} "Файлы установлены, но регистрация надстройки SolidWorks не прошла. Код ошибки: $0.$\r$\nЗапустите установщик от имени администратора или выполните Register ZTool SolidWorks AddIn.cmd из папки установки."
+  LangString MsgUnregisterFailed ${LANG_RUSSIAN} "Удаление регистрации надстройки SolidWorks завершилось с ошибкой. Код ошибки: $0.$\r$\nФайлы всё равно будут удалены."
+  LangString MsgLegacyUninstallFailed ${LANG_RUSSIAN} "Не удалось удалить предыдущую установку ZTool/SWTool из:$\r$\n$1$\r$\n$\r$\nКод ошибки: $0"
+
+  !define LBL_SHORTCUT_DEACTIVATE "Деактивация лицензии.lnk"
+  !define LBL_SHORTCUT_REGISTER "Регистрация надстройки SolidWorks.lnk"
+  !define LBL_SHORTCUT_UNINSTALL "Удалить SWTool.lnk"
+  !define LBL_SHORTCUT_UNINSTALL_LEGACY_RU "Удалить SWTool.lnk"
+!endif
 
 Var PowerShellExe
 Var ExitCode
@@ -163,9 +203,9 @@ Section "SWTool" SecMain
 
   CreateDirectory "$SMPROGRAMS\${START_MENU_DIR}"
   CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\SWTool.lnk" "$INSTDIR\ZTool.exe" "" "$INSTDIR\ZTool.ico" 0
-  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\Деактивация лицензии.lnk" "$INSTDIR\ZTool License Deactivate.exe" "" "$INSTDIR\ZTool.ico" 0
-  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\Регистрация надстройки SolidWorks.lnk" "$INSTDIR\Register ZTool SolidWorks AddIn.cmd" "" "$INSTDIR\ZTool.ico" 0
-  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\Удалить SWTool.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\${LBL_SHORTCUT_DEACTIVATE}" "$INSTDIR\ZTool License Deactivate.exe" "" "$INSTDIR\ZTool.ico" 0
+  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\${LBL_SHORTCUT_REGISTER}" "$INSTDIR\Register ZTool SolidWorks AddIn.cmd" "" "$INSTDIR\ZTool.ico" 0
+  CreateShortCut "$SMPROGRAMS\${START_MENU_DIR}\${LBL_SHORTCUT_UNINSTALL}" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
   CreateShortCut "$DESKTOP\SWTool.lnk" "$INSTDIR\ZTool.exe" "" "$INSTDIR\ZTool.ico" 0
 
   WriteRegStr HKLM "${APP_UNINSTALL_KEY}" "DisplayName" "${APP_NAME}"
@@ -230,6 +270,9 @@ skip_unreg:
   Delete "$SMPROGRAMS\${START_MENU_DIR}\Регистрация надстройки SolidWorks.lnk"
   Delete "$SMPROGRAMS\${START_MENU_DIR}\Удалить SWTool.lnk"
   Delete "$SMPROGRAMS\${START_MENU_DIR}\Удалить ZTool.lnk"
+  Delete "$SMPROGRAMS\${START_MENU_DIR}\Deactivate licence.lnk"
+  Delete "$SMPROGRAMS\${START_MENU_DIR}\Register SolidWorks add-in.lnk"
+  Delete "$SMPROGRAMS\${START_MENU_DIR}\Uninstall SWTool.lnk"
   RMDir "$SMPROGRAMS\${START_MENU_DIR}"
 
   DeleteRegKey HKLM "${APP_UNINSTALL_KEY}"

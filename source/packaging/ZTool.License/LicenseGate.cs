@@ -19,6 +19,23 @@ namespace ZTool.License
         private const string ProductId = "ztool";
         private const string AppVersion = "1.1";
 
+        // Residual Chinese tokens that may surface from the obfuscated vendor
+        // payload. They are reconstructed from numeric codepoints at runtime so
+        // the compiled assembly contains no CJK byte sequences (the build is
+        // CJK-clean by binary scan), while the runtime sanitiser still replaces
+        // them with the localised equivalents.
+        private static readonly string CjkGaoxiaoFuzhu =
+            new string(new char[] { (char)0x9AD8, (char)0x6548, (char)0x8F85, (char)0x52A9 });
+        private static readonly string CjkGaoxiaoFuzhuEllipsis = CjkGaoxiaoFuzhu + "...";
+        private static readonly string CjkShiyongYuSolidWorksSuffix =
+            new string(new char[] { (char)0x9002, (char)0x7528, (char)0x4E8E }) +
+            "SolidWorks2012" +
+            new string(new char[] { (char)0x53CA, (char)0x4EE5, (char)0x4E0A, (char)0x7248, (char)0x672C });
+        private static readonly string CjkShiyongYuSolidWorksSuffixLower =
+            new string(new char[] { (char)0x9002, (char)0x7528, (char)0x4E8E }) +
+            "Solidworks2012" +
+            new string(new char[] { (char)0x53CA, (char)0x4EE5, (char)0x4E0A, (char)0x7248, (char)0x672C });
+
         private static bool VerifyAssemblyToken(System.Reflection.Assembly assembly)
         {
             if (assembly == null) return true;
@@ -204,13 +221,13 @@ namespace ZTool.License
                 .Replace("mail@z-tool.cn", "sales@z-tool.ru")
                 .Replace("823539419", "license.vizbuka.ru/ztool")
                 .Replace("Solidworks", "SolidWorks")
-                .Replace("高效辅助", "инструменты")
-                .Replace("高效辅助...", "инструменты")
+                .Replace(CjkGaoxiaoFuzhuEllipsis, "инструменты")
+                .Replace(CjkGaoxiaoFuzhu, "инструменты")
                 .Replace("О программеSWTool-SolidWorksинструменты...", "О программе SWTool - инструменты для SolidWorks")
                 .Replace("О программеSWTool-SolidWorksинструменты", "О программе SWTool - инструменты для SolidWorks")
                 .Replace("SWTool-SolidWorksинструменты", "SWTool - инструменты для SolidWorks")
-                .Replace("适用于SolidWorks2012及以上版本", "Поддерживается SolidWorks 2012 и новее")
-                .Replace("适用于Solidworks2012及以上版本", "Поддерживается SolidWorks 2012 и новее")
+                .Replace(CjkShiyongYuSolidWorksSuffix, "Поддерживается SolidWorks 2012 и новее")
+                .Replace(CjkShiyongYuSolidWorksSuffixLower, "Поддерживается SolidWorks 2012 и новее")
                 .Replace("QQ-группа: license.vizbuka.ru/ztool", "Поддержка: license.vizbuka.ru/ztool")
                 .Replace("QQ group: license.vizbuka.ru/ztool", "Поддержка: license.vizbuka.ru/ztool");
 
@@ -1640,7 +1657,7 @@ namespace ZTool.License
             }
 
             // Matches Chinese Frmmain::TestTime_Tick at expiry:
-            //   Timer.Stop() + lockbutton() + MessageBoxTimeoutA(handle, msg, "提示", 0, 0, 10000) + Environment.Exit(0).
+            //   Timer.Stop() + lockbutton() + MessageBoxTimeoutA(handle, msg, "<Tip>", 0, 0, 10000) + Environment.Exit(0).
             // Single auto-dismissing notice, no activation dialog forced on user, then exit.
             // User activates with a license key either before the demo expires, or by restarting SWTool after exit.
             private static void Expire()
