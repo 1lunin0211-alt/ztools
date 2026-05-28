@@ -117,7 +117,12 @@ function Get-InitStringMap([string]$SelectedLanguage) {
         throw "Could not extract Get-StringMap from Patch-SWToolNativePayloadResources.ps1."
     }
     Invoke-Expression $scriptContent.Substring($startIndex, $endIndex - $startIndex)
-    return Get-StringMap $SelectedLanguage
+    $Global:SwToolPayloadResourceTextRoot = Join-Path $PSScriptRoot '..\payload-resources'
+    try {
+        return Get-StringMap $SelectedLanguage
+    } finally {
+        Remove-Variable -Scope Global -Name SwToolPayloadResourceTextRoot -ErrorAction SilentlyContinue
+    }
 }
 
 $initStringMap = Get-InitStringMap $Language

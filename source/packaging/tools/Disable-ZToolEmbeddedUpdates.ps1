@@ -1106,7 +1106,16 @@ function Patch-ChineseLdstrTranslations([dnlib.DotNet.ModuleDef]$Module, [string
         if ($startIndex -ge 0 -and $endIndex -gt $startIndex) {
             $functionCode = $scriptContent.Substring($startIndex, $endIndex - $startIndex)
             Invoke-Expression $functionCode
-            $map = Get-StringMap $Language
+            # Hint Get-StringMap to the payload-resources companion-file dir
+            # so the Update_log / regexhelp blocks are merged into the ldstr
+            # map (the helper ALSO uses this map, but ldstr coverage of these
+            # multi-line blocks is harmless and keeps both code paths in sync).
+            $Global:SwToolPayloadResourceTextRoot = Join-Path $PSScriptRoot '..\payload-resources'
+            try {
+                $map = Get-StringMap $Language
+            } finally {
+                Remove-Variable -Scope Global -Name SwToolPayloadResourceTextRoot -ErrorAction SilentlyContinue
+            }
         }
     }
     
@@ -1220,13 +1229,17 @@ public static class SwToolResourcePatchHelper
             return 2;
         }
 
+        // The PowerShell side writes records using 0x07 as key/value separator
+        // and 0x08 as record separator so multi-line keys (Update_log, regexhelp)
+        // survive the round-trip. Parse the whole file as a single string.
         var map = new Dictionary<string, string>();
-        foreach (string line in File.ReadAllLines(args[2], Encoding.UTF8))
+        string raw = File.ReadAllText(args[2], Encoding.UTF8);
+        foreach (string record in raw.Split('\u0008'))
         {
-            if (string.IsNullOrWhiteSpace(line)) continue;
-            int tab = line.IndexOf('\t');
-            if (tab <= 0) continue;
-            map[line.Substring(0, tab)] = line.Substring(tab + 1);
+            if (string.IsNullOrEmpty(record)) continue;
+            int sep = record.IndexOf('\u0007');
+            if (sep <= 0) continue;
+            map[record.Substring(0, sep)] = record.Substring(sep + 1);
         }
 
         var entries = new List<DictionaryEntry>();
@@ -1280,7 +1293,17 @@ function Patch-PayloadResources([dnlib.DotNet.ModuleDef]$Module, [string]$Langua
         if ($startIndex -ge 0 -and $endIndex -gt $startIndex) {
             $functionCode = $scriptContent.Substring($startIndex, $endIndex - $startIndex)
             Invoke-Expression $functionCode
-            $map = Get-StringMap $Language
+            # Hint Get-StringMap to the payload-resources companion-file dir.
+            # When invoked via Invoke-Expression neither $PSScriptRoot nor
+            # $PSCommandPath is populated, so without the explicit hint the
+            # Update_log / regexhelp file pairs (6+ KB multi-line CJK blocks)
+            # are silently dropped from the translation map.
+            $Global:SwToolPayloadResourceTextRoot = Join-Path $PSScriptRoot '..\payload-resources'
+            try {
+                $map = Get-StringMap $Language
+            } finally {
+                Remove-Variable -Scope Global -Name SwToolPayloadResourceTextRoot -ErrorAction SilentlyContinue
+            }
         }
     }
     

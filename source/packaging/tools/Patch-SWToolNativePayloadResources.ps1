@@ -2508,29 +2508,32 @@ function Get-StringMap([string]$SelectedLanguage) {
     # companion files under source/packaging/payload-resources/ so PowerShell
     # quoting doesn't have to handle 6+ KB of Chinese text. The companion files
     # preserve CRLF line endings, which the original .resources blob also uses.
-    # $PSScriptRoot is not populated when this function is loaded via
-    # Invoke-Expression (Patch-ChineseLdstrTranslations / Patch-PayloadResources
-    # in Disable-ZToolEmbeddedUpdates.ps1, Get-InitStringMap in
-    # Resign-ZToolInitExe.ps1), so we fall back to discovering this script's
-    # location through MyInvocation when needed.
-    $thisScriptPath = $PSScriptRoot
-    if ([string]::IsNullOrWhiteSpace($thisScriptPath)) {
-        $thisScriptPath = $PSCommandPath
-        if (-not [string]::IsNullOrWhiteSpace($thisScriptPath)) {
-            $thisScriptPath = Split-Path -Parent $thisScriptPath
-        }
-    }
-    if ([string]::IsNullOrWhiteSpace($thisScriptPath)) {
-        # Look for Patch-SWToolNativePayloadResources.ps1 in a known sibling location
-        $thisScriptPath = Join-Path (Get-Location) 'source\packaging\tools'
-        if (-not (Test-Path -LiteralPath $thisScriptPath -PathType Container)) {
-            $thisScriptPath = ''
-        }
-    }
-    if ([string]::IsNullOrWhiteSpace($thisScriptPath)) {
-        $payloadResourceTextRoot = ''
+    # Resolve the payload-resources companion-file directory. Callers that
+    # load Get-StringMap via Invoke-Expression (Patch-PayloadResources in
+    # Disable-ZToolEmbeddedUpdates.ps1, Get-InitStringMap in
+    # Resign-ZToolInitExe.ps1) can set $Global:SwToolPayloadResourceTextRoot
+    # before invoking, since $PSScriptRoot/$PSCommandPath are not populated
+    # in that scope.
+    $payloadResourceTextRoot = ''
+    if ($null -ne $Global:SwToolPayloadResourceTextRoot -and -not [string]::IsNullOrWhiteSpace([string]$Global:SwToolPayloadResourceTextRoot)) {
+        $payloadResourceTextRoot = [string]$Global:SwToolPayloadResourceTextRoot
     } else {
-        $payloadResourceTextRoot = Join-Path $thisScriptPath '..\payload-resources'
+        $thisScriptPath = $PSScriptRoot
+        if ([string]::IsNullOrWhiteSpace($thisScriptPath)) {
+            $thisScriptPath = $PSCommandPath
+            if (-not [string]::IsNullOrWhiteSpace($thisScriptPath)) {
+                $thisScriptPath = Split-Path -Parent $thisScriptPath
+            }
+        }
+        if ([string]::IsNullOrWhiteSpace($thisScriptPath)) {
+            $thisScriptPath = Join-Path (Get-Location) 'source\packaging\tools'
+            if (-not (Test-Path -LiteralPath $thisScriptPath -PathType Container)) {
+                $thisScriptPath = ''
+            }
+        }
+        if (-not [string]::IsNullOrWhiteSpace($thisScriptPath)) {
+            $payloadResourceTextRoot = Join-Path $thisScriptPath '..\payload-resources'
+        }
     }
     if (-not [string]::IsNullOrWhiteSpace($payloadResourceTextRoot) -and (Test-Path -LiteralPath $payloadResourceTextRoot -PathType Container)) {
         $langSuffix = if ($SelectedLanguage -eq 'Russian') { 'ru' } else { 'en' }
