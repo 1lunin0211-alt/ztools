@@ -1,0 +1,1530 @@
+[
+  {
+    "offset": 345784,
+    "lenB": 42,
+    "chars": 21,
+    "text": "错误: 文件不是有效的 .NET 程序集。",
+    "ru": "  :         .NET     ",
+    "en": "  :         .NET     "
+  },
+  {
+    "offset": 345828,
+    "lenB": 20,
+    "chars": 10,
+    "text": "错误: 文件未找到。",
+    "ru": "  :       ",
+    "en": "  :       "
+  },
+  {
+    "offset": 345850,
+    "lenB": 18,
+    "chars": 9,
+    "text": "获取名称时出错: ",
+    "ru": "       : ",
+    "en": "       : "
+  },
+  {
+    "offset": 345954,
+    "lenB": 4,
+    "chars": 2,
+    "text": "错误",
+    "ru": "Ош",
+    "en": "Er"
+  },
+  {
+    "offset": 347014,
+    "lenB": 18,
+    "chars": 9,
+    "text": "已存在！是否覆盖？",
+    "ru": "         ",
+    "en": "         "
+  },
+  {
+    "offset": 347034,
+    "lenB": 4,
+    "chars": 2,
+    "text": "信息",
+    "ru": "Ин",
+    "en": "In"
+  },
+  {
+    "offset": 347040,
+    "lenB": 8,
+    "chars": 4,
+    "text": "是否打开",
+    "ru": "Откр",
+    "en": "Open"
+  },
+  {
+    "offset": 347050,
+    "lenB": 2,
+    "chars": 1,
+    "text": "？",
+    "ru": " ",
+    "en": " "
+  },
+  {
+    "offset": 347118,
+    "lenB": 4,
+    "chars": 2,
+    "text": "确定",
+    "ru": "ОК",
+    "en": "OK"
+  },
+  {
+    "offset": 347152,
+    "lenB": 4,
+    "chars": 2,
+    "text": "取消",
+    "ru": "От",
+    "en": "Ca"
+  },
+  {
+    "offset": 347174,
+    "lenB": 8,
+    "chars": 4,
+    "text": "添加文件",
+    "ru": "+Фл ",
+    "en": "+Fle"
+  },
+  {
+    "offset": 347200,
+    "lenB": 8,
+    "chars": 4,
+    "text": "添加目录",
+    "ru": "+Дир",
+    "en": "+Dir"
+  },
+  {
+    "offset": 347230,
+    "lenB": 8,
+    "chars": 4,
+    "text": "菜单运行",
+    "ru": "Меню",
+    "en": "Menu"
+  },
+  {
+    "offset": 347292,
+    "lenB": 8,
+    "chars": 4,
+    "text": "移除选中",
+    "ru": "Удал",
+    "en": "Del."
+  },
+  {
+    "offset": 347318,
+    "lenB": 4,
+    "chars": 2,
+    "text": "下移",
+    "ru": "Вн",
+    "en": "Dn"
+  },
+  {
+    "offset": 347340,
+    "lenB": 4,
+    "chars": 2,
+    "text": "上移",
+    "ru": "Вв",
+    "en": "Up"
+  },
+  {
+    "offset": 347378,
+    "lenB": 98,
+    "chars": 49,
+    "text": "说明：支持运行宏程序，打开exe、excel、网址、快捷方式、文件夹等操作 ，可添加多项依次执行。",
+    "ru": "             exe excel                           ",
+    "en": "             exe excel                           "
+  },
+  {
+    "offset": 347530,
+    "lenB": 8,
+    "chars": 4,
+    "text": "菜单列表",
+    "ru": "Спсм",
+    "en": "Mnus"
+  },
+  {
+    "offset": 347540,
+    "lenB": 8,
+    "chars": 4,
+    "text": "微软雅黑",
+    "ru": "Шрфт",
+    "en": "Font"
+  },
+  {
+    "offset": 347666,
+    "lenB": 14,
+    "chars": 7,
+    "text": "自定义菜单设置",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 347750,
+    "lenB": 10,
+    "chars": 5,
+    "text": "自定义菜单",
+    "ru": "     ",
+    "en": "     "
+  },
+  {
+    "offset": 347768,
+    "lenB": 26,
+    "chars": 13,
+    "text": "所有文件（*.*）|*.*",
+    "ru": "     *.* |*.*",
+    "en": "     *.* |*.*"
+  },
+  {
+    "offset": 348438,
+    "lenB": 6,
+    "chars": 3,
+    "text": "编号：",
+    "ru": "Ном",
+    "en": "# :"
+  },
+  {
+    "offset": 348466,
+    "lenB": 8,
+    "chars": 4,
+    "text": "自动应用",
+    "ru": "Авто",
+    "en": "Auto"
+  },
+  {
+    "offset": 348492,
+    "lenB": 4,
+    "chars": 2,
+    "text": "应用",
+    "ru": "Пр",
+    "en": "Ap"
+  },
+  {
+    "offset": 348498,
+    "lenB": 8,
+    "chars": 4,
+    "text": "重置序号",
+    "ru": "Сбрс",
+    "en": "Resn"
+  },
+  {
+    "offset": 348522,
+    "lenB": 6,
+    "chars": 3,
+    "text": "位数：",
+    "ru": "Раз",
+    "en": "Dig"
+  },
+  {
+    "offset": 348544,
+    "lenB": 40,
+    "chars": 20,
+    "text": "solidworks重启也会自动重置序号",
+    "ru": "solidworks          ",
+    "en": "solidworks          "
+  },
+  {
+    "offset": 348600,
+    "lenB": 6,
+    "chars": 3,
+    "text": "前缀：",
+    "ru": "Прф",
+    "en": "Pfx"
+  },
+  {
+    "offset": 348634,
+    "lenB": 8,
+    "chars": 4,
+    "text": "自动隐藏",
+    "ru": "Скрт",
+    "en": "Hide"
+  },
+  {
+    "offset": 348670,
+    "lenB": 8,
+    "chars": 4,
+    "text": "临时编号",
+    "ru": "ВрНм",
+    "en": "Tmpn"
+  },
+  {
+    "offset": 348694,
+    "lenB": 12,
+    "chars": 6,
+    "text": "写入到属性：",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 348780,
+    "lenB": 26,
+    "chars": 13,
+    "text": "  重复编号，请更换零部件",
+    "ru": "             ",
+    "en": "             "
+  },
+  {
+    "offset": 348808,
+    "lenB": 16,
+    "chars": 8,
+    "text": "  未选中零部件",
+    "ru": "        ",
+    "en": "        "
+  },
+  {
+    "offset": 349022,
+    "lenB": 8,
+    "chars": 4,
+    "text": "随机上色",
+    "ru": "Цвет",
+    "en": "Colr"
+  },
+  {
+    "offset": 349032,
+    "lenB": 4,
+    "chars": 2,
+    "text": "操作",
+    "ru": "Оп",
+    "en": "Op"
+  },
+  {
+    "offset": 349038,
+    "lenB": 14,
+    "chars": 7,
+    "text": "应用到零部件层",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 349054,
+    "lenB": 16,
+    "chars": 8,
+    "text": "应用到零件文档层",
+    "ru": "        ",
+    "en": "        "
+  },
+  {
+    "offset": 349208,
+    "lenB": 12,
+    "chars": 6,
+    "text": "修复外部参考",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 349222,
+    "lenB": 4,
+    "chars": 2,
+    "text": "选项",
+    "ru": "Оп",
+    "en": "Op"
+  },
+  {
+    "offset": 349228,
+    "lenB": 30,
+    "chars": 15,
+    "text": "修复装配体内零件丢失的外部参考",
+    "ru": "               ",
+    "en": "               "
+  },
+  {
+    "offset": 349260,
+    "lenB": 10,
+    "chars": 5,
+    "text": "包含轻化件",
+    "ru": "Лгкс ",
+    "en": "Light"
+  },
+  {
+    "offset": 349272,
+    "lenB": 10,
+    "chars": 5,
+    "text": "包含压缩件",
+    "ru": "Сжтм ",
+    "en": "Suppr"
+  },
+  {
+    "offset": 349284,
+    "lenB": 10,
+    "chars": 5,
+    "text": "包含隐藏件",
+    "ru": "Скртм",
+    "en": "Hidn "
+  },
+  {
+    "offset": 349364,
+    "lenB": 12,
+    "chars": 6,
+    "text": "可修复的项：",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 349378,
+    "lenB": 16,
+    "chars": 8,
+    "text": "丢失的外部参考：",
+    "ru": "        ",
+    "en": "        "
+  },
+  {
+    "offset": 349396,
+    "lenB": 8,
+    "chars": 4,
+    "text": "修复为：",
+    "ru": "Исп:",
+    "en": "Fix:"
+  },
+  {
+    "offset": 349406,
+    "lenB": 6,
+    "chars": 3,
+    "text": "结果：",
+    "ru": "Рез",
+    "en": "Res"
+  },
+  {
+    "offset": 349414,
+    "lenB": 6,
+    "chars": 3,
+    "text": "成功！",
+    "ru": "OK!",
+    "en": "OK!"
+  },
+  {
+    "offset": 349422,
+    "lenB": 6,
+    "chars": 3,
+    "text": "失败！",
+    "ru": "Err",
+    "en": "Err"
+  },
+  {
+    "offset": 349532,
+    "lenB": 8,
+    "chars": 4,
+    "text": "修复成功",
+    "ru": "OK  ",
+    "en": "OK  "
+  },
+  {
+    "offset": 349542,
+    "lenB": 12,
+    "chars": 6,
+    "text": "项，修复失败",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 349556,
+    "lenB": 4,
+    "chars": 2,
+    "text": "项。",
+    "ru": ". ",
+    "en": ". "
+  },
+  {
+    "offset": 349586,
+    "lenB": 14,
+    "chars": 7,
+    "text": "没有可修复的项",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 349602,
+    "lenB": 4,
+    "chars": 2,
+    "text": "提示",
+    "ru": "Пд",
+    "en": "Tp"
+  },
+  {
+    "offset": 349608,
+    "lenB": 14,
+    "chars": 7,
+    "text": "\n需修复的项：",
+    "ru": "\n      ",
+    "en": "\n      "
+  },
+  {
+    "offset": 349624,
+    "lenB": 18,
+    "chars": 9,
+    "text": "\n丢失的外部参考：",
+    "ru": "\n        ",
+    "en": "\n        "
+  },
+  {
+    "offset": 349644,
+    "lenB": 10,
+    "chars": 5,
+    "text": "\n修复为：",
+    "ru": "\nИсп:",
+    "en": "\nFix:"
+  },
+  {
+    "offset": 349656,
+    "lenB": 18,
+    "chars": 9,
+    "text": "\n修复结果：成功！",
+    "ru": "\n        ",
+    "en": "\n        "
+  },
+  {
+    "offset": 349676,
+    "lenB": 18,
+    "chars": 9,
+    "text": "\n修复结果：失败！",
+    "ru": "\n        ",
+    "en": "\n        "
+  },
+  {
+    "offset": 349882,
+    "lenB": 12,
+    "chars": 6,
+    "text": "正在获取数据",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 350554,
+    "lenB": 14,
+    "chars": 7,
+    "text": "正在还原零部件",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 351548,
+    "lenB": 12,
+    "chars": 6,
+    "text": "\" 修改失败",
+    "ru": "\"     ",
+    "en": "\"     "
+  },
+  {
+    "offset": 351790,
+    "lenB": 14,
+    "chars": 7,
+    "text": "保存失败:0x",
+    "ru": "    :0x",
+    "en": "    :0x"
+  },
+  {
+    "offset": 351806,
+    "lenB": 24,
+    "chars": 12,
+    "text": "无效文档或打开失败:0x",
+    "ru": "         :0x",
+    "en": "         :0x"
+  },
+  {
+    "offset": 351870,
+    "lenB": 8,
+    "chars": 4,
+    "text": "无效文档",
+    "ru": "    ",
+    "en": "    "
+  },
+  {
+    "offset": 351880,
+    "lenB": 12,
+    "chars": 6,
+    "text": "新旧名称相同",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 351894,
+    "lenB": 18,
+    "chars": 9,
+    "text": "当前目录有同名文件",
+    "ru": "         ",
+    "en": "         "
+  },
+  {
+    "offset": 351914,
+    "lenB": 30,
+    "chars": 15,
+    "text": "，需要勾选<覆盖同名文件>选项",
+    "ru": "     <      >  ",
+    "en": "     <      >  "
+  },
+  {
+    "offset": 351946,
+    "lenB": 6,
+    "chars": 3,
+    "text": "名称为",
+    "ru": "Имя",
+    "en": "Nm "
+  },
+  {
+    "offset": 351954,
+    "lenB": 36,
+    "chars": 18,
+    "text": "的文件已经打开, 请修改为不同的名称",
+    "ru": "       ,          ",
+    "en": "       ,          "
+  },
+  {
+    "offset": 351992,
+    "lenB": 10,
+    "chars": 5,
+    "text": "重命名失败",
+    "ru": "ErrRn",
+    "en": "RnErr"
+  },
+  {
+    "offset": 352004,
+    "lenB": 12,
+    "chars": 6,
+    "text": "更新参考关系",
+    "ru": "ОбнСвз",
+    "en": "UpdRef"
+  },
+  {
+    "offset": 352070,
+    "lenB": 6,
+    "chars": 3,
+    "text": "打开 ",
+    "ru": "Окр",
+    "en": "Op "
+  },
+  {
+    "offset": 352078,
+    "lenB": 8,
+    "chars": 4,
+    "text": " 失败！",
+    "ru": "    ",
+    "en": "    "
+  },
+  {
+    "offset": 352088,
+    "lenB": 4,
+    "chars": 2,
+    "text": "路径",
+    "ru": "Пт",
+    "en": "Pt"
+  },
+  {
+    "offset": 352112,
+    "lenB": 4,
+    "chars": 2,
+    "text": "锁定",
+    "ru": "Бл",
+    "en": "Lk"
+  },
+  {
+    "offset": 352118,
+    "lenB": 4,
+    "chars": 2,
+    "text": "宋体",
+    "ru": "Шр",
+    "en": "Fn"
+  },
+  {
+    "offset": 352174,
+    "lenB": 14,
+    "chars": 7,
+    "text": "指定路径...",
+    "ru": "    ...",
+    "en": "    ..."
+  },
+  {
+    "offset": 352190,
+    "lenB": 6,
+    "chars": 3,
+    "text": "原路径",
+    "ru": "Стп",
+    "en": "Old"
+  },
+  {
+    "offset": 352198,
+    "lenB": 12,
+    "chars": 6,
+    "text": "与装配体相同",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 352212,
+    "lenB": 12,
+    "chars": 6,
+    "text": "保存到名称：",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 352226,
+    "lenB": 12,
+    "chars": 6,
+    "text": "保存到路径：",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 352240,
+    "lenB": 8,
+    "chars": 4,
+    "text": "查看记录",
+    "ru": "Логи",
+    "en": "Log "
+  },
+  {
+    "offset": 352268,
+    "lenB": 8,
+    "chars": 4,
+    "text": "常用路径",
+    "ru": "Путь",
+    "en": "Path"
+  },
+  {
+    "offset": 352324,
+    "lenB": 4,
+    "chars": 2,
+    "text": "添加",
+    "ru": "До",
+    "en": "Ad"
+  },
+  {
+    "offset": 352330,
+    "lenB": 4,
+    "chars": 2,
+    "text": "删除",
+    "ru": "Уд",
+    "en": "De"
+  },
+  {
+    "offset": 352354,
+    "lenB": 10,
+    "chars": 5,
+    "text": "文件名分割",
+    "ru": "РазФл",
+    "en": "SplFn"
+  },
+  {
+    "offset": 352366,
+    "lenB": 8,
+    "chars": 4,
+    "text": "属性名称",
+    "ru": "    ",
+    "en": "    "
+  },
+  {
+    "offset": 352376,
+    "lenB": 6,
+    "chars": 3,
+    "text": "属性值",
+    "ru": "Знч",
+    "en": "Val"
+  },
+  {
+    "offset": 352400,
+    "lenB": 10,
+    "chars": 5,
+    "text": "正则表达式",
+    "ru": "РегВр",
+    "en": "Regex"
+  },
+  {
+    "offset": 352446,
+    "lenB": 6,
+    "chars": 3,
+    "text": "主操作",
+    "ru": "Опц",
+    "en": "Op "
+  },
+  {
+    "offset": 352500,
+    "lenB": 16,
+    "chars": 8,
+    "text": "另存为副本并打开",
+    "ru": "КопОткр ",
+    "en": "CopyOpn "
+  },
+  {
+    "offset": 352544,
+    "lenB": 16,
+    "chars": 8,
+    "text": "另存为副本并继续",
+    "ru": "КопПрод ",
+    "en": "CopyCnt "
+  },
+  {
+    "offset": 352588,
+    "lenB": 4,
+    "chars": 2,
+    "text": "替换",
+    "ru": "За",
+    "en": "Re"
+  },
+  {
+    "offset": 352620,
+    "lenB": 8,
+    "chars": 4,
+    "text": "使之独立",
+    "ru": "Незв",
+    "en": "Indp"
+  },
+  {
+    "offset": 352656,
+    "lenB": 8,
+    "chars": 4,
+    "text": "直接改名",
+    "ru": "Перн",
+    "en": "Renm"
+  },
+  {
+    "offset": 352692,
+    "lenB": 6,
+    "chars": 3,
+    "text": "另存为",
+    "ru": "СоК",
+    "en": "SvA"
+  },
+  {
+    "offset": 352700,
+    "lenB": 4,
+    "chars": 2,
+    "text": "选型",
+    "ru": "Сл",
+    "en": "Op"
+  },
+  {
+    "offset": 352722,
+    "lenB": 20,
+    "chars": 10,
+    "text": "     复制工程图",
+    "ru": "          ",
+    "en": "          "
+  },
+  {
+    "offset": 352764,
+    "lenB": 12,
+    "chars": 6,
+    "text": "自动保存总装",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 352778,
+    "lenB": 10,
+    "chars": 5,
+    "text": "包含工程图",
+    "ru": "ВклЧт",
+    "en": "IncDr"
+  },
+  {
+    "offset": 352790,
+    "lenB": 20,
+    "chars": 10,
+    "text": "删除原零部件和工程图",
+    "ru": "          ",
+    "en": "          "
+  },
+  {
+    "offset": 352854,
+    "lenB": 12,
+    "chars": 6,
+    "text": "更新参考目录",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 352954,
+    "lenB": 12,
+    "chars": 6,
+    "text": "从磁盘中选择",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 352988,
+    "lenB": 16,
+    "chars": 8,
+    "text": "与选中零件同目录",
+    "ru": "        ",
+    "en": "        "
+  },
+  {
+    "offset": 353042,
+    "lenB": 6,
+    "chars": 3,
+    "text": "路径\"",
+    "ru": "  \"",
+    "en": "  \""
+  },
+  {
+    "offset": 353050,
+    "lenB": 20,
+    "chars": 10,
+    "text": "\"不存在,是否创建？",
+    "ru": "\"   ,     ",
+    "en": "\"   ,     "
+  },
+  {
+    "offset": 353072,
+    "lenB": 4,
+    "chars": 2,
+    "text": "询问",
+    "ru": "  ",
+    "en": "  "
+  },
+  {
+    "offset": 353078,
+    "lenB": 28,
+    "chars": 14,
+    "text": "更新参考关系中，请稍后...",
+    "ru": "           ...",
+    "en": "           ..."
+  },
+  {
+    "offset": 353108,
+    "lenB": 28,
+    "chars": 14,
+    "text": "\n操作类型：另存为\n原名称：",
+    "ru": "\n        \n    ",
+    "en": "\n        \n    "
+  },
+  {
+    "offset": 353138,
+    "lenB": 10,
+    "chars": 5,
+    "text": "\n新名称：",
+    "ru": "\nНвИм",
+    "en": "\nNwNm"
+  },
+  {
+    "offset": 353150,
+    "lenB": 30,
+    "chars": 15,
+    "text": "\n操作类型：直接改名\n原名称：",
+    "ru": "\n         \n    ",
+    "en": "\n         \n    "
+  },
+  {
+    "offset": 353182,
+    "lenB": 32,
+    "chars": 16,
+    "text": "\n操作类型：另存为副本\n源文件：",
+    "ru": "\n          \n    ",
+    "en": "\n          \n    "
+  },
+  {
+    "offset": 353216,
+    "lenB": 10,
+    "chars": 5,
+    "text": "\n新文件：",
+    "ru": "\nНвФл",
+    "en": "\nNwFl"
+  },
+  {
+    "offset": 353228,
+    "lenB": 8,
+    "chars": 4,
+    "text": "名称为\"",
+    "ru": "Имя\"",
+    "en": "Nm \""
+  },
+  {
+    "offset": 353238,
+    "lenB": 38,
+    "chars": 19,
+    "text": "\"的文件已经打开, 请修改为不同的名称",
+    "ru": "\"       ,          ",
+    "en": "\"       ,          "
+  },
+  {
+    "offset": 353278,
+    "lenB": 38,
+    "chars": 19,
+    "text": "\n操作类型：另存为副本并打开\n源文件：",
+    "ru": "\n             \n    ",
+    "en": "\n             \n    "
+  },
+  {
+    "offset": 353354,
+    "lenB": 32,
+    "chars": 16,
+    "text": "\n操作类型：使之独立\n独立的项：",
+    "ru": "\n         \n     ",
+    "en": "\n         \n     "
+  },
+  {
+    "offset": 353388,
+    "lenB": 10,
+    "chars": 5,
+    "text": "\n原名称：",
+    "ru": "\nСтИм",
+    "en": "\nOlNm"
+  },
+  {
+    "offset": 353400,
+    "lenB": 6,
+    "chars": 3,
+    "text": "不存在",
+    "ru": "Нет",
+    "en": "N/A"
+  },
+  {
+    "offset": 353408,
+    "lenB": 34,
+    "chars": 17,
+    "text": "请选中需要被替换的零部件（可多选）",
+    "ru": "                 ",
+    "en": "                 "
+  },
+  {
+    "offset": 353484,
+    "lenB": 30,
+    "chars": 15,
+    "text": "请选中需要替换的零部件，可多选",
+    "ru": "               ",
+    "en": "               "
+  },
+  {
+    "offset": 353516,
+    "lenB": 40,
+    "chars": 20,
+    "text": "请在装配体中选择需要替换的零部件，可多选",
+    "ru": "                    ",
+    "en": "                    "
+  },
+  {
+    "offset": 353558,
+    "lenB": 12,
+    "chars": 6,
+    "text": "替换全部实例",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 353572,
+    "lenB": 48,
+    "chars": 24,
+    "text": "按 \"Y\" 确认并保存\n按 \"N\" 撤销当前操作",
+    "ru": "  \"Y\"      \n  \"N\"       ",
+    "en": "  \"Y\"      \n  \"N\"       "
+  },
+  {
+    "offset": 353622,
+    "lenB": 30,
+    "chars": 15,
+    "text": "\n操作类型：替换\n被替换的项：",
+    "ru": "\n       \n      ",
+    "en": "\n       \n      "
+  },
+  {
+    "offset": 353654,
+    "lenB": 10,
+    "chars": 5,
+    "text": "\n原文件：",
+    "ru": "\nСтФл",
+    "en": "\nOlFl"
+  },
+  {
+    "offset": 353666,
+    "lenB": 10,
+    "chars": 5,
+    "text": "\n替换为：",
+    "ru": "\nЗам:",
+    "en": "\nRep:"
+  },
+  {
+    "offset": 353976,
+    "lenB": 8,
+    "chars": 4,
+    "text": "错误22",
+    "ru": "Ошб2",
+    "en": "Err2"
+  },
+  {
+    "offset": 353986,
+    "lenB": 8,
+    "chars": 4,
+    "text": "$图号$",
+    "ru": "$НЧ$",
+    "en": "$DN$"
+  },
+  {
+    "offset": 353996,
+    "lenB": 12,
+    "chars": 6,
+    "text": "$零件名称$",
+    "ru": "$ИмяД$",
+    "en": "$NAME$"
+  },
+  {
+    "offset": 354010,
+    "lenB": 8,
+    "chars": 4,
+    "text": "$版本$",
+    "ru": "$Рев",
+    "en": "$Rev"
+  },
+  {
+    "offset": 354057,
+    "lenB": 252,
+    "chars": 126,
+    "text": "((?<=\\s)[A-Za-z0-9\\u4e00-\\u9fa5]+$)|([A-Za-z0-9\\u4e00-\\u9fa5]+(?=\\]$|\\】$|\\)$|\\）$))|([\\u4e00-\\u9fa5][A-Za-z0-9\\u4e00-\\u9fa5]+$)",
+    "ru": "((?<=\\s)[A-Za-z0-9\\u4e00-\\u9fa5]+$)|([A-Za-z0-9\\u4e00-\\u9fa5]+(?=\\]$|\\】$|\\)$|\\ $))|([\\u4e00-\\u9fa5][A-Za-z0-9\\u4e00-\\u9fa5]+$)",
+    "en": "((?<=\\s)[A-Za-z0-9\\u4e00-\\u9fa5]+$)|([A-Za-z0-9\\u4e00-\\u9fa5]+(?=\\]$|\\】$|\\)$|\\ $))|([\\u4e00-\\u9fa5][A-Za-z0-9\\u4e00-\\u9fa5]+$)"
+  },
+  {
+    "offset": 354311,
+    "lenB": 120,
+    "chars": 60,
+    "text": "([A-HJ-NP-Z][0-9])(?=_|\\s|\\[|\\【|\\（|\\(|\\.+|[\\u4e00-\\u9fa5]|$)",
+    "ru": "([A-HJ-NP-Z][0-9])(?=_|\\s|\\[|\\【|\\ |\\(|\\.+|[\\u4e00-\\u9fa5]|$)",
+    "en": "([A-HJ-NP-Z][0-9])(?=_|\\s|\\[|\\【|\\ |\\(|\\.+|[\\u4e00-\\u9fa5]|$)"
+  },
+  {
+    "offset": 354433,
+    "lenB": 56,
+    "chars": 28,
+    "text": "$属性名称$，表示写入自定义\n%属性名称%，表示写入配置",
+    "ru": "$    $        \n%    %       ",
+    "en": "$    $        \n%    %       "
+  },
+  {
+    "offset": 354491,
+    "lenB": 56,
+    "chars": 28,
+    "text": "操作前先在装配体内选择需要关联的零件，否则将在磁盘中选择",
+    "ru": "                            ",
+    "en": "                            "
+  },
+  {
+    "offset": 354549,
+    "lenB": 16,
+    "chars": 8,
+    "text": "获取零部件失败！",
+    "ru": "        ",
+    "en": "        "
+  },
+  {
+    "offset": 354583,
+    "lenB": 22,
+    "chars": 11,
+    "text": "请在装配体中选择零部件",
+    "ru": "           ",
+    "en": "           "
+  },
+  {
+    "offset": 354607,
+    "lenB": 94,
+    "chars": 47,
+    "text": "零件 (*.sldprt)|*.sldprt|装配体 (*.sldasm)|*.sldasm|",
+    "ru": "   (*.sldprt)|*.sldprt|    (*.sldasm)|*.sldasm|",
+    "en": "   (*.sldprt)|*.sldprt|    (*.sldasm)|*.sldasm|"
+  },
+  {
+    "offset": 354703,
+    "lenB": 20,
+    "chars": 10,
+    "text": "选择需要关联的零部件",
+    "ru": "          ",
+    "en": "          "
+  },
+  {
+    "offset": 354725,
+    "lenB": 14,
+    "chars": 7,
+    "text": "复制工程图\n\"",
+    "ru": "КопЧт\n\"",
+    "en": "CpyDr\n\""
+  },
+  {
+    "offset": 354741,
+    "lenB": 18,
+    "chars": 9,
+    "text": "\"\n并与零部件\n\"",
+    "ru": "\"\n     \n\"",
+    "en": "\"\n     \n\""
+  },
+  {
+    "offset": 354761,
+    "lenB": 10,
+    "chars": 5,
+    "text": "\"\n关联？",
+    "ru": "\"\nСв?",
+    "en": "\"\nLn?"
+  },
+  {
+    "offset": 354773,
+    "lenB": 10,
+    "chars": 5,
+    "text": "工程图\n\"",
+    "ru": "Чрт\n\"",
+    "en": "Drg\n\""
+  },
+  {
+    "offset": 354785,
+    "lenB": 24,
+    "chars": 12,
+    "text": "\"\n已存在！\n是否覆盖？",
+    "ru": "\"\n    \n     ",
+    "en": "\"\n    \n     "
+  },
+  {
+    "offset": 354811,
+    "lenB": 22,
+    "chars": 11,
+    "text": "复制成功！\n打开目录？",
+    "ru": "     \n     ",
+    "en": "     \n     "
+  },
+  {
+    "offset": 354885,
+    "lenB": 10,
+    "chars": 5,
+    "text": "目录不存在",
+    "ru": "Нет п",
+    "en": "NoDir"
+  },
+  {
+    "offset": 354897,
+    "lenB": 20,
+    "chars": 10,
+    "text": "\"已存在,是否覆盖?",
+    "ru": "\"   ,    ?",
+    "en": "\"   ,    ?"
+  },
+  {
+    "offset": 354935,
+    "lenB": 10,
+    "chars": 5,
+    "text": "原文件 \"",
+    "ru": "Стп  ",
+    "en": "Old  "
+  },
+  {
+    "offset": 354947,
+    "lenB": 52,
+    "chars": 26,
+    "text": "\" 已被修改，是否需要保存？\n按Y保存，按N撤销修改",
+    "ru": "\"             \n Y    N    ",
+    "en": "\"             \n Y    N    "
+  },
+  {
+    "offset": 355165,
+    "lenB": 32,
+    "chars": 16,
+    "text": "接管系统保存功能（仅限于工程图）",
+    "ru": "                ",
+    "en": "                "
+  },
+  {
+    "offset": 355217,
+    "lenB": 126,
+    "chars": 63,
+    "text": "说明：启用此功能后，不论是手动、宏程序或者外挂程序保存工程图文档，都会强制对其进行重命名操作，使其与关联的零部件名称保持一致。",
+    "ru": "                                                               ",
+    "en": "                                                               "
+  },
+  {
+    "offset": 355363,
+    "lenB": 8,
+    "chars": 4,
+    "text": "辅助功能",
+    "ru": "Дпф ",
+    "en": "Tool"
+  },
+  {
+    "offset": 355373,
+    "lenB": 6,
+    "chars": 3,
+    "text": "名称：",
+    "ru": "Им:",
+    "en": "Nm:"
+  },
+  {
+    "offset": 355407,
+    "lenB": 6,
+    "chars": 3,
+    "text": "路径：",
+    "ru": "Пт:",
+    "en": "Pt:"
+  },
+  {
+    "offset": 355415,
+    "lenB": 8,
+    "chars": 4,
+    "text": "指定路径",
+    "ru": "Указ",
+    "en": "Spec"
+  },
+  {
+    "offset": 355471,
+    "lenB": 10,
+    "chars": 5,
+    "text": "拆分多配置",
+    "ru": "Разд ",
+    "en": "Split"
+  },
+  {
+    "offset": 355483,
+    "lenB": 14,
+    "chars": 7,
+    "text": "<磁盘文件名>",
+    "ru": "<файл_>",
+    "en": "<file_>"
+  },
+  {
+    "offset": 355499,
+    "lenB": 12,
+    "chars": 6,
+    "text": "<配置名称>",
+    "ru": "<конф>",
+    "en": "<conf>"
+  },
+  {
+    "offset": 355513,
+    "lenB": 18,
+    "chars": 9,
+    "text": "不存在,是否创建？",
+    "ru": "   ,     ",
+    "en": "   ,     "
+  },
+  {
+    "offset": 356433,
+    "lenB": 22,
+    "chars": 11,
+    "text": "ZTool高效辅助工具",
+    "ru": "ZToolПомощь",
+    "en": "ZTool Helpe"
+  },
+  {
+    "offset": 356775,
+    "lenB": 12,
+    "chars": 6,
+    "text": "零部件重命名",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 356829,
+    "lenB": 14,
+    "chars": 7,
+    "text": "同步到零件目录",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 356965,
+    "lenB": 10,
+    "chars": 5,
+    "text": "保存选中项",
+    "ru": "СохрС",
+    "en": "SaveS"
+  },
+  {
+    "offset": 356977,
+    "lenB": 24,
+    "chars": 12,
+    "text": "保存装配体内选中的零部件",
+    "ru": "            ",
+    "en": "            "
+  },
+  {
+    "offset": 357071,
+    "lenB": 8,
+    "chars": 4,
+    "text": "文件管理",
+    "ru": "    ",
+    "en": "    "
+  },
+  {
+    "offset": 357081,
+    "lenB": 12,
+    "chars": 6,
+    "text": "文件批量处理",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 357121,
+    "lenB": 12,
+    "chars": 6,
+    "text": "批量转换格式",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 357161,
+    "lenB": 8,
+    "chars": 4,
+    "text": "批量打印",
+    "ru": "    ",
+    "en": "    "
+  },
+  {
+    "offset": 357171,
+    "lenB": 14,
+    "chars": 7,
+    "text": "批量打印工程图",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 357213,
+    "lenB": 14,
+    "chars": 7,
+    "text": "替换图框和标准",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 357229,
+    "lenB": 18,
+    "chars": 9,
+    "text": "批量替换图框和标准",
+    "ru": "         ",
+    "en": "         "
+  },
+  {
+    "offset": 357275,
+    "lenB": 12,
+    "chars": 6,
+    "text": "替换参考文件",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 357289,
+    "lenB": 32,
+    "chars": 16,
+    "text": "从指定目录搜索同名参考文件并替换",
+    "ru": "                ",
+    "en": "                "
+  },
+  {
+    "offset": 357349,
+    "lenB": 14,
+    "chars": 7,
+    "text": "同步工程图名称",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 357365,
+    "lenB": 60,
+    "chars": 30,
+    "text": "批量同步工程图名称，  使其与关联的零部件名称和路径保持一致",
+    "ru": "                              ",
+    "en": "                              "
+  },
+  {
+    "offset": 357453,
+    "lenB": 16,
+    "chars": 8,
+    "text": "合并和拆分PDF",
+    "ru": "     PDF",
+    "en": "     PDF"
+  },
+  {
+    "offset": 357497,
+    "lenB": 4,
+    "chars": 2,
+    "text": "更新",
+    "ru": "Об",
+    "en": "Up"
+  },
+  {
+    "offset": 357533,
+    "lenB": 4,
+    "chars": 2,
+    "text": "帮助",
+    "ru": "Сп",
+    "en": "Hl"
+  },
+  {
+    "offset": 357555,
+    "lenB": 4,
+    "chars": 2,
+    "text": "关于",
+    "ru": "О ",
+    "en": "Ab"
+  },
+  {
+    "offset": 357941,
+    "lenB": 6,
+    "chars": 3,
+    "text": "自定义",
+    "ru": "Свй",
+    "en": "Cst"
+  },
+  {
+    "offset": 358053,
+    "lenB": 26,
+    "chars": 13,
+    "text": "help.chm文件没找到",
+    "ru": "help.chm     ",
+    "en": "help.chm     "
+  },
+  {
+    "offset": 358171,
+    "lenB": 14,
+    "chars": 7,
+    "text": "信息读取失败！",
+    "ru": "       ",
+    "en": "       "
+  },
+  {
+    "offset": 358187,
+    "lenB": 26,
+    "chars": 13,
+    "text": "仅支持2012及以上版本！",
+    "ru": "Для 2012+    ",
+    "en": "For 2012+    "
+  },
+  {
+    "offset": 358227,
+    "lenB": 8,
+    "chars": 4,
+    "text": "连接超时",
+    "ru": "    ",
+    "en": "    "
+  },
+  {
+    "offset": 358237,
+    "lenB": 6,
+    "chars": 3,
+    "text": "主程序",
+    "ru": "Прг",
+    "en": "Pgm"
+  },
+  {
+    "offset": 358265,
+    "lenB": 78,
+    "chars": 39,
+    "text": "\n丢失，请确认是否被杀毒软件误删，可尝试设置杀毒软件白名单，然后重新安装本软件",
+    "ru": "\n                                      ",
+    "en": "\n                                      "
+  },
+  {
+    "offset": 358373,
+    "lenB": 4,
+    "chars": 2,
+    "text": "设置",
+    "ru": "Нс",
+    "en": "Se"
+  },
+  {
+    "offset": 358397,
+    "lenB": 12,
+    "chars": 6,
+    "text": "请先进行设置",
+    "ru": "      ",
+    "en": "      "
+  },
+  {
+    "offset": 358411,
+    "lenB": 8,
+    "chars": 4,
+    "text": "不存在！",
+    "ru": "    ",
+    "en": "    "
+  }
+]

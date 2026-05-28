@@ -280,8 +280,16 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["`"为重复的属性名称"] = "`" — повторяющееся имя свойства"
         $map["`"列中清除筛选"] = "`" — снять фильтр в столбце"
         $map["`"找不到"] = "`" не найдено"
-        $map["`$图号`$ `$名称`$ `$类型`$"] = "`$Номер`$ `$Имя`$ `$Тип`$"
-        $map["`$图号`$-`$零件名称`$-{001}"] = "`$Номер`$-`$ИмяДетали`$-{001}"
+        # Note: $НЧ$ / $ИмяД$ / <конф> / <файл_> / $Рев are length-equal byte
+        # patches in ZTool.dll's Constant.Value blob (see Get-ZToolDllCjkPatches in
+        # Disable-ZToolEmbeddedUpdates.ps1). Payload composites MUST use the same
+        # short tokens so payload-side template parsing matches ZTool.dll constants.
+        $map["`$图号`$ `$名称`$ `$类型`$"] = "`$НЧ`$ `$Имя`$ `$Тип`$"
+        $map["`$图号`$-`$零件名称`$-{001}"] = "`$НЧ`$-`$ИмяД`$-{001}"
+        $map["`$图号`$"] = "`$НЧ`$"
+        $map["`$零件名称`$"] = "`$ИмяД`$"
+        $map["`$版本`$"] = "`$Рев"
+        $map["<磁盘文件名>"] = "<файл_>"
         $map["`$类型`$-<文件名称>-<当前日期>"] = "`$Тип`$-<ИмяФайла>-<ТекущаяДата>"
         $map["(全选)"] = "(выделить всё)"
         $map[") (不包含在明"] = ") (не включено в спецификацию"
@@ -303,7 +311,7 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["<模型文件名称>"] = "<ИмяМоделиФайла>"
         $map["<模型文件夹名称>"] = "<ПапкаМодели>"
         $map["<统计数量>"] = "<Количество>"
-        $map["<配置名称>"] = "<ИмяКонфигурации>"
+        $map["<配置名称>"] = "<конф>"
         $map["A4横"] = "A4 альбомная"
         $map["A4竖"] = "A4 книжная"
         $map["Application UnhandledException:{0};`n`r堆栈信息:{1}"] = "Application UnhandledException:{0};`n`rСтек:{1}"
@@ -1410,8 +1418,16 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["`"为重复的属性名称"] = "`" — duplicate property name"
         $map["`"列中清除筛选"] = "`" — clear filter on column"
         $map["`"找不到"] = "`" not found"
-        $map["`$图号`$ `$名称`$ `$类型`$"] = "`$Number`$ `$Name`$ `$Type`$"
-        $map["`$图号`$-`$零件名称`$-{001}"] = "`$Number`$-`$PartName`$-{001}"
+        # Note: $DN$ / $NAME$ / <conf> / <file_> / $Rev are length-equal byte
+        # patches in ZTool.dll's Constant.Value blob (see Get-ZToolDllCjkPatches in
+        # Disable-ZToolEmbeddedUpdates.ps1). Payload composites MUST use the same
+        # short tokens so payload-side template parsing matches ZTool.dll constants.
+        $map["`$图号`$ `$名称`$ `$类型`$"] = "`$DN`$ `$Name`$ `$Type`$"
+        $map["`$图号`$-`$零件名称`$-{001}"] = "`$DN`$-`$NAME`$-{001}"
+        $map["`$图号`$"] = "`$DN`$"
+        $map["`$零件名称`$"] = "`$NAME`$"
+        $map["`$版本`$"] = "`$Rev"
+        $map["<磁盘文件名>"] = "<file_>"
         $map["`$类型`$-<文件名称>-<当前日期>"] = "`$Type`$-<FileName>-<CurrentDate>"
         $map["(全选)"] = "(Select All)"
         $map[") (不包含在明"] = ") (Excluded from BOM"
@@ -1433,7 +1449,7 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["<模型文件名称>"] = "<ModelFileName>"
         $map["<模型文件夹名称>"] = "<ModelFolderName>"
         $map["<统计数量>"] = "<Quantity>"
-        $map["<配置名称>"] = "<ConfigName>"
+        $map["<配置名称>"] = "<conf>"
         $map["A4横"] = "A4 Landscape"
         $map["A4竖"] = "A4 Portrait"
         $map["Application UnhandledException:{0};`n`r堆栈信息:{1}"] = "Application UnhandledException:{0};`n`rStack:{1}"
