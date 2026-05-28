@@ -1365,6 +1365,13 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["ZTool初始化"] = "Инициализация ZTool"
         $map["加载成功"] = "Загружено успешно"
         $map["卸载成功"] = "Выгружено успешно"
+        $map["加载到SolidWorks菜单"] = "Загрузить в меню SolidWorks"
+        $map["从SolidWorks菜单卸载"] = "Выгрузить из меню SolidWorks"
+        $map["加载成功,请重启SolidWorks！"] = "Загружено успешно, перезапустите SolidWorks!"
+        $map["卸载成功,下次启动SolidWorks时将不再加载"] = "Выгружено успешно; при следующем запуске SolidWorks загружаться не будет"
+        $map["嵌入SolidWorks菜单"] = "Интеграция с меню SolidWorks"
+        # ResourceManager base name used by ZTool.Init.exe (matches renamed resource ZTool.Init.Resources.resources)
+        $map["ZTool初始化.Resources"] = "ZTool.Init.Resources"
     } else {
         $map["`t统计数量"] = "`tQuantity"
         $map[" (属性值)"] = " (Property Value)"
@@ -2488,6 +2495,13 @@ function Get-StringMap([string]$SelectedLanguage) {
         $map["ZTool初始化"] = "ZTool Initialization"
         $map["加载成功"] = "Loaded successfully"
         $map["卸载成功"] = "Unloaded successfully"
+        $map["加载到SolidWorks菜单"] = "Load to SolidWorks menu"
+        $map["从SolidWorks菜单卸载"] = "Unload from SolidWorks menu"
+        $map["加载成功,请重启SolidWorks！"] = "Loaded successfully, please restart SolidWorks!"
+        $map["卸载成功,下次启动SolidWorks时将不再加载"] = "Unloaded successfully; will not load on next SolidWorks start"
+        $map["嵌入SolidWorks菜单"] = "Integrate with SolidWorks menu"
+        # ResourceManager base name used by ZTool.Init.exe (matches renamed resource ZTool.Init.Resources.resources)
+        $map["ZTool初始化.Resources"] = "ZTool.Init.Resources"
     }
 
     # Long multi-line payload .resources strings (Update_log, regexhelp) live in
